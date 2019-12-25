@@ -1,0 +1,77 @@
+<template>
+	<div class="shenpt">
+		<ul class='s-p-t'>
+			<li>发票抬头</li>
+			<li>申请时间</li>
+		</ul>
+		<ul class="s-p-l">
+			<li v-for='(item,index) in 7' :key='index'>
+				<div>
+					<p>杭州帕菲克网络有限公司</p>
+					<h2>2019-12-03</h2>
+				</div>
+
+			</li>
+		</ul>
+	</div>
+</template>
+
+<script>
+</script>
+
+<style lang="stylus" scoped>
+	.shenpt {
+		.s-p-t {
+			padding: 10px 20px;
+			box-sizing: border-box;
+			display: flex;
+			justify-content: space-between;
+			
+			background: #fff;
+			li {
+				height: 100px;
+				line-height: 100px;
+				text-align: center;
+				border-bottom: 2px solid #ddd;
+			}
+			li:nth-child(1) {
+				width: 60%;
+			}
+			li:nth-child(2) {
+				width: 40%;
+			}
+		}
+		.s-p-l {
+			height: 900px;
+			overflow: auto;
+			li {
+				background: #fff;
+				padding: 10px 20px;
+				box-sizing: border-box;
+				div {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					height: 100px;
+					border-bottom: 2px solid #ddd;
+					p {
+						width: 60%;
+						text-align: center;
+						font-size: 28px;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: rgba(51, 51, 51, 1);
+					}
+					h2 {
+						width: 40%;
+						text-align: center;
+						font-size: 28px;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: rgba(153, 153, 153, 1);
+					}
+				}
+			}
+		}
+	}
+</style>
