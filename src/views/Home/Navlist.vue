@@ -1,110 +1,107 @@
 <template>
 	<div class="navlist">
-		<mt-navbar v-model="selected">
-			<mt-tab-item id="1" class='quanbu'>全部</mt-tab-item>
-			<mt-tab-item id="2">新鲜蔬菜</mt-tab-item>
-			<mt-tab-item id="3">肉禽蛋品 </mt-tab-item>
-			<mt-tab-item id="4">粮油米面</mt-tab-item>
-			<mt-tab-item id="5">酒水饮料</mt-tab-item>
-		</mt-navbar>
-		<mt-tab-container v-model="selected">
-			<mt-tab-container-item id="1">
-				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
-						<div class="nav-l"><img :src="item.cover" alt="" /></div>
-						<div class="nav-r">
-							<p class="nav-title">{{item.title}}</p>
-							<div class="nav-z-k">
-								<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2></h2>
-							</div>
+		<div class="nav-ul">
+			<ul>
+				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'chost':selected===index}">
+					{{item.name}}
+				</li>
+			</ul>
+		</div>
+		<div class="nav-list">
+			<ul class="nav-mian">
+				<li v-for="(item,index) in tlist">
+					<div class="nav-l"><img :src="item.cover" alt="" /></div>
+					<div class="nav-r">
+						<p class="nav-title">{{item.title}}</p>
+						<div class="nav-z-k">
+							<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
+							<h2></h2>
 						</div>
-					</li>
-				</ul>
-			</mt-tab-container-item>
-			<mt-tab-container-item id="2">
-				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
-						<div class="nav-l"><img :src="item.cover" alt="" /></div>
-						<div class="nav-r">
-							<p class="nav-title">{{item.title}}</p>
-							<div class="nav-z-k">
-								<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2></h2>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</mt-tab-container-item>
-			<mt-tab-container-item id="3">
-				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
-						<div class="nav-l"><img :src="item.cover" alt="" /></div>
-						<div class="nav-r">
-							<p class="nav-title">{{item.title}}</p>
-							<div class="nav-z-k">
-								<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2></h2>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</mt-tab-container-item>
-			<mt-tab-container-item id="4">
-				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
-						<div class="nav-l"><img :src="item.cover" alt="" /></div>
-						<div class="nav-r">
-							<p class="nav-title">{{item.title}}</p>
-							<div class="nav-z-k">
-								<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2></h2>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</mt-tab-container-item>
-			<mt-tab-container-item id="5">
-				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
-						<div class="nav-l"><img :src="item.cover" alt="" /></div>
-						<div class="nav-r">
-							<p class="nav-title">{{item.title}}</p>
-							<div class="nav-z-k">
-								<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2></h2>
-							</div>
-						</div>
-					</li>
-				</ul>
-			</mt-tab-container-item>
-		</mt-tab-container>
+					</div>
+				</li>
+			</ul>
+		</div>
 
 	</div>
 </template>
 
 <script>
-	import { shangpingData} from '@/api/api'
-	
+	import { shangpingData } from '@/api/api'
+
 	export default {
 		data() {
 			return {
 				active: true,
-				selected: '1',
-				tlist: []
+				selected: 0,
+				tlist: [],
+				list: [{
+						name: '全部'
+					},
+					{
+						name: '新鲜蔬菜'
+
+					},
+					{
+						name: '肉禽蛋品'
+
+					}, {
+						name: '粮油米面'
+
+					}, {
+						name: '酒水饮料'
+
+					}, {
+						name: '调味干货'
+
+					}, {
+						name: '水产海鲜'
+
+					}, {
+						name: '餐厨用品'
+
+					}, {
+						name: '火锅专用'
+
+					}, {
+						name: '烧烤专用'
+					},
+					{
+						name: '会员专享'
+					}
+
+				],
 			}
 		},
-		mounted() {
-			let data={
-				type:0,
-				page:1
-			}
-			shangpingData(data).then(res=>{
+		watch:{
+			selected(newId){
+				let data={
+					type:newId,
+					page:1
+				}
+				shangpingData(data).then(res => {
 				console.log(res)
-				if(res.data.code == 200){
+				if(res.data.code == 200) {
 					this.tlist = res.data.data
 				}
 			})
+			}
+		},
+		mounted() {
+			let data = {
+				type: 0,
+				page: 1
+			}
+			shangpingData(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.tlist = res.data.data
+				}
+			})
+		},
+		methods:{
+			changestyle(idt){
+				this.selected =idt
+			}
 		}
 	}
 </script>
@@ -114,25 +111,43 @@
 		width: 100%;
 		min-height: 900px;
 		background: #fff;
-		.mint-navbar {
+		.nav-ul {
 			height: 100px;
-			background: #fff;
-			display: flex;
-			.mint-tab-item {
-				padding: 0!important;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				font-size: 30px;
-				.mint-tab-item-label {
+			background: #FFF;
+			ul {
+				overflow-x: auto;
+				white-space: nowrap;
+				width: auto;
+				li {
+					width: 178px;
+					height: 100px;
+					background: #fff;
+					line-height: 100px;
+					position: relative;
+					text-align: center;
+					font-size: 32px;
 					color: #333;
+					display: inline-block;
+				}
+				.chost {
+					color: #3FB94D!important;
+				}
+				.chost:after {
+					content: '';
+					position: absolute;
+					z-index: 22;
+					width: 36px;
+					height: 4px;
+					left: 40%;
+					top:80px;
+					background: linear-gradient(-36deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
+					border-radius: 2px;
 				}
 			}
 		}
-		.mint-tab-container {
-			margin-top: 30px;
-		}
 		.nav-mian {
+			height: 900px;
+			overflow: auto;
 			li {
 				display: flex;
 				height: 173px;

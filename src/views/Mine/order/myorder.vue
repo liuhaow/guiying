@@ -79,7 +79,7 @@
 						<div class="lis-f-f">
 							<div class="dinzh">
 								<button>取消订单</button>
-								<button class="btde">立即付款</button>
+								<button class="btde" @click="payData">立即付款</button>
 							</div>
 						</div>
 					</div>
@@ -224,6 +224,9 @@
 			},
 			querenData(idt){
 				this.$router.push('/myorder/bourse')
+			},
+			payData(){
+				this.$router.push('/myorder/payinfo')			
 			}
 
 		}

@@ -1,7 +1,7 @@
 <template>
 	<div class="add-d-z">
 		<div class="mor-t">
-			<img @click="back" src="../../../assets/back.jpg" alt="" /> 选择收货地址
+			<img @click="back" src="../../../assets/back.jpg" alt="" /> 编辑收货地址
 		</div>
 		<div class="ad-l-s-t">
 			<div class="d-t-l">
@@ -37,7 +37,7 @@
 			return {
 				areaList,
 				show: false,
-				carmodel: ''
+				carmodel: '北京-北京-朝阳'
 			}
 		},
 

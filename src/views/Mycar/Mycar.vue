@@ -12,8 +12,8 @@
 					<van-cell :border="false">
 						<div class="car-list">
 
-							<img src="../../../static/imges/radios.jpg" alt="" class='choose-icon' v-if='item.selected' @click='select(item.productId)'>
-							<img src="../../../static/imges/radio.jpg" alt="" class='choose-icon' v-else @click='select(item.productId)'>
+							<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='item.selected' @click='select(item.productId)'>
+							<img src="../../../static/img/choss.png" alt="" class='choose-icon' v-else @click='select(item.productId)'>
 							<img :src="item.img" alt="" class='car-img'>
 							<div class='car-fr'>
 								<div class='car-name'>{{item.title}}</div>
@@ -45,8 +45,8 @@
 		<baokuan message='爆款推荐'></baokuan>
 		<div class='car-btm'>
 			<div class='btm-fl' @click="selectAll()">
-				<img src="../../../static/imges/radios.jpg" alt="" class='choose-icon' v-if='allSelsect'>
-				<img src="../../../static/imges/radio.jpg" alt="" class='choose-icon' v-else>
+				<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='allSelsect'>
+				<img src="../../../static/img/choss.png" alt="" class='choose-icon' v-else>
 				<span class='all-text'>全选</span>
 			</div>
 			<div class='all-money'>合计：<span>&yen;{{allMoney}}</span></div>
@@ -124,6 +124,7 @@
 				height: 260px!important;
 				.van-swipe-cell__wrapper {
 					height: 100%!important;
+					border:none!important;
 					.van-cell {
 						padding: 0!important;
 					}
@@ -137,6 +138,11 @@
 					button {
 						background: #FF6501!important;
 						width: 100%!important;
+						border:none!important;
+						
+					}
+					button::before{
+						display: none!important;
 					}
 				}
 			}
@@ -147,8 +153,8 @@
 			background: #fff;
 			align-items: center;
 			.choose-icon {
-				height: 36px;
-				width: 36px;
+				height: 44px;
+				width: 44px;
 				margin: 0 20px;
 			}
 			.car-img {
@@ -164,9 +170,10 @@
 				flex-direction: column;
 				justify-content: space-between;
 				.car-name {
-					font-size: 32px;
+					font-size: 28px;
 					color: #333;
-					margin-bottom: 50;
+
+					padding-right: 20px;
 				}
 				.fr-btm {
 					display: flex;
@@ -225,8 +232,8 @@
 			display: flex;
 			justify-content: center;
 			img {
-				height: 36px;
-				height: 36px;
+				height: 44px;
+				height: 44px;
 				margin: 0 10px;
 			}
 			span {

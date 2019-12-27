@@ -21,6 +21,7 @@
 						<h2>共2款，3件，合计¥5860</h2>
 						<div class="">
 							<button @click="chakanData(3)">查看物流</button><button @click="tuihuoData">申请退货</button>
+							<button @click="sqingjinduData()">申请进度</button>
 						</div>
 					</div>
 				</li>
@@ -54,6 +55,10 @@
 			},
 			quanbuqingdan(idt){
 				this.$router.push('/myorder/alldan/2')
+				
+			},
+			sqingjinduData(){
+				this.$router.push('/myorder/sqjindu')
 				
 			}
 		}

@@ -3,12 +3,10 @@
 		<headt message='交易成功'></headt>
 		<div class="wu-l">
 			<div class="j-y-t">
-
-				<h2><img src="../../../../static/img/succs.png" alt="" />交易成功</h2>
-				
-				<p>去评价一下本次的购物体验吧</p>
+				<h2><img src="../../../../static/img/succs.png" alt="" />评价成功</h2>
+				<p>坚持写真实内容丰富的评价，共建更好的购物体验！</p>
 				<div class="">
-					<button>返回首页</button><button @click="pingjiaData">立即评价</button>
+					<button>返回首页</button><button>继续购物</button>
 				</div>
 			</div>
 			<ul class="baokuan">
@@ -78,10 +76,8 @@
 			headt
 
 		},
-		methods:{
-			pingjiaData(idt){
-				this.$router.push('/myorder/pingjia/2')
-			}
+		methods: {
+
 		}
 	}
 </script>
@@ -169,8 +165,6 @@
 				margin-bottom: 40px;
 				h2 {
 					font-size: 40px;
-
-
 					color: rgba(255, 255, 255, 1);
 					img {
 						height: 40px;
@@ -187,7 +181,7 @@
 				}
 				div {
 					display: flex;
-					width: 70%;
+					width:70%;
 					justify-content: space-around;
 					button {
 						width: 180px;

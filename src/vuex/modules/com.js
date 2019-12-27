@@ -8,7 +8,8 @@ const state = {
 	TokenId:JSON.parse(localStorage.getItem('tokenId')) ||'',//token
 	taber:JSON.parse(localStorage.getItem('taber')) || 0,
 	phonenum:JSON.parse(localStorage.getItem('phone')) || '',//电话输入保存
-	userData:JSON.parse(localStorage.getItem('userData')) || ''//个人信息
+	userData:JSON.parse(localStorage.getItem('userData')) || '',
+	morendata:JSON.parse(localStorage.getItem('adress')) || ''
 
 	
 	
@@ -46,15 +47,7 @@ const getters = {
     taber:state => state.taber,
     phonenum:state => state.phonenum,
     userData:state=> state.userData,
-    sum:state=>{
-            var total=0;
-            state.goodsList.forEach((item)=>{
-                if(item.select){
-                    total+=item.price*item.number
-                }             
-            })
-            return total
-        }
+    morendata:state=>state.morendata,
 }
 const mutations = {
 	[types.PHONE_NUM](state,res){

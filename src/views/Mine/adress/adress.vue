@@ -6,18 +6,22 @@
 		<div class="adress-l">
 			<div style="height: 100%;overflow: auto;">
 				<ul>
-					<li v-for="(item,index) in 10" :key='index'>
+					<li v-for="(item,index) in list" :key='index'>
 						<div class="ad-t">
-							<h2><span class="spn-a">小凤仙</span><span>132****5876</span></h2>
-							<h3>浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...</h3>
+							<h2><span class="spn-a">{{item.name}}</span><span>{{item.moble}}</span></h2>
+							<h3>{{item.adress}}</h3>
 						</div>
 						<div class="ad-f">
 							<div class="ad-f-l">
-								<h2>设为默认</h2>
+								<h2 :class="{'morende':item.moren ==1 }">
+									<img src="../../../../static/img/chos.png"  v-if="item.moren ==1 " alt="" />
+									<img src="../../../../static/img/choss.png" @click="shezhimoData(item.id)" v-else="" alt="" />								
+									设为默认
+								</h2>
 							</div>
 							<div class="ad-f-r">
 								<h3>切换为此地址</h3>
-								<h4>编辑</h4>
+								<h4 @click="bianjiData(1)">编辑</h4>
 							</div>
 						</div>
 					</li>
@@ -33,15 +37,55 @@
 <script>
 	export default {
 		data() {
-			return {}
+			return {
+				list: [{
+						name: '小凤仙',
+						moble: '13567676767',
+						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
+						moren: 1,
+						id: 1
+					},
+					{
+						name: '小凤仙',
+						moble: '13567676767',
+						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
+						moren: 2,
+						id: 2
+
+					},
+					{
+						name: '小凤仙',
+						moble: '13567676767',
+						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
+						moren: 2,
+						id: 3
+
+					}
+				]
+			}
 		},
 		methods: {
 			back() {
 				this.$router.go(-1)
 			},
-			tianAddate(){
+			tianAddate() {
 				var that = this
-				that.$router.push('/mine/address')
+				that.$router.push('/mine/adddizhi')
+			},
+			bianjiData() {
+				var that = this
+				that.$router.push('/mine/bianji/2')
+			},
+			shezhimoData(idt) {
+				console.log(idt)
+
+				let index = this.list.findIndex(item => {
+					return item.id == idt
+				})
+				for(let i in this.list) {
+					this.list[i].moren = 2
+				}
+				this.list[index].moren = 1
 			}
 		}
 	}
@@ -50,9 +94,9 @@
 <style lang="stylus" scoped>
 	.adress {
 		position: absolute;
-		left:0;
-		top:0;
-		right:0;
+		left: 0;
+		top: 0;
+		right: 0;
 		bottom: 0;
 		display: flex;
 		flex-direction: column;
@@ -97,6 +141,22 @@
 						justify-content: space-between;
 						height: 80px;
 						align-items: center;
+						.ad-f-l {
+							.morende {
+								color: rgba(63, 185, 77, 1)!important;							
+							}
+							h2 {
+								font-size: 26px;
+								font-family: PingFang SC;
+								font-weight: 400;
+								color: #333;
+								img {
+									height: 38px;
+									width: 38px;
+									margin-right: 5px;
+								}
+							}
+						}
 						.ad-f-r {
 							display: flex;
 							align-items: center;
