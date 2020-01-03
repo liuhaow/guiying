@@ -7,45 +7,45 @@
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>纳税人识别号</h2> <input type="" placeholder="请输入纳税人识别号" name="" id="" value="" />
+				<h2><span>*</span>纳税人识别号</h2> <input type="" v-model="taxid" placeholder="请输入纳税人识别号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>注册地址</h2> <input type="" placeholder="请输入详细注册地址" name="" id="" value="" />
+				<h2><span>*</span>注册地址</h2> <input type="" v-model="addr" placeholder="请输入详细注册地址" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>注册电话</h2> <input type="" placeholder="请输入注册电话" name="" id="" value="" />
+				<h2><span>*</span>注册电话</h2> <input type="" v-model="mobile" placeholder="请输入注册电话" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>开户银行</h2> <input type="" placeholder="请输入开户银行" name="" id="" value="" />
+				<h2><span>*</span>开户银行</h2> <input type="" v-model="bank_account" placeholder="请输入开户银行" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div style="border: none!important;">
-				<h2><span>*</span>银行账号</h2> <input type="" placeholder="请输入银行账号" name="" id="" value="" />
+				<h2><span>*</span>银行账号</h2> <input type="" v-model="account_num" placeholder="请输入银行账号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-d">
 			<h2>其他信息</h2>
 		</div>
 		<div class="p-t-f">
-			<div >
-				<h2><span>*</span>联系人</h2> <input type="" placeholder="请输入联系人信息" name="" id="" value="" />
+			<div>
+				<h2><span>*</span>联系人</h2> <input type="" v-model="contact_person" placeholder="请输入联系人信息" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
-			<div >
-				<h2><span>*</span>联系电话</h2> <input type="" placeholder="请输入联系人电话" name="" id="" value="" />
+			<div>
+				<h2><span>*</span>联系电话</h2> <input type="" v-model="phone" placeholder="请输入联系人电话" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
-			<div >
-				<h2><span>*</span>详细地址</h2> <input type="" placeholder="请输入详细地址" name="" id="" value="" />
+			<div>
+				<h2><span>*</span>详细地址</h2> <input type="" v-model="dettail_addr" placeholder="请输入详细地址" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="butn">
@@ -56,11 +56,22 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { fapiaosqInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
 				select: 2,
 				chd: 2,
+				taxid: '',
+				addr: '',
+				mobile: '',
+				bank_account: '',
+				account_num: '',
+				contact_person: '',
+				phone: '',
+				dettail_addr: '',
+				
 				list: [{
 						name: '已申请发票'
 					},
@@ -73,10 +84,31 @@
 				]
 			}
 		},
-
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId',
+				userData:'userData'
+			})
+		},
 		methods: {
-			btnDatatijiao(){
-				console.log(1)
+			btnDatatijiao() {
+				let data = {
+					type: 1,
+					token: this.TokenId,
+					name:this.userData.id,
+					taxid:this.taxid,
+					addr:this.addr,
+					mobile:this.mobile,
+					bank_account:this.bank_account,
+					account_num:this.account_num,
+					phone:this.phone,
+					dettail_addr:this.dettail_addr
+					
+					
+				}
+				fapiaosqInfo(data).then(res => {
+
+				})
 			}
 		}
 	}
@@ -97,6 +129,7 @@
 			color: rgba(255, 255, 255, 1);
 		}
 	}
+	
 	.p-t-d {
 		height: 100px;
 		padding: 0 20px;
@@ -110,6 +143,7 @@
 			color: rgba(51, 51, 51, 1);
 		}
 	}
+	
 	.p-t-f {
 		height: 100px;
 		padding: 0 20px;

@@ -11,10 +11,13 @@
 
 <script>
 	import tabbar from "./components/abbar"
-	import { mapGetters } from 'vuex'
 	export default {
 		components: {
-			tabbar,
+			tabbar
+		},
+		updated() {
+
+			window.scroll(0, 0);
 
 		}
 	}
@@ -22,7 +25,7 @@
 
 <style lang="stylus" scoped>
 	#app {
-		background: rgba(225, 225, 225, .5);
+		background: rgba(225, 225, 225, .3);
 		height: 100%;
 	}
 </style>

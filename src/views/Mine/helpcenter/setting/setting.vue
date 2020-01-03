@@ -79,6 +79,7 @@
 				font-size: 28px;
 				font-family: PingFang SC;
 				font-weight: 500;
+				border: 0;
 				color: rgba(255, 255, 255, 1);
 				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(88, 214, 89, 1));
 				border-radius: 40px;

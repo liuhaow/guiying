@@ -9,36 +9,18 @@
 			<ul class="a-l-s-t">
 				<li v-for="(item,index) in leftl" @click="changestyle(index)" :class="{'xuan':chose===index}">{{item.name}}</li>
 			</ul>
-				
-			<ul class="a-l-r" v-if="chose ==0">
+			<ul class="a-l-r">
 				<li v-for="item in mlist">
-					<img :src="item.img" class="mlistimg" />
+					<img :src="item.cover" class="mlistimg" />
 					<div class="a-l-t-d">
 						<p>{{item.title}}</p>
 						<div class="listxi">
 							<h2>
-								<span>&yen;{{item.miaos}}</span><br />
-								<span>&yen;{{item.yu}}</span>
+								<span class="newp">&yen;{{item.now_price}}</span><br />
+								<span class="oldp">&yen;{{item.old_price}}</span>
 							</h2>
-							<h3>
-								<img src="../../../static/gw.jpg"/>
-							</h3>
-						</div>
-					</div>
-				</li>
-			</ul>
-			<ul class="a-l-r" v-if="chose == 1">
-				<li v-for="item in mlist">
-					<img :src="item.img" class="mlistimg" />
-					<div class="a-l-t-d">
-						<p>{{item.title}}</p>
-						<div class="listxi">
-							<h2>
-								<span>&yen;{{item.miaos}}</span><br />
-								<span>&yen;{{item.yu}}</span>
-							</h2>
-							<h3>
-								<img src="../../../static/gw.jpg"/>
+							<h3 @click="addhouwuAdd(item.id)">
+								<img src="../../../static/img/jgwc.png"/>
 							</h3>
 						</div>
 					</div>
@@ -49,94 +31,114 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { shangpingData } from '@/api/api'
+	import { Notify } from 'vant';
+	import {addshopcar} from '@/api/mine'
 	export default {
 		data() {
 			return {
 				chose: 0,
 				leftl: [{
-						name: '每日推荐'
+						name: '新鲜蔬菜'
+					},
+
+					{
+						name: '肉禽蛋品'
 					},
 					{
-						name: '豆制品'
+						name: '粮油米面'
 					},
 					{
-						name: '新鲜水果'
+						name: '酒水饮料'
 					},
 					{
-						name: '肉禽蛋'
+						name: '调味干货'
 					},
 					{
-						name: '海鲜水产'
+						name: '水产海鲜'
 					},
 					{
-						name: '乳品烘焙'
+						name: '餐厨用品'
 					},
 					{
-						name: '火锅来了'
+						name: '火锅专用'
 					},
 					{
-						name: '米面粮油'
+						name: '烧烤专用'
 					},
 					{
-						name: '调味品'
+						name: '会员专享'
 					}
 				],
-				mlist: [{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					}, {
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					}, {
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-				]
+				mlist: []
 			}
 		},
+		computed: {
+			...mapGetters({
+				lit: 'lit',
+				TokenId: 'TokenId'
+				
+			})
+		},
+		created() {
+			console.log(this.lit)
+			this.chose = this.lit;
+
+		},
+		mounted() {
+			let litd = this.lit + 1
+			let data = {
+				type: litd,
+				page: 1
+			}
+			shangpingData(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.mlist = res.data.data
+				}
+			})
+		},
 		methods: {
+			...mapActions(
+				[
+					'chooseilt'
+				]
+			),
 			seachData() {},
 			changestyle(index) {
-				this.chose = index
+				this.chose = index,
+				this.chooseilt(index)
+				let litd = index + 1
+				let data = {
+					type: litd,
+					page: 1
+				}
+				shangpingData(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						this.mlist = res.data.data
+					}
+				})
 
 			},
+			addhouwuAdd(idt){
+				let data={
+					token:this.TokenId,
+					cid:idt,
+					num:1,
+					type:1,
+					classify:1
+					
+				}
+				addshopcar(data).then(res=>{
+					if(res.data.code == 200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+						Notify({ type: 'warning', message: res.data.msg });
+					}
+				})
+			}
 
 		}
 	}
@@ -203,7 +205,6 @@
 			.a-l-r {
 				width: 72%;
 				height: 100%;
-
 				overflow: auto;
 				li {
 					height: 220px;
@@ -228,27 +229,28 @@
 							line-height: 34px;
 							color: rgba(51, 51, 51, 1);
 						}
-						.listxi{
+						.listxi {
 							margin-top: 60px;
 							display: flex;
 							justify-content: space-between;
+							align-items: center;
 							h2 {
-								span:nth-child(1) {
+								.newp {
 									color: #FB0E3A;
 									font-size: 32px;
-									
 								}
-								span:nth-child(2) {
+								.oldp {
 									font-size: 28px;
 									font-weight: 500;
 									text-decoration: line-through;
 									color: #ccc;
 								}
 							}
-							h3{
-								img{
-									width:48px;
-									height: 48px;
+							h3 {
+								img {
+									width: 50px;
+									height: 50px;
+									margin-right: 20px;
 								}
 							}
 						}

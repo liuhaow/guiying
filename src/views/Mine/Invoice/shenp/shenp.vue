@@ -5,10 +5,10 @@
 			<li>申请时间</li>
 		</ul>
 		<ul class="s-p-l">
-			<li v-for='(item,index) in 7' :key='index'>
+			<li v-for='(item,index) in shen' :key='index'>
 				<div>
-					<p>杭州帕菲克网络有限公司</p>
-					<h2>2019-12-03</h2>
+					<p>{{item.name}}</p>
+					<h2>{{item.create_time}}</h2>
 				</div>
 
 			</li>
@@ -17,6 +17,32 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { fapiaokpInfo } from '@/api/mine'
+	export default {
+		data() {
+			return {
+				shen:[],
+				
+			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data={
+				token:this.TokenId
+			}
+			fapiaokpInfo(data).then(res=>{
+				console.log(res)
+				if(res.data.code == 200){
+					this.shen = res.data.data
+				}
+			})
+		}
+	}
 </script>
 
 <style lang="stylus" scoped>
@@ -26,7 +52,6 @@
 			box-sizing: border-box;
 			display: flex;
 			justify-content: space-between;
-			
 			background: #fff;
 			li {
 				height: 100px;

@@ -38,7 +38,7 @@
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
-	import { questiondata } from '@/api/api'
+	import { problemInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -57,7 +57,7 @@
 			let data = {
 				token: this.TokenId
 			}
-			questiondata(data).then(res => {
+			problemInfo(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
 					this.fileList = res.data.data

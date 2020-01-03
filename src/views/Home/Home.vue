@@ -39,7 +39,7 @@
 				<p @click="messData()">更多</p>
 			</div>
 			<ul class="nav-list">
-				<li v-for='(item,index) in list' class="list-n">
+				<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index)">
 					<img :src="item.img" alt="" />
 					<p>{{item.name}}</p>
 				</li>
@@ -70,7 +70,7 @@
 		</div>
 
 		<div class="haol">
-			<div class="haob">
+			<div class="haob" @click="fashData">
 				<img v-if='hud' :src="hud.image" />
 			</div>
 		</div>
@@ -89,6 +89,8 @@
 	import Timeout from '@/views/Home/Timeout'
 	import Tuangou from '@/views/Home/Tuangou'
 	import Navlist from '@/views/Home/Navlist'
+	import { mapActions } from 'vuex'
+	
 	import { lunboData, shangpingData, indexmessage } from '@/api/api'
 
 	export default {
@@ -96,36 +98,36 @@
 			return {
 				list: [{
 						name: '新鲜蔬菜',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/sfsd.png',
 					},
 					{
 						name: '肉禽蛋品',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/rouy.png',
 					}, {
 						name: '粮油米面',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/lyou.png',
 					}, {
 						name: '酒水饮料',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/jius.png',
 					}, {
 						name: '调味干货',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/ytiw.png',
 					}, {
 						name: '水产海鲜',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/shuigb.png',
 					}, {
 						name: '餐厨用品',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/canc.png',
 					}, {
 						name: '火锅专用',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/hguo.png',
 					}, {
 						name: '烧烤专用',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/shaok.png',
 					},
 					{
 						name: '会员专享',
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
+						img: '../../../static/img/hyuan.png',
 					}
 
 				],
@@ -181,6 +183,14 @@
 
 		},
 		methods: {
+			...mapActions(
+				[
+					
+					'chooseilt',
+					'settaber'
+					
+				]
+			),
 			showMarquee: function() {
 				this.animate = true;
 				setTimeout(() => {
@@ -201,6 +211,17 @@
 				
 					this.$router.push('/home/seach')
 				
+			},
+			fashData(){
+					this.$router.push('/home/fash')
+				
+			},
+			tiaozhuan(idt){
+				console.log(idt)
+				this.chooseilt(idt)
+				this.settaber(1)
+				this.$router.push('/overall')
+				
 			}
 		}
 	};
@@ -209,7 +230,7 @@
 <style lang="stylus" scoped>
 	.wrapper {
 		width: 100%;
-		background: #ccc;
+		background: rgba(225, 225, 225, .3);
 		padding-bottom: 98px;
 	}
 	
@@ -237,7 +258,7 @@
 		box-sizing: border-box;
 		height: 366px;
 		width: 100%;
-		background: yellow;
+		background: #fff;
 		.zhuanq {
 			font-size: 36px;
 			font-weight: bold;

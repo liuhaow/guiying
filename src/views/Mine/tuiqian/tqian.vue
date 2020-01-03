@@ -3,19 +3,21 @@
 		<headt message='退押金'></headt>
 		<div class="jiany-l">
 			<ul>
-				<li v-for='(item,index) in 5' :key='index'>
+				<li v-for='(item,index) in list' :key='index'>
 					<div class="j-t">
-						<h2>2019-11-1 17:16:20</h2>
+						<h2>{{item.create_time}}</h2>
 						<h3>有押金</h3>
 					</div>
 					<div class="j-n">
 						<ul>
-							<li><img src="../../../assets/back.jpg" /><img src="../../../assets/back.jpg" /></li>
+							<li >
+								<img v-for='(idt ,indx) in item.pro' :src="idt.cover" />
+							</li>
 						</ul>
 						<h2>查看全部》</h2>
 					</div>
 					<div class="j-f">
-						<button @click="shengqingData(3)">可退9000</button>
+						<button @click="shengqingData(item.id,item.deposit)">可退{{item.deposit}}</button>
 					</div>
 				</li>
 			</ul>
@@ -26,30 +28,48 @@
 
 <script>
 	import headt from '../../../components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	import { jinayiListInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
 				select: 2,
 				chd: 2,
-				list: [{
-						name: '已申请发票'
-					},
-					{
-						name: '已开发票'
-					},
-					{
-						name: '发票开票信息 '
-					}
-				]
+				list: []
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data={
+				token:this.TokenId,
+				page:1,
+				type:1
+			}
+			jinayiListInfo(data).then(res=>{
+				console.log(res)
+				if(res.data.code==200){
+					this.list=res.data.data
+				}
+			})
+		},
 		methods: {
-			shengqingData(idt) {
+			shengqingData(idt,dept) {
 				var that = this
-				that.$router.push('/mine/sqing')
+				that.$router.push({
+					path:'/mine/sqing',
+					query:{
+						id:idt,
+						dept:dept
+						
+					}
+				})
 			}
 		}
 	}
@@ -128,6 +148,7 @@
 						button {
 							width: 200px;
 							height: 56px;
+							border: 0;
 							font-size: 26px;
 							font-family: PingFang SC;
 							font-weight: 500;

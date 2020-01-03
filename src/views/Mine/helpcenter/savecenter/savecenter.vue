@@ -1,6 +1,6 @@
 <template>
 	<div class="addxuqu">
-
+		<headt message='服务中心'></headt>
 		<div class="a-d-d">
 			<div class="p-t-f">
 				<div>
@@ -70,6 +70,7 @@
 				width: 90%;
 				height: 80px;
 				font-size: 28px;
+				border: none;
 				font-family: PingFang SC;
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
@@ -79,7 +80,7 @@
 		}
 		.a-d-d {
 			.p-t-f {
-				height: 100px;
+				height: 104px;
 				padding: 0 20px;
 				box-sizing: border-box;
 				background: #fff;
@@ -100,6 +101,7 @@
 					input {
 						font-size: 28px;
 						width: 480px;
+						background: none;
 						font-family: PingFang SC;
 						font-weight: 500;
 						color: rgba(153, 153, 153, 1);

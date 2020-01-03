@@ -5,30 +5,68 @@
 			请填写邮箱地址，我们将发送到您的邮箱！
 		</div>
 		<div class="you-x">
-			<h2>邮箱账号：</h2><input type="text" placeholder="请输入店家名称" />
+			<h2>邮箱账号：</h2><input v-model="email" type="text" placeholder="请输入邮箱" />
 		</div>
 		<div class="s-y-b">
 			<h2>备注：</h2>
-			<textarea name="" rows="" cols="" placeholder="您有其他的要求可以告知我们！"></textarea>
+			<textarea name="" rows="" v-model="remark" cols="" placeholder="您有其他的要求可以告知我们！"></textarea>
 		</div>
 		<div class="btnd">
-			<button>提交需求</button>
+			<button @click="suoyaoData">提交需求</button>
 		</div>
 	</div>
 </template>
 
 <script>
 	import headt from '../../../components/heda'
+	import { mapGetters } from 'vuex'
+	import { Notify } from 'vant';
+	import { jinasqInfo } from '@/api/mine'
+	
+	
 	export default {
 		data() {
-			return {}
+			return {
+				email:'',
+				remark:''			
+			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
-			suoyaoData(idt) {
-
+			suoyaoData() {	
+				if(!this.email){
+				 	Notify({ type: 'warning', message: '需要输入邮箱' });
+				 	return
+				 }
+				var reg=/^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+				 if(!reg.test(this.email)){
+				 	Notify({ type: 'warning', message: '输入正确邮箱' });
+				 	return
+				 }
+				 			 	
+				let data={
+					token:this.TokenId,
+					email:this.email,
+					remark:this.remark,
+					order_id:this.$route.params.id
+				}
+				jinasqInfo(data).then(res=>{
+					console.log(res)
+					if(res.data.code==200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+				 		Notify({ type: 'warning', message: res.data.msg });
+						
+					}
+				})
+				
 			}
 		}
 	}
@@ -54,7 +92,7 @@
 			button {
 				width: 90%;
 				height: 80px;
-
+				border: 0;
 				font-size: 28px;
 				font-family: PingFang SC;
 				font-weight: 500;

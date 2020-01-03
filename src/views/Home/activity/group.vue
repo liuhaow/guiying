@@ -3,18 +3,18 @@
 		<headt message='今日团购'></headt>
 		<div class="a-d-d">
 			<ul>
-				<li v-for='item in mlist' @click="tuanDatail(1)">
-					<div class="t-g-imh">
-						<img :src="item.img" alt="" />
+				<li v-for='item in mlist' >
+					<div class="t-g-imh" @click="tuanDatail(item.id)">
+						<img :src="item.goods_cover" alt="" />
 					</div>
-					<p class="mingc">{{item.title}} </p>
-					
+					<p class="mingc">{{item.goods_name}} </p>
+
 					<div class="t-g-f-t">
 						<div class="t-g-f-j">
-<p>秒杀价：&yen;{{item.miaos}} <span class="yuanjia">&yen;{{item.yu}}</span></p>
+							<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
 						</div>
-						<div class="t-g-f-b">
-							<img src="../../../../static/gw.jpg" />
+						<div class="t-g-f-b"@click="addhouwuAdd(item.goods_id)">
+							<img src="../../../../static/img/jgwc.png" />
 						</div>
 					</div>
 				</li>
@@ -27,66 +27,57 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { hometugou } from '@/api/api'
+	import { mapGetters, mapActions } from 'vuex'
+	import {addshopcar} from '@/api/mine'
+	
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
-				mlist: [{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-				]
+				mlist: []
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data ={
+				page:1
+			}
+			hometugou(data).then(res =>{
+				console.log(res)
+				if(res.data.code == 200){
+					this.mlist = res.data.data
+				}
+			})
+		},
 		methods: {
-			tuanDatail(idt){
-				this.$router.push('/home/pintuan/2')
-				
+			tuanDatail(idt) {
+				this.$router.push('/pintu/pintuan/'+idt)
+
+			},
+			addhouwuAdd(idt){
+				let data={
+					token:this.TokenId,
+					cid:idt,
+					num:1,
+					type:1,
+					classify:2
+					
+				}
+				addshopcar(data).then(res=>{
+					if(res.data.code == 200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+						Notify({ type: 'warning', message: res.data.msg });
+					}
+				})
 			}
 		}
 	}
@@ -112,7 +103,6 @@
 				overflow: auto;
 				padding: 0 20px;
 				box-sizing: border-box;
-				
 				li {
 					width: 345px;
 					height: 496px;
@@ -137,19 +127,19 @@
 						color: rgba(51, 51, 51, 1);
 						margin: 20px 0 10px;
 					}
-					.t-g-f-t{
+					.t-g-f-t {
 						height: 48px;
 						display: flex;
 						justify-content: space-between;
 						align-items: center;
-						.t-g-f-b{
-							img{
+						.t-g-f-b {
+							img {
 								height: 48px;
 								width: 48px;
 							}
 						}
 					}
-					.t-g-f-j{
+					.t-g-f-j {
 						p {
 							font-size: 26px;
 							font-weight: 500;
@@ -165,10 +155,10 @@
 						}
 					}
 				}
-				li:nth-child(n){
+				li:nth-child(n) {
 					float: left;
 				}
-				li:nth-child(2n){
+				li:nth-child(2n) {
 					float: right;
 				}
 			}

@@ -6,10 +6,10 @@
 				<li>开票状态</li>
 			</ul>
 			<ul class="s-p-l">
-				<li v-for='(item,index) in 6' :key='index'>
+				<li v-for='(item,index) in yikai' :key='index' @click="detailinfo(item.id)">
 					<div>
-						<p>杭州帕菲克网络有限公司</p>
-						<h2>已开票</h2>
+						<p>{{item.name}}</p>
+						<h2>{{item.create_time}}</h2>
 					</div>
 
 				</li>
@@ -19,57 +19,96 @@
 			<div class="p-t-f">
 				<div>
 					<h2>发票类型</h2>
-					<h3>普通发票</h3>
+					<h3>{{datt.type==1?'普通发票':'电子发票'}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>发票抬头</h2>
-					<h3>杭州帕菲克网络有限公司</h3>
+					<h3>{{datt.name}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>纳税人识别号</h2>
-					<h3>4206299550023</h3>
+					<h3>{{datt.taxid}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>注册地址</h2>
-					<h3>浙江省杭州市余杭区仓前街道</h3>
+					<h3>{{datt.addr}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>注册电话</h2>
-					<h3>dwde</h3>
+					<h3>{{datt.mobile}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>开户银行</h2>
-					<h3>中国银行</h3>
+					<h3>{{datt.bank_account}}</h3>
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
 					<h2>银行账号</h2>
-					<h3>420621199005013354</h3>
+					<h3>{{datt.account_num}}</h3>
 				</div>
 			</div>
-			
+
 		</div>
 	</div>
 </template>
 
 <script>
+	import { mapGetters } from 'vuex'
+	import { fapiaoykInfo, fapiaoxqInfo } from '@/api/mine'
+	import { Toast } from 'vant';
 	export default {
 		data() {
 			return {
-				chak: 1
+				chak: 2,
+				yikai: [],
+				datt:''
+			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			fapiaoykInfo(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.yikai = res.data.data
+				}
+			})
+		},
+		methods: {
+			detailinfo(idt) {
+				let data = {
+					iid: idt,
+					token: this.TokenId
+				}
+				fapiaoxqInfo(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						this.datt= res.data.data
+						this.chak=1
+					}else{
+						Toast.fail(rea.data.msg);
+					}
+				})
 			}
 		}
+
 	}
 </script>
 

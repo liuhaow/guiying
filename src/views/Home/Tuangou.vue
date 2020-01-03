@@ -7,14 +7,16 @@
 		<div class="tlist">
 			<ul class="tlist-u">
 				<li v-for='(item,index) in tlist' >
-					<img :src="item.img" class="mimgs" alt="" @click="mshaData(1)" />
-					<p class="tutile">{{item.title}}</p>
+					<img :src="item.goods_cover" class="mimgs" alt="" @click="mshaData(item.id)" />
+					<p class="tutile">{{item.goods_name}}</p>
 					<div class="tu-f">
 						<p>
 							<span class="tgj">团购价</span>
-							<span>&yen;9.9</span>
+							<span>&yen;{{item.show_price}}</span>
 						</p>
-						<h2></h2>
+						<h2 @click="addhouwuAdd(item.goods_id)">
+							<img src="../../../static/img/jgwc.png"/>
+						</h2>
 					</div>
 				</li>
 			</ul>
@@ -23,41 +25,58 @@
 </template>
 
 <script>
+	import { hometugou } from '@/api/api'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import {addshopcar} from '@/api/mine'
 	export default {
 		data() {
 			return {
-				tlist: [{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果  ',
-						miaos: '90',
-						yu: '109'
-					}
-				]
+				tlist: []
 			}
 
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data ={
+				page:1
+			}
+			hometugou(data).then(res =>{
+				console.log(res)
+				if(res.data.code == 200){
+					this.tlist = res.data.data.splice(0,3)
+				}
+			})
 		},
 		methods:{
 			moreData() {
 				this.$router.push('/group')
 
 			},
-			mshaData(){
-				this.$router.push('/home/pintuan/2')
+			mshaData(idt){
+				this.$router.push('/pintu/pintuan/'+idt)
 				
+			},
+			addhouwuAdd(idt){
+				let data={
+					token:this.TokenId,
+					cid:idt,
+					num:1,
+					type:1,
+					classify:2
+					
+				}
+				addshopcar(data).then(res=>{
+					if(res.data.code == 200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+						Notify({ type: 'warning', message: res.data.msg });
+					}
+				})
 			}
 		}
 	}
@@ -103,23 +122,24 @@
 								height: 20px;
 								display: block;
 								margin-bottom: 6px;
-								font-size: 16px!important;
+								font-size: 20px!important;
 								font-family: PingFang SC;
 								font-weight: 500;
 								color: rgba(255, 101, 1, 1);
 							}
 							span {
-								font-size: 48px;
+								font-size: 38px;
 								font-family: PingFang SC;
 								font-weight: 500;
 								color: rgba(255, 101, 1, 1);
 							}
 						}
 						h2 {
-							width: 48px;
-							height: 48px;
-							background: linear-gradient(-36deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
-							border-radius: 50%;
+							img{
+								height: 48px;
+								width: 48px;
+								border-radius: 50%;
+							}
 						}
 					}
 				}

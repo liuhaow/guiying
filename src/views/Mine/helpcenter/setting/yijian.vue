@@ -2,7 +2,7 @@
 	<div class="addxuqu">
 		<headt message='意见与反馈'></headt>
 		<div class="a-d-d">
-			<textarea v-model="title" placeholder="我们想听听你的心声，如果愿意，你也可以留下联系方式，我们期待与你的真诚沟通。"></textarea>
+			<textarea v-model="title"  placeholder="我们想听听你的心声，如果愿意，你也可以留下联系方式，我们期待与你的真诚沟通。"></textarea>
 			<p>{{this.titleMaxLength - this.title.length}}/150</p>
 		</div>
 		<div class="btnd">
@@ -13,6 +13,10 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { yijianData} from '@/api/mine'
+	
 	export default {
 		data() {
 			return {
@@ -31,8 +35,26 @@
 				}
 			}
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
-			nextData() {}
+			nextData() {
+				let data={
+					content:this.title,
+					token:this.TokenId
+				}
+				yijianData(data).then(res=>{
+					if(res.data.code == 200){
+						this.title=''
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+						Notify({ type: 'warning', message: res.data.msg });
+					}
+				})
+			}
 		}
 	}
 </script>
@@ -59,6 +81,7 @@
 				height: 80px;
 				background: rgba(63, 185, 77, 1);
 				border-radius: 40px;
+				border: 0;
 				font-size: 28px;
 				font-family: PingFang SC;
 				font-weight: 500;

@@ -4,7 +4,7 @@
 		<div class="j-f-t">
 			<h2 @click="back"><img src="../../../static/img/fanhui.png" alt="" /></h2>
 			<h3>会员专区</h3>
-			<h4>等级规则</h4>
+			<h4 @click="ruleData()">等级规则</h4>
 		</div>
 		<div class="j-f-b-n">
 			<div class="huiyu">
@@ -30,19 +30,23 @@
 			<h3 class="laix">600+超值低价商品等你来享</h3>
 			<div class="allpin">
 				<ul>
-					<li v-for="(item,index) in 10">
+					<li v-for="(item,index) in 5">
 						<img class="spimg" src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
-						<div class="">
-							<div class="">
+						<div class="hy-list">
+							<div class="hy-l-l">
 								<h2>兴业馆广西皇帝柑贡柑新鲜水果</h2>
-								<h3>&yen;9.9 <span>会员价</span> <span>&yen;9.9</span></h3>
+								<h3>&yen;9.9 <span class="hyuajia">会员价</span> <span class="zhek">&yen;9.9</span></h3>
 							</div>
-							<div class="">
-								<h1>123</h1>
+							<div class="goumai">
+								<img src="../../../static/img/jgwc.png" alt="" />
 							</div>
 						</div>
+
 					</li>
 				</ul>
+				<div class="ckall" @click="allListData()">
+					查看全部会员商品
+				</div>
 			</div>
 		</div>
 	</div>
@@ -61,6 +65,12 @@
 			},
 			makeData() {
 
+			},
+			allListData(){
+				this.$router.push('/vip/viplist')			
+			},
+			ruleData(){
+				this.$router.push('/vip/viprule')							
 			}
 		}
 	}
@@ -89,20 +99,74 @@
 				color: rgba(153, 153, 153, 1);
 				margin-bottom: 30px;
 			}
-			.allpin{
-				height: 1020px;
+			.allpin {
+				height: 1120px;
 				background: #fff;
-				ul{
+				.ckall {
+					width: 670px;
+					height: 80px;
+					line-height: 80px;
+					text-align: center;
+					font-size: 32px;
+					color: #fff;
+					background: rgba(88, 194, 98, 1);
+					border-radius: 8px;
+					margin: 60px auto 0;
+				}
+				ul {
 					height: 900px;
-					overflow: auto;
-					li{
+					padding-top: 20px;
+					li {
 						height: 180px;
 						display: flex;
 						align-items: center;
 						justify-content: space-between;
-						.spimg{
+						.spimg {
 							height: 150px;
+							margin-left: 30px;
 							width: 150px;
+						}
+						.hy-list {
+							display: flex;
+							justify-content: space-between;
+							align-items: center;
+							width: 70%;
+							height: 100%;
+							border-bottom: 2px solid #E1E1E1;
+							.hy-l-l {
+								height: 70%;
+								display: flex;
+								flex-direction: column;
+								justify-content: space-between;
+								h3 {
+									font-size: 24px;
+									color: rgba(63, 185, 77, 1);
+									display: flex;
+									font-weight: 600;
+									align-items: center;
+									.hyuajia {
+										display: block;
+										width: 88px;
+										height: 32px;
+										line-height: 32px;
+										text-align: center;
+										margin: 0 20px;
+										background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
+										border-radius: 16px;
+										color: #fff!important;
+									}
+									.zhek{
+										color: #666666!important;
+									}
+								}
+							}
+							.goumai {
+								img {
+									width: 55px;
+									height: 55px;
+									margin: 70px 30px 0 0;
+								}
+							}
 						}
 					}
 				}

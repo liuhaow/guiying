@@ -50,7 +50,7 @@
 		overflow: auto;
 		.btnd {
 			position: fixed;
-			bottom: 180px;
+			top: 370px;
 			width: 100%;
 			display: flex;
 			justify-content: center;
@@ -60,6 +60,7 @@
 				background: rgba(63, 185, 77, 1);
 				border-radius: 40px;
 				font-size: 28px;
+				border: 0;
 				color: #fff;
 			}
 		}

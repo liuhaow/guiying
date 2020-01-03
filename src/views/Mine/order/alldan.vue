@@ -23,7 +23,7 @@
 
 <script>
 	import headt from '@/components/heda'
-
+	
 	export default {
 		data() {
 			return {

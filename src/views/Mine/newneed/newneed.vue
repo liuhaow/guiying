@@ -6,13 +6,14 @@
 		</div>
 		<div class="you-x">
 			<div>
-				<h2>名称：</h2><input type="text" placeholder="请填写商品名称" />
+				<h2>名称：</h2><input v-model="name" type="text" placeholder="请填写商品名称" />
 			</div>
 
 		</div>
 		<div class="you-x">
 			<div class="" @click="showPicker=true">
-				<h2>分类：</h2><p>{{value}}</p>
+				<h2>分类：</h2>
+				<p>{{value}}</p>
 			</div>
 
 		</div>
@@ -28,12 +29,16 @@
 
 <script>
 	import headt from '../../../components/heda'
+	import { Notify } from 'vant';
+
 	export default {
 		data() {
 			return {
 				showPicker: false,
-				columns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
-				value:'请选择商品分类'
+				columns: ['新鲜蔬菜', '肉禽蛋品', '粮油米面', '酒水饮料', '调味干货', '水产海鲜', '餐厨用品', '火锅专用', '烧烤专用'],
+				value: '请选择商品分类',
+				chose: '',
+				name: ''
 			}
 		},
 		components: {
@@ -41,12 +46,35 @@
 		},
 
 		methods: {
-			onConfirm(value) {
+			onConfirm(value, index) {
+				console.log(index)
 				this.value = value;
+				this.chose = index + 1;
 				this.showPicker = false;
 			},
-			nextData(){
-					this.$router.push('/mine/addxuqu')
+			nextData() {
+				if(!this.name) {
+					Notify({
+						type: 'warning',
+						message: '输入您需要添加的名称'
+					});
+					return
+				}
+				if(!this.chose) {
+					Notify({
+						type: 'warning',
+						message: '请选择分类'
+					});
+					return
+				}
+				this.$router.push({
+					path: '/mine/addxuqu',
+					query: {
+						name: this.name,
+						type: this.chose
+
+					}
+				})
 			}
 		}
 
@@ -75,6 +103,7 @@
 				height: 80px;
 				font-size: 28px;
 				font-family: PingFang SC;
+				border: 0;
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
 				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(88, 214, 89, 1));
@@ -137,7 +166,6 @@
 				p {
 					width: 70%;
 					font-size: 28px;
-
 					font-weight: 500;
 					color: rgba(153, 153, 153, 1);
 				}

@@ -6,41 +6,98 @@
 		</div>
 		<div class="you-x">
 			<div>
-				<h2>联系人：</h2><input type="text" placeholder="请填写联系人" />
+				<h2>联系人：</h2><input v-model="name" type="text" placeholder="请填写联系人" />
 			</div>
 
 		</div>
 		<div class="you-x">
 			<div class="">
-				<h2>联系方式：</h2><input type="text" placeholder="请填写联系电话" />
+				<h2>联系方式：</h2><input v-model="mobile" type="text" placeholder="请填写联系电话" />
 			</div>
 
 		</div>
 		<div class="you-x">
 			<div>
-				<h2>退押金事宜：</h2><input type="text" placeholder="请填写您需求" />
+				<h2>退押金事宜：</h2><input v-model="remark" type="text" placeholder="请填写您需求" />
 			</div>
 
 		</div>
 
 		<div class="btnd">
-			<button>提交申请</button>
+			<button @click="suoyaoData">提交申请</button>
 		</div>
 	</div>
 </template>
 
 <script>
 	import headt from '../../../components/heda'
+	import { mapGetters } from 'vuex'
+	import { Notify } from 'vant';
+	import { yajintuiData } from '@/api/mine'
 	export default {
 		data() {
-			return {}
+			return {
+				name: '',
+				mobile: '',
+				remark: ''
+			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
-			suoyaoData(idt) {
+			suoyaoData() {
+				let order_id= this.$route.query.id;
+				let deposit =this.$route.query.dept;
+				console.log(deposit,order_id)
+				if(!this.name) {
+					Notify({
+						type: 'warning',
+						message: '需要输入名字'
+					});
+					return
 
+				}
+				if(!this.mobile) {
+					Notify({
+						type: 'warning',
+						message: '需要输入手机号'
+					});
+					return
+
+				}
+				var reg = /^1[3456789]\d{9}$/;
+				if(!reg.test(this.mobile)) {
+					Notify({
+						type: 'warning',
+						message: '需要正确手机号'
+					});
+					return
+				}
+				let data={
+					token:this.TokenId,
+					order_id:order_id,
+					name:this.name,
+					mobile:this.mobile,
+					remark:this.remark,
+					deposit:deposit
+					
+				}
+				yajintuiData(data).then(res => {
+					console.log(res)
+					if(res.data.code ==200){
+						Notify({ type: 'success', message: res.data.msg });
+						
+					}else{
+				 		Notify({ type: 'warning', message: res.data.msg });
+						
+					}
+				})
 			}
 		}
 	}
@@ -69,6 +126,7 @@
 				font-size: 28px;
 				font-family: PingFang SC;
 				font-weight: 500;
+				border: 0;
 				color: rgba(255, 255, 255, 1);
 				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(88, 214, 89, 1));
 				border-radius: 40px;
@@ -119,7 +177,6 @@
 				border-bottom: 2px solid #ddd;
 				width: 100%;
 				height: 98px;
-				
 				display: flex;
 				align-items: center;
 				h2 {

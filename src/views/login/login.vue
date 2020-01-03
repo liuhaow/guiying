@@ -78,6 +78,14 @@
 </script>
 
 <style lang="stylus" scoped>
+.login{
+	position: absolute;
+	right:0;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	background: #fff;
+}
 	.back {
 		img {
 			height: 36px;

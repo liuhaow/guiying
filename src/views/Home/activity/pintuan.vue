@@ -4,16 +4,16 @@
 		<div class="a-d-d">
 			<div class="top-p-t">
 				<van-swipe :autoplay="3000">
-					<van-swipe-item v-for="(image, index) in images" :key="index">
-						<img v-lazy="image" />
+					<van-swipe-item v-for="(imgt, index) in images" :key="index">
+						<img v-lazy="imgt.image" />
 					</van-swipe-item>
 				</van-swipe>
 			</div>
 			<div class="x-q-l">
 				<div class="x-q-l-t">
 					<div class="x-q-l-t-l">
-						<p>抢购价</p>
-						<h2>&yen;68 <span>60件已售</span></h2>
+						<p>拼团价</p>
+						<h2>&yen;{{messgein.show_price}} <span>已拼{{messgein.group_num}}件</span></h2>
 					</div>
 					<div class="x-q-l-t-r">
 
@@ -21,7 +21,7 @@
 					</div>
 				</div>
 				<div class="x-q-l-f">
-					<p>大宅蟹礼品券石庄煮大闸蟹6只（389） 阳澄湖大宅蟹</p>
+					<p>{{messgein.goods_name}}</p>
 				</div>
 			</div>
 
@@ -29,35 +29,54 @@
 				<div class="c-s-x-q-c">
 					<h3>参数</h3>
 					<div class="changm">
-						<p>厂名：苏州市阳澄湖九百亩生态农业
-						</p>
-						<p>
-							厂址：昆山巴城厂家
-						</p>
+						<p>品牌：{{messgein.brand}}</p>
+						<p>规格：{{messgein.specification}}</p>
 					</div>
 				</div>
 				<h2 class="c-s-x-h" @click="canshu=true">
-					<i slot="icon" class="icon iconfont ">&#xe644;</i>
-					
+					<i slot="icon" class="icon iconfont ">&#xe644;</i>				
 				</h2>
 			</div>
-			
-			<pinglun></pinglun>
+
+			<div class="pinglu">
+				<h1>宝贝评论</h1>
+				<div class="p-l-l-s" v-if="pinglun.length!=0">
+					<ul>
+						<li v-for='(item,index) in pinglun' :key='index'>
+							<div class="l-t-op">
+								<div class="">
+									<img :src="item.avatar" alt="" /><span>{{item.username}}</span>
+								</div>
+								<p>{{item.create_time}}</p>
+							</div>
+							<div class="l-t-nav">
+								<van-rate v-model="item.level" readonly/>
+							</div>
+							<p class="l-t-ft">
+								{{item.content}}
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div class="p-l-f-t" v-if="pinglun.length!=0">
+					<button @click="checkout(messgein.goods_id)">查看更多({{messgein.evl_count}})</button>
+				</div>
+			</div>
+			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
 		</div>
 		<van-goods-action>
-			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata()' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addShoping()' />
-			<van-goods-action-button color="#262C41" type="warning" @click='addShoping()' text="加入购物车" />
-			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping()' text="立即购买" />
+			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
+			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd(messgein.goods_id)' />
+			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd(messgein.goods_id)' text="加入购物车" />
+			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping(messgein.goods_id)' text="立即购买" />
 		</van-goods-action>
-		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '50%' }">
+		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '40%' }">
 			<div class="can-s-x-q">
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
+				<p class="can-shu">品牌：{{messgein.brand}}</p>
+				<p class="can-shu">规格：{{messgein.specification}}</p>
+				<p class="can-shu">等级：{{messgein.grade}}</p>
+				<p class="can-shu">保存方式：{{messgein.Storage_method}}</p>
+
 			</div>
 
 		</van-popup>
@@ -66,7 +85,10 @@
 
 <script>
 	import headt from '@/components/heda'
-	import pinglun from './pinglun'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { tuangoudetail } from '@/api/api'
+	import { addshopcar } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -75,23 +97,99 @@
 					'https://img.yzcdn.cn/vant/apple-2.jpg'
 				],
 				current: 0,
-				canshu: false
+				canshu: false,
+				messgein: '',
+				pinglun: []
+
 			}
 		},
 		components: {
-			headt,
-			pinglun
+			headt
+
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let idt = this.$route.params.id
+			console.log(idt)
+			let data = {
+				group_id: idt
+			}
+			tuangoudetail(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.messgein = res.data.data;
+					this.pinglun = res.data.data.evl;
+					this.images = res.data.data.zhutu;
+					this.time = res.data.data.countdown;
+				}
+			})
 		},
 		methods: {
-			addShoping() {
-				console.log(1)
+			addhouwuAdd(idt) {
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 2
+
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			},
-			addShopdata() {
-				console.log('加长')
+			addShopdata(idt) {
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 2,
+					classify: 2
+
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 
 			},
 			goShoping() {
 				console.log('立即购买')
+			},
+			checkout(idt) {
+				this.$router.push({
+					path: '/home/pingjia',
+					query: {
+						cid: idt,
+						type:2					
+					}
+				})
+
 			}
 		}
 	}
@@ -141,10 +239,22 @@
 							margin-bottom: 30px;
 						}
 						h2 {
-							font-size: 26px;
+							font-size: 32px;
 							font-family: PingFang SC;
 							font-weight: 500;
-							color: rgba(255, 255, 255, 1);
+							display: flex;
+							color: #fff;
+							span {
+								width: 121px;
+								margin-left: 6px;
+								display: block;
+								height: 33px;
+								line-height: 33px;
+								text-align: center;
+								font-size: 24px!important;
+								background: rgba(0, 0, 0, .1);
+								border-radius: 17px;
+							}
 						}
 					}
 					.x-q-l-t-r {
@@ -247,6 +357,85 @@
 					img {
 						width: 80%;
 						height: auto;
+					}
+				}
+			}
+		}
+	}
+	
+	.pinglu {
+		height: 720px;
+		width: 100%;
+		background: #fff;
+		h1 {
+			font-size: 30px;
+			font-weight: bold;
+			color: rgba(51, 51, 51, 1);
+			background: #fff;
+			padding: 40px 20px;
+			box-sizing: border-box;
+		}
+		.p-l-f-t {
+			display: flex;
+			justify-content: center;
+			height: 200px;
+			button {
+				width: 280px;
+				height: 62px;
+				border: 2px solid rgba(225, 225, 225, 1)!important;
+				border-radius: 31px;
+				font-size: 26px;
+				font-family: PingFang SC;
+				background: #fff;
+				font-weight: 500;
+				color: rgba(51, 51, 51, 1);
+			}
+		}
+		.p-l-l-s {
+			ul {
+				padding-bottom: 70px;
+				li {
+					background: #fff;
+					border-bottom: 2px solid #E1E1E1;
+					padding: 0 20px;
+					box-sizing: border-box;
+					.l-t-ft {
+						font-size: 26px;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: rgba(51, 51, 51, 1);
+						line-height: 44px;
+						padding-bottom: 40px;
+					}
+					.l-t-nav {
+						padding: 20px 0;
+					}
+					.l-t-op {
+						display: flex;
+						width: 100%;
+						justify-content: space-between;
+						padding-top: 30px;
+						p {
+							font-size: 24px;
+							font-family: PingFang SC;
+							font-weight: 500;
+							color: rgba(153, 153, 153, 1);
+						}
+						div {
+							img {
+								width: 68px;
+								height: 68px;
+								border: 1px solid rgba(225, 225, 225, 1);
+								border-radius: 50%;
+							}
+							span {
+								font-size: 28px;
+								font-family: PingFang SC;
+								font-weight: 500;
+								margin-left: 20px;
+								color: rgba(51, 51, 51, 1);
+							}
+						}
 					}
 				}
 			}

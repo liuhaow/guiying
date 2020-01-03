@@ -1,10 +1,12 @@
-<!--  -->
 <template>
 	<div class='car'>
-
 		<div class="gouwu">购物车</div>
 		<div class="" v-if="!carList">
-			
+			<div class="">
+				购物车什么都没有  去买点吧
+			</div>
+			<baokuand v-on:click="myclick"></baokuand>
+
 		</div>
 		<div class='car-box' v-else>
 			<div class='car-top' v-for='(item,index) in carList' :key='index'>
@@ -12,21 +14,21 @@
 					<van-cell :border="false">
 						<div class="car-list">
 
-							<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='item.selected' @click='select(item.productId)'>
-							<img src="../../../static/img/choss.png" alt="" class='choose-icon' v-else @click='select(item.productId)'>
-							<img :src="item.img" alt="" class='car-img'>
+							<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='item.selected' @click='select(item.id)'>
+							<img src="../../../static/img/choss.png" alt="" class='choose-icon' v-else @click='select(item.id)'>
+							<img :src="item.cover" alt="" class='car-img'>
 							<div class='car-fr'>
 								<div class='car-name'>{{item.title}}</div>
 								<div class='fr-btm'>
 									<div class='car-money'>
 										<!--<p class='money-old'>￥{{item.marketPrice}}</p>-->
-										<p class='money-now'>￥{{item.sellPrice}}</p>
+										<p class='money-now'>￥{{item.now_price}}</p>
 									</div>
 									<div class='car-num'>
 
-										<span class='num-icon' @click='jianNum(item.productId)'> - </span>
+										<span class='num-icon' @click='jianNum(item.id)'> - </span>
 										<span class='car-nums'>{{item.num}}</span>
-										<span class='num-icon' @click='addNum(item.productId)'> + </span>
+										<span class='num-icon' @click='addNum(item.id)'> + </span>
 									</div>
 								</div>
 
@@ -34,15 +36,16 @@
 						</div>
 					</van-cell>
 					<template slot="right">
-						<van-button square type="danger" @click='delData(item.productId)' text="删除" />
+						<van-button square type="danger" @click='delData(item.id)' text="删除" />
 					</template>
 				</van-swipe-cell>
 			</div>
-			<div class="shixiao">
+			<!--<div class="shixiao">
 				<shixiao></shixiao>
-			</div>
+			</div>-->
+			<baokuand v-on:click="myclick"></baokuand>
 		</div>
-		<baokuan message='爆款推荐'></baokuan>
+
 		<div class='car-btm'>
 			<div class='btm-fl' @click="selectAll()">
 				<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='allSelsect'>
@@ -58,50 +61,111 @@
 
 <script>
 	import { mapActions, mapGetters } from 'vuex'
+	import { gouwcarInfo, shanchugwData } from '@/api/cars'
 
-	import shixiao from './shixiao'
-	import baokuan from '@/components/baokuan'
-	
-
+	import { Notify } from 'vant';
+	//	import shixiao from './shixiao'
+	import baokuand from '@/components/baokuand'
 	export default {
 
 		data() {
 			//这里存放数据
 			return {
 				del_show: false
+
 			};
 		},
 		components: {
-			shixiao,
-			baokuan
+			//			shixiao,
+			baokuand
 
 		},
-		//监听属性 类似于data概念
-		computed: { //computed用来监控自己定义的变量，该变量不在data里面声明，直接在computed里面定义，然后就可以在页面上进行双向数据绑定展示出结果或者用作其他处理；
-			...mapGetters(['carList', 'allMoney', 'allSelsect'])
+		computed: {
+			...mapGetters(['carList', 'allMoney', 'allSelsect', 'TokenId'])
 		},
-		//监控data中的数据变化
-		watch: {},
-		//方法集合
+		watch: {
+			
+		},
+
 		methods: {
-			...mapActions(['headTitle', 'addNum', 'jianNum', 'select', 'selectAll', 'del', 'showBtm']),
+			...mapActions(['headTitle', 'addNum', 'jianNum', 'select', 'selectAll', 'del', 'showBtm', 'carsnum']),
 			delData(idt) {
 				console.log(idt)
+				let data = {
+					token: this.TokenId,
+					sid: idt
+				}
+				shanchugwData(data).then(res => {
+					console.log(res)
+					if(res.data.code = 200) {
+						let data = {
+							page: 1,
+							token: this.TokenId
+						}
+						gouwcarInfo(data).then(res => {
+							if(res.data.code == 200) {
+								this.carsnum(res.data.data)
+							} else {
+								Notify({
+									type: 'warning',
+									message: res.data.msg
+								});
+
+							}
+						})
+					}
+				})
+			},
+			myclick() {
+				let data = {
+					page: 1,
+					token: this.TokenId
+				}
+				gouwcarInfo(data).then(res => {
+					if(res.data.code == 200) {
+						this.carsnum(res.data.data)
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+
+					}
+				})
 			}
 		},
-		//生命周期 - 创建完成（可以访问当前this实例）
-		created() {},
-		//生命周期 - 挂载完成（可以访问DOM元素）
 		mounted() {
+			console.log(this.carList)
+			let data = {
+				page: 1,
+				token: this.TokenId
+			}
+			gouwcarInfo(data).then(res => {
+				if(res.data.code == 200) {
 
+					this.carsnum(res.data.data)
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+
+				}
+			})
 		}
 	}
 </script>
 <style type="text/css" lang="stylus" scoped="">
 	.car {
-		padding-bottom: 240px;
+		padding-bottom: 230px;
 		background: rgba(225, 225, 225, .5);
-
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		flex-direction: column;
 		.gouwu {
 			height: 88px;
 			background: rgba(255, 255, 255, 1);
@@ -117,6 +181,8 @@
 	}
 	
 	.car-box {
+		flex: 1;
+		overflow: auto;
 		.car-top {
 			border-bottom: 2px solid #E1E1E1;
 			>>>.van-swipe-cell {
@@ -124,7 +190,7 @@
 				height: 260px!important;
 				.van-swipe-cell__wrapper {
 					height: 100%!important;
-					border:none!important;
+					border: none!important;
 					.van-cell {
 						padding: 0!important;
 					}
@@ -138,10 +204,9 @@
 					button {
 						background: #FF6501!important;
 						width: 100%!important;
-						border:none!important;
-						
+						border: none!important;
 					}
-					button::before{
+					button::before {
 						display: none!important;
 					}
 				}
@@ -172,7 +237,6 @@
 				.car-name {
 					font-size: 28px;
 					color: #333;
-
 					padding-right: 20px;
 				}
 				.fr-btm {

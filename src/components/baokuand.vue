@@ -1,7 +1,7 @@
 <template>
 	<div class="guess-i">
 		<van-divider :style="{ color: '#9999', borderColor: '#999', padding: '0 40px' }">
-			猜你喜欢
+			爆款推荐
 		</van-divider>
 		<ul class="guess-list">
 			<li v-for="(item,index) in mlist">
@@ -23,7 +23,7 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { addshopcar ,guessylove} from '@/api/mine'
+	import { addshopcar ,hotgoudata} from '@/api/mine'
 	export default{
 		data(){
 			return{
@@ -37,9 +37,9 @@
 		},
 		mounted() {
 			let data={
-				token:this.TokenId
+				page:1
 			}
-			guessylove(data).then(res => {
+			hotgoudata(data).then(res => {
 				if(res.data.code == 200){
 					this.mlist= res.data.data
 				}
@@ -47,6 +47,7 @@
 		},
 		methods:{
 			addhouwuAdd(idt){
+				var that = this
 				let data={
 					token:this.TokenId,
 					cid:idt,
@@ -58,6 +59,7 @@
 				addshopcar(data).then(res=>{
 					console.log(res)
 					if(res.data.code == 200){
+						that.$emit("click");
 						Notify({ type: 'success', message: res.data.msg });
 					}else{
 						Notify({ type: 'warning', message: res.data.msg });

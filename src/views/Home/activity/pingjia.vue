@@ -6,15 +6,15 @@
 				<li v-for='(item,index) in list' :key='index'>
 					<div class="l-t-op">
 						<div class="">
-							<img :src="item.img" alt="" /><span>{{item.name}}</span>
+							<img :src="item.avatar" alt="" /><span>{{item.username}}</span>
 						</div>
-						<p>{{item.time}}</p>
+						<p>{{item.create_time}}</p>
 					</div>
 					<div class="l-t-nav">
-						<van-rate v-model="item.start" readonly/>
+						<van-rate v-model="item.level" readonly/>
 					</div>
 					<p class="l-t-ft">
-						{{item.conct}}
+						{{item.content}}
 					</p>
 				</li>
 			</ul>
@@ -25,6 +25,8 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { pinglundetail } from '@/api/api'
+	import { Notify } from 'vant';
 
 	export default {
 		data() {
@@ -33,7 +35,7 @@
 					'https://img.yzcdn.cn/vant/apple-1.jpg',
 					'https://img.yzcdn.cn/vant/apple-2.jpg'
 				],
-				listt:[],
+				listt: [],
 				current: 0,
 				canshu: false,
 				list: [{
@@ -76,13 +78,25 @@
 						conct: '从平台上买的很实惠，很多优惠活动。本地的品牌值得信赖以后还会朵朵光顾的。',
 						start: 4
 					}
-					
+
 				]
 			}
 		},
 		components: {
 			headt,
 
+		},
+		mounted() {
+			let data={
+				type:this.$route.query.type,
+				cid:this.$route.query.cid,
+				page:1
+			}
+			pinglundetail(data).then(res => {
+				if(res.data.code==200){
+					this.list= res.data.data
+				}
+			})
 		},
 		methods: {
 			checkout() {
@@ -98,12 +112,16 @@
 		width: 100%;
 		position: absolute;
 		background: #fff;
-		left:0;
-		top:0;
+		left: 0;
+		top: 0;
 		right: 0;
 		bottom: 0;
 		overflow: auto;
+		display: flex;
+		flex-direction: column;
 		.p-l-l-s {
+			flex: 1;
+			overflow: auto;
 			ul {
 				li {
 					background: #fff;

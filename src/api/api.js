@@ -30,20 +30,53 @@ export const indexmessage = data=>Axios({
 	method:'post',
 	data
 })
+//首页秒杀
+export const homemiaosha = data=>Axios({
+	url:"/api/spikemysql/home_spike_list",
+	method:'post',
+	data
+})
+//首页团购列表
+export const hometugou = data=>Axios({
+	url:'/api/groupbuy/groupbuylist',
+	method:'post',
+	data
+})
+//团购详情
+export const tuangoudetail =data=>Axios({
+	url:'/api/groupbuy/groupbuydetail',
+	method:'post',
+	data
+})
+//秒杀导航列表
+export const MkillList =data=>Axios({
+	url:'/api/spikemysql/spike_nav',
+	method:'post',
+	data
+})
+export const MkillInfoList =data=>Axios({
+	url:'/api/spikemysql/spike_list',
+	method:'post',
+	data
+})
+
+
+//秒杀详情
+export const Mkilldetail =data=>Axios({
+	url:'/api/spikemysql/spike_detail',
+	method:'post',
+	data
+})
+//评论详情
+export const pinglundetail =data=>Axios({
+	url:'/api/groupbuy/all_evl',
+	method:'post',
+	data
+})
 //分类
 export const shangpingData = data =>Axios({
 	url:'/api/allcategories/all_categories',
 	method:'post',
 	data
 })
-//我的 问题
-export const questiondata = data =>Axios({
-	url:'/api/personal/problem',
-	method:'post',
-	data
-})
-export const questiondetail = data =>Axios({
-	url:'/api/personal/problem_detail',
-	method:'post',
-	data
-})
+

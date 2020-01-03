@@ -2,7 +2,7 @@
 	<div class="chongz">
 		<div class="c-head">
 			<h1 @click="back">
-				<!--<img src="../../../../static/back.jpg"/>-->
+				<img src="../../../../static/img/fanhui.png"/>
 			</h1>
 			<h2>在线充值</h2>
 			<h3>明细</h3>
@@ -257,9 +257,8 @@
 			box-sizing: border-box;
 			h1 {
 				img {
-					height: 36px;
-					width: 20px;
-					padding: 40px;
+					height: 40px;
+					width: 40px;
 				}
 			}
 			h2 {

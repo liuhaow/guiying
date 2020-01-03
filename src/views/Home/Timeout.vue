@@ -8,52 +8,43 @@
 			<h2 @click="moreData"> 更多</h2>
 		</div>
 		<ul class="xlist">
-			<li v-for='(item,index) in mlist' >
-				<img :src="item.img" class="mimgs" alt="" />
+			<li v-for='(item,index) in mlist' :key='index'>
+				<img :src="item.goods_cover" class="mimgs" alt="" />
 				<div class="miao-l-r">
-					<p class="mingc">{{item.title}} </p>
+					<p class="mingc">{{item.goods_name}} </p>
 					<p class="bili"><span class="bline"></span></p>
 					<div class="mjia">
-						<p>秒杀价：&yen;{{item.miaos}} <span class="yuanjia">&yen;{{item.yu}}</span></p>
-						<h3 @click="mshaData(1)">马上抢</h3>
+						<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
+						<h3 @click="mshaData(item.id)">马上抢</h3>
 					</div>
 				</div>
 			</li>
-			<li></li>
+
 
 		</ul>
 	</div>
 </template>
 
 <script>
+
+	import { homemiaosha } from '@/api/api'
+	
 	export default {
 		data() {
 			return {
-				time: 30 * 60 * 60 * 1000,
-				mlist: [{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					}
-				]
+				time: 1.0 * 60 * 60 * 1000,
+				mlist: []
 			}
 
+		},
+		mounted() {
+			homemiaosha().then(res =>{
+				console.log(res)
+				if(res.data.code == 200){
+					this.mlist= res.data.data.commodity;
+//					this.time = res.data.data.countdown
+				}
+			})
 		},
 		methods: {
 			moreData() {
@@ -61,7 +52,7 @@
 
 			},
 			mshaData(idt){
-				this.$router.push('/home/msdetail/2')
+				this.$router.push('/home/msdetail/'+idt)
 				
 			}
 		}
@@ -70,7 +61,7 @@
 
 <style lang="stylus" scoped>
 	.xianshi {
-		height: 920px;
+
 		background: #fff;
 		width: 100%;
 		.xlist {

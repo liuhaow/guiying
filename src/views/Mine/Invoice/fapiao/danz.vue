@@ -2,17 +2,17 @@
 	<div class="putong">
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>发票抬头</h2> <input type="" placeholder="请输入营业执照注册名称" name="" id="" value="" />
+				<h2><span>*</span>发票抬头</h2> <input type="" v-model="name" placeholder="请输入营业执照注册名称" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>纳税人识别号</h2> <input type="" placeholder="请输入纳税人识别号" name="" id="" value="" />
+				<h2><span>*</span>纳税人识别号</h2> <input type="" v-model="taxid" placeholder="请输入纳税人识别号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div style="border: none!important;">
-				<h2><span style="opacity: 0;">*</span>邮箱</h2> <input type="" placeholder="请输入纳税人识别号" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>邮箱</h2> <input type=""  v-model="email" placeholder="请输入纳税人识别号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-d">
@@ -20,22 +20,22 @@
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span style="opacity: 0;">*</span>注册地址</h2> <input type="" placeholder="请输入详细注册地址" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>注册地址</h2> <input type="" v-model="addr" placeholder="请输入详细注册地址" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span style="opacity: 0;">*</span>注册电话</h2> <input type="" placeholder="请输入注册电话" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>注册电话</h2> <input type="" v-model="mobile" placeholder="请输入注册电话" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span style="opacity: 0;">*</span>开户银行</h2> <input type="" placeholder="请输入开户银行" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>开户银行</h2> <input type="" v-model="bank_account" placeholder="请输入开户银行" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div style="border: none!important;">
-				<h2><span style="opacity: 0;">*</span>银行账号</h2> <input type="" placeholder="请输入银行账号" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>银行账号</h2> <input type="" v-model="account_num" placeholder="请输入银行账号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="butn">
@@ -48,6 +48,8 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { fapiaosqInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -62,7 +64,17 @@
 					{
 						name: '发票开票信息 '
 					}
-				]
+				],
+				name:'',
+				taxid: '',
+				addr: '',
+				mobile: '',
+				bank_account: '',
+				account_num: '',
+				contact_person: '',
+				phone: '',
+				dettail_addr: ''
+
 			}
 		},
 

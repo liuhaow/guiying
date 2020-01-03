@@ -2,41 +2,46 @@
 	<div class="addxuqu">
 		<headt message='限时秒杀'></headt>
 		<div class="a-d-d">
+			<ul class="m-s-t">
+				<li v-for='(item,index) in mlistd' @click="changestyle(index,item)" :class="{'actt':select==index}">
+					<div class="d-t-m-e">
+						<p v-if="item.status==2">
+							<span>已结束</span>
+							<span>{{item.end_time}}</span>
+						</p>
+						<p v-if="item.status==0">
+							<span>即将开始</span>
+							<span>{{item.start_time}}</span> 
+						</p>
+						<p v-if="item.status==1">
+							<span >结束时间</span>
+							<span>
+								{{item.end_time}}
+							</span> 
+						</p>
 
-				<ul class="m-s-t" >
-					<li v-for='(item,index) in mlist' @click="changestyle(index)" :class="{'actt':select===index}">
-						<div class="d-t-m-e" >						
-							<p v-if="item.tf==1">
-								即将结束
-							</p>
-							<h2 v-if="item.tf==1">00:25:12</h2>
-							
-							<p v-if="item.tf==2">
-								即将开始
-							</p>
-							<h2 v-if="item.tf==2">00:25:12</h2>
-							
-							
-						</div>
+					</div>
 
-					</li>
-				</ul>
-
+				</li>
+			</ul>
 
 			<div class="l-s-t-d">
 				<ul class="xlist" v-if='mlist'>
 					<li v-for='(item,index) in mlist'>
-						<img :src="item.img" class="mimgs" alt="" />
+						<img :src="item.goods_cover" class="mimgs" alt="" />
 						<div class="miao-l-r">
-							<p class="mingc">{{item.title}} </p>
+							<p class="mingc">{{item.goods_name}} </p>
 							<p class="bili"><span class="bline"></span></p>
 							<div class="mjia">
-								<p>秒杀价：&yen;{{item.miaos}} <span class="yuanjia">&yen;{{item.yu}}</span></p>
-								<h3>马上抢</h3>
+								<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
+								<h3 class="zhenz" @click="mshaData(item.id)" v-if='statvd==1'>马上抢</h3>
+								<h3 class="yijin"  v-if='statvd==2'>已结束</h3>
+								<h3 class="yijin"  v-if='statvd==0'>敬请期待</h3>
+								
+								
 							</div>
 						</div>
 					</li>
-
 
 				</ul>
 			</div>
@@ -49,91 +54,55 @@
 <script>
 	import headt from '@/components/heda'
 	import BScroll from "better-scroll";
+	import { MkillList ,MkillInfoList} from '@/api/api'
 	export default {
 		data() {
 			return {
 				select: 0,
-				dt: 1,
 				mlistd: [],
-				mlist: [{
-						tf: 1,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						tf: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						tf: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						tf: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						tf: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-						tf: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-
-				]
+				mlist: [],
+				statvd:1
+				
 			}
 		},
 		components: {
 			headt
 		},
-		created() {
-			this.$nextTick(() => {
-				this.personScroll();
-			});
+		mounted() {
+			MkillList().then(res => {
+				if(res.data.code == 200) {
+					let mlistdt = res.data.data.time;
+					let indext = mlistdt.findIndex(item => {
+						return item.status == 1
+					})
+					console.log(indext)
+					this.select = indext;
+					this.mlistd = mlistdt;
+					this.mlist = res.data.data.pro;
+				}
+			})
 		},
 		methods: {
-			changestyle(index) {
-				this.select = index
-
-			},
-			personScroll() {
-				// 默认有六个li子元素，每个子元素的宽度为120px
-
-				let width = this.mlist.length * 2.5;
-				this.$refs.personTab.style.width = width + "rem";
-
-				this.$nextTick(() => {
-					if(!this.scroll) {
-						this.scroll = new BScroll(this.$refs.personWrap, {
-							startX: 0,
-							click: true,
-							scrollX: true,
-							// 忽略竖直方向的滚动
-							scrollY: false,
-							eventPassthrough: "vertical"
-						});
-					} else {
-						this.scroll.refresh();
+			changestyle(index,infom) {
+				this.select = index;
+				this.statvd = infom.status
+				let data ={
+					status:infom.status,
+					page:1,
+					end_time:infom.end_time,
+					start_time:infom.start_time
+				}
+				console.log(data)
+				MkillInfoList(data).then(res=>{
+					console.log(res)
+					if(res.data.code ==200){
+						this.mlist =res.data.data
 					}
-				});
+				})
+			},
+			mshaData(idt){
+				this.$router.push('/home/msdetail/'+idt)
+				
 			}
 
 		}
@@ -220,7 +189,7 @@
 										color: #C1C1C1!important;
 									}
 								}
-								h3 {
+								.zhenz {
 									width: 160px;
 									height: 58px;
 									border: 2px solid rgba(63, 185, 77, 1);
@@ -230,6 +199,17 @@
 									text-align: center;
 									font-weight: 500;
 									color: rgba(63, 185, 77, 1);
+								}
+								.yijin {
+									width: 160px;
+									height: 58px;
+									border: 2px solid #C1C1C1;
+									border-radius: 29px;
+									font-size: 26px;
+									line-height: 58px;
+									text-align: center;
+									font-weight: 500;
+									color: #ccc;
 								}
 							}
 						}
@@ -243,8 +223,12 @@
 				touch-action: none;
 			}
 			.m-s-t {
-
-				width:100%;display: inline;white-space: nowrap;overflow-x:scroll;float:left;overflow-y:hidden
+				width: 100%;
+				display: inline;
+				white-space: nowrap;
+				overflow-x: scroll;
+				float: left;
+				overflow-y:hidden ;
 				li {
 					width: 200px;
 					height: 100px;
@@ -261,6 +245,11 @@
 						color: #fff;
 						p {
 							font-size: 32px;
+							height: 90%;
+							display: flex;
+							flex-direction: column;
+							justify-content: space-around;
+							align-items: center;
 							margin: 10px 0;
 						}
 						h2 {

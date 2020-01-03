@@ -4,36 +4,36 @@
 		<div class="a-d-d">
 			<div class="p-t-f">
 				<div>
-					<h2>品牌</h2> <input type="" placeholder="例:百威，农夫山泉" name="" id="" value="" />
+					<h2>品牌</h2> <input type="" v-model="brand" placeholder="例:百威，农夫山泉" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>规格</h2> <input type="" placeholder="例：250ml×24瓶/箱" name="" id="" value="" />
+					<h2>规格</h2> <input type="" v-model="specification" placeholder="例：250ml×24瓶/箱" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>条形码</h2> <input type="" placeholder="请输入数字条形码" name="" id="" value="" />
+					<h2>条形码</h2> <input type="" v-model="bar_code" placeholder="请输入数字条形码" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>月需求量</h2> <input type="" placeholder="预计一个月购买量" name="" id="" value="" />
+					<h2>月需求量</h2> <input type="" v-model="demand" placeholder="预计一个月购买量" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>备注</h2> <input type="" placeholder="品种、口味、产地等信息" name="" id="" value="" />
+					<h2>备注</h2> <input type="" v-model="remark" placeholder="品种、口味、产地等信息" name="" id="" value="" />
 				</div>
 			</div>
-			<div class="uplimg">
+			<!--<div class="uplimg">
 				<h2>上传照片</h2>
 				<div class="upimg-s">
 					<van-uploader v-model="fileList" multiple :max-count="4" />
 				</div>
 				<p>最多可上传四张图片</p>
-			</div>
+			</div>-->
 		</div>
 		<div class="btnd">
 			<button @click="nextData()">提交</button>
@@ -43,24 +43,68 @@
 
 <script>
 	import headt from '../../../components/heda'
+	import { mapGetters } from 'vuex'
+	import { Notify } from 'vant';
+	import { NewneedData } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				fileList: [{
-						url: 'https://img.yzcdn.cn/vant/leaf.jpg'
-					},
-					
-				]
+				brand: '',
+				specification: '',
+				bar_code: '',
+				demand: '',
+				remark: ''
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
-			suoyaoData(idt) {
 
-			},
-			nextData(){}
+			nextData() {
+				let name = this.$route.query.name;
+				let type = this.$route.query.type;
+				if(!this.brand||!this.specification||!this.bar_code||!this.demand){
+					Notify({ type: 'warning', message: '数据需要完整' });
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					title: name,
+					type: type,
+					brand: this.brand,
+					specification: this.specification,
+					bar_code: this.bar_code,
+					demand: this.demand,
+					remark: this.remark
+				}
+				NewneedData(data).then(res => {
+
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+						this.brand= '';
+						this.specification= '';
+						this.bar_code='';
+						this.demand= '';
+						this.remark= ''
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+
+					}
+				})
+
+			}
 		}
 	}
 </script>
@@ -87,6 +131,7 @@
 				height: 80px;
 				font-size: 28px;
 				font-family: PingFang SC;
+				border: 0;
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
 				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(88, 214, 89, 1));

@@ -1,43 +1,37 @@
 <template>
 	<div class="morder">
 		<headt message='我的订单'></headt>
-		
+
 		<ul class="issus-list">
 			<li class='issueli' :key='index' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">{{item.name}}</li>
 		</ul>
 		<div class="quanbu" v-if="select == 0">
 			<ul>
-				<li v-for='(item,index) in 10 ' :key='index'>
-
+				<li v-for='(item,index) in lstdata ' :key='index'>
 					<div class="list-t">
 						<div class="list-t-l">
-							2019-11-1 17:16:20
+							{{item.create_time}}
 						</div>
 						<div class="list-t-r">
-							<span>
-									已完成
-								</span>
-							<span>等待买家付款</span>
-							<span>已取消</span>
+							<span v-if="item.type==5">已完成</span>
+							<span v-if="item.type==1">等待买家付款</span>
+							<span v-if="item.type==6">已取消</span>
 						</div>
 					</div>
 					<div class="list-n">
 						<ul>
-							<li></li>
-							<li></li>
+							<li>
+								<img v-for='(idt,index) in item.cover' :src="idt" alt="" />
+							</li>
+
 						</ul>
-						<h2 @click="chakanData(1)">查看全部 》</h2>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
 					</div>
 					<div class="list-f">
 						<div class="lst-t-d">
-							共2款， 3件，合计&yen;5860
+							{{item.num}}件，合计&yen;{{item.total}}
 						</div>
-						<div class="lis-f-f">
-							<div class="dinzh" v-if='dingd ==0'>
-								<button>删除订单</button>
-								<button @click="checkenwul">查看物流</button>
-								<button class="btde">去评价</button>
-							</div>
+						<!--<div class="lis-f-f">
 							<div class="dinzh" v-if='dingd ==1'>
 								<button>取消订单</button>
 								<button class="btde">去支付</button>
@@ -46,7 +40,7 @@
 								<button>删除订单</button>
 								<button class="btde">重新购买</button>
 							</div>
-						</div>
+						</div>-->
 					</div>
 
 				</li>
@@ -55,11 +49,12 @@
 		</div>
 		<div class="quanbu" v-if="select == 1">
 			<ul>
-				<li v-for='(item,index) in 10' :key='index'>
+				<li v-for='(item,index) in lstdata' :key='index'>
 
 					<div class="list-t">
 						<div class="list-t-l">
-							2019-11-1 17:16:20
+							{{item.create_time}}
+
 						</div>
 						<div class="list-t-r">
 							<span>等待买家付款</span>
@@ -67,19 +62,20 @@
 					</div>
 					<div class="list-n">
 						<ul>
-							<li></li>
-							<li></li>
+							<li>
+								<img v-for='(idt,index) in item.cover' :src="idt" alt="" />
+							</li>
 						</ul>
-						<h2 @click="chakanData(1)">查看全部 》</h2>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
 					</div>
 					<div class="list-f">
 						<div class="lst-t-d">
-							共2款， 3件，合计&yen;5860
+							{{item.num}}件，合计&yen;{{item.total}}
 						</div>
 						<div class="lis-f-f">
 							<div class="dinzh">
-								<button>取消订单</button>
-								<button class="btde" @click="payData">立即付款</button>
+								<button @click="quxiaoOrder(item.id)">取消订单</button>
+								<button class="btde" @click="payData(item.id)">立即付款</button>
 							</div>
 						</div>
 					</div>
@@ -90,36 +86,36 @@
 		</div>
 		<div class="quanbu" v-if="select == 2">
 			<ul>
-				<li v-for='(item,index) in 10' :key='index'>
-
+				<li v-for='(item,index) in lstdata' :key='index'>
+					
 					<div class="list-t">
 						<div class="list-t-l">
-							2019-11-1 17:16:20
+							{{item.create_time}}
 						</div>
 						<div class="list-t-r">
 							<span>等待卖家发货</span>
 						</div>
 					</div>
-					<div class="list-nt">
+					<div class="list-n">
 						<ul>
 							<li>
-								<img src="../../../assets/logo.png" alt="" />
-								<div class="">
-									<p>浙江省 杭州市 余杭区好运街风雅乐府...</p>
-									<p>颜色分类：白色 尺寸：L150/60A</p>
-									<p>3件，¥5860</p>
-								</div>
+								<img v-for='(idt,index) in item.cover' :src="idt" alt="" />
 							</li>
-
 						</ul>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
 
 					</div>
 					<div class="list-f">
+						<div class="lst-t-d">
+							{{item.num}}件，合计&yen;{{item.total}}
+
+						</div>
 						<div class="lis-f-f">
-							<div class="dinzhd">
-								<button @click="checkenwul">查看物流</button>
-								<button class="btde" @click="querenData(1)">确认收货</button>
+							<div class="dinzh">
+								<button @click="checkenwul(item.id)">查看物流</button>
+								<button class="btde" @click="querenData(item.id)">确认收货</button>
 							</div>
+
 						</div>
 					</div>
 
@@ -129,45 +125,37 @@
 		</div>
 		<div class="quanbu" v-if="select == 3">
 			<ul>
-				<li v-for='(item,index) in 10' :key='index'>
+				<li v-for='(item,index) in lstdata' :key='index'>
 
 					<div class="list-t">
 						<div class="list-t-l">
-							2019-11-1 17:16:20
+							{{item.create_time}}
 						</div>
 						<div class="list-t-r">
 							<span>
 									已完成
-								</span>
-							<span>等待买家付款</span>
-							<span>已取消</span>
+							</span>
 						</div>
 					</div>
 					<div class="list-n">
 						<ul>
-							<li></li>
-							<li></li>
+							<li>
+								<img v-for='(idt,index) in item.cover' :src="idt" alt="" />
+							</li>
 						</ul>
-						<h2 @click="chakanData(1)">查看全部 》</h2>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
 					</div>
 					<div class="list-f">
 						<div class="lst-t-d">
-							共2款， 3件，合计&yen;5860
+							{{item.num}}件，合计&yen;{{item.total}}
+
 						</div>
 						<div class="lis-f-f">
-							<div class="dinzh" v-if='dingd ==0'>
-								<button>删除订单</button>
-								<button @click="checkenwul">查看物流</button>
+							<div class="dinzh">
+								<button @click="shanchuoder(item.id)">删除订单</button>
 								<button class="btde">去评价</button>
 							</div>
-							<div class="dinzh" v-if='dingd ==1'>
-								<button>取消订单</button>
-								<button class="btde">去支付</button>
-							</div>
-							<div class="dinzh" v-if='dingd ==2'>
-								<button>删除订单</button>
-								<button class="btde">重新购买</button>
-							</div>
+
 						</div>
 					</div>
 
@@ -181,12 +169,15 @@
 
 <script>
 	import headt from '@/components/heda'
-	
+
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { orderallData, Shancsorderall } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				select: 0,
-				dingd: 0,
+				select: '',
+
 				list: [{
 						name: '全部'
 					},
@@ -200,33 +191,117 @@
 						name: '待评价'
 					}
 
-				]
+				],
+				lstdata: ''
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId',
+				orderl: 'orderl'
+
+			})
+		},
+		created() {
+			this.select = this.orderl
+		},
+		mounted() {
+
+			let std = ''
+			if(this.orderl == 3) {
+				std = 4
+			} else {
+				std = this.orderl
+			}
+			let data = {
+				token: this.TokenId,
+				page: 1,
+				status: std
+			}
+			orderallData(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.lstdata = res.data.data
+				}
+			})
+		},
 		methods: {
+			...mapActions(['orderchoose']),
 			back() {
 				this.$router.go(-1)
 
 			},
 			changestyle(index) {
-				this.select = index
+				this.select = index;
+				let std = ''
+				if(index == 3) {
+					std = 4
+				} else {
+					std = index
+				}
+
+				let data = {
+					token: this.TokenId,
+					page: 1,
+					status: std
+				}
+				this.orderchoose(index)
+				orderallData(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						this.lstdata = res.data.data
+					}
+				})
 
 			},
-			checkenwul(idt){
-				this.$router.push('/myorder/wuliu/2')
-				
+			checkenwul(idt) {
+				this.$router.push('/myorder/wuliu/' + idt)
 			},
-			chakanData(id){
-				this.$router.push('/myorder/alldan/2')
+			chakanData(id) {
+				this.$router.push('/myorder/alldan/' + id)
 			},
-			querenData(idt){
-				this.$router.push('/myorder/bourse')
+			querenData(idt) {
+				this.$router.push('/myorder/bourse/' + idt)
 			},
-			payData(){
-				this.$router.push('/myorder/payinfo')			
+			payData(idt) {
+				this.$router.push('/myorder/payinfo/' + idt)
+			},
+			quxiaoData(idt) {
+				this.$router.push('/myorder/quxiao/' + idt)
+
+			},
+			shanchuoder(idt) {
+				let data = {
+					token: this.TokenId,
+					order_id: idt
+				}
+				Shancsorderall(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+						let data = {
+							token: this.TokenId,
+							page: 1,
+							status: 4
+						}
+						orderallData(data).then(res => {
+							if(res.data.code == 200) {
+								this.lstdata = res.data.data
+							}
+						})
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+
+					}
+				})
 			}
 
 		}
@@ -237,8 +312,17 @@
 	.morder {
 		padding-bottom: 98px;
 		box-sizing: border-box;
-		background: rgba(225, 225, 225, .5);
+		display: flex;
+		flex-direction: column;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		background: rgba(225, 225, 225, .3);
 		.quanbu {
+			flex: 1;
+			overflow: auto;
 			ul {
 				li {
 					margin-top: 20px;
@@ -246,7 +330,6 @@
 						ul {
 							padding-left: 40px;
 							width: 100%;
-							
 							box-sizing: border-box;
 							li {
 								height: 152px;
@@ -323,7 +406,13 @@
 								height: 152px;
 								background: #fff;
 								margin-right: 10px;
+								display: flex;
 								margin-top: 0!important;
+								img {
+									width: 152px;
+									margin-right: 10px;
+									height: 152px;
+								}
 							}
 						}
 						h2 {
@@ -372,7 +461,7 @@
 								display: flex;
 								justify-content: flex-end;
 								align-items: center;
-								height:150px ;
+								height: 150px;
 								button {
 									width: 200px;
 									height: 56px;

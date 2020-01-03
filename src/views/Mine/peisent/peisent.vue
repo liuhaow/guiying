@@ -4,17 +4,17 @@
 		<div class="a-d-d">
 			<div class="p-t-f">
 				<div>
-					<h2>姓名</h2> <input type="" placeholder="请输入您的姓名" name="" id="" value="" />
+					<h2>姓名</h2> <input type="" v-model="name" placeholder="请输入您的姓名" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>手机号</h2> <input type="" placeholder="请填写您的手机号" name="" id="" value="" />
+					<h2>手机号</h2> <input type="" v-model="mobile" placeholder="请填写您的手机号" name="" id="" value="" />
 				</div>
 			</div>
 			<div class="p-t-f">
 				<div>
-					<h2>备注</h2> <input type="" placeholder="还有其他的问题可以留言我们！" name="" id="" value="" />
+					<h2>备注</h2> <input type="" v-model="remark" placeholder="还有其他的问题可以留言我们！" name="" id="" value="" />
 				</div>
 			</div>
 
@@ -27,24 +27,36 @@
 
 <script>
 	import headt from '../../../components/heda'
+	import { AddrlistInfo, ShezhiAddr } from '@/api/mine'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
-				fileList: [{
-						url: 'https://img.yzcdn.cn/vant/leaf.jpg'
-					},
-					
-				]
+				name:'',
+				monile:'',
+				remark:''
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
 			suoyaoData(idt) {
 
 			},
-			nextData(){}
+			nextData(){
+				let data ={
+					token:this.TokenId,
+					name:this.name,
+					mobile:this.mobile
+				}
+			}
 		}
 	}
 </script>
@@ -71,6 +83,7 @@
 				height: 80px;
 				font-size: 28px;
 				font-family: PingFang SC;
+				border:none;
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
 				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(88, 214, 89, 1));

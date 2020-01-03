@@ -1,27 +1,27 @@
 <template>
 	<div class="pinglu">
 		<h1>宝贝评论</h1>
-		<div class="p-l-l-s">
+		<div class="p-l-l-s" v-if="message.length!=0" >
 			<ul>
-				<li v-for='(item,index) in list' :key='index'>
+				<li v-for='(item,index) in message' :key='index'>
 					<div class="l-t-op">
 						<div class="">
-							<img :src="item.img" alt="" /><span>{{item.name}}</span>
+							<img :src="item.avatar" alt="" /><span>{{item.username}}</span>
 						</div>
-						<p>{{item.time}}</p>
+						<p>{{item.create_time}}</p>
 					</div>
 					<div class="l-t-nav">
-						<van-rate v-model="item.start" readonly/>
+						<van-rate v-model="item.level" readonly/>
 					</div>
 					<p class="l-t-ft">
-						{{item.conct}}
+						{{item.content}}
 					</p>
 				</li>
 			</ul>
 		</div>
-		<div class="p-l-f-t">
+		<div class="p-l-f-t" v-if="message.length!=0">
 
-			<button @click="checkout()">查看更多（198）</button>
+			<button @click="checkout()">查看更多{{numb}}</button>
 
 		</div>
 	</div>
@@ -29,11 +29,15 @@
 
 <script>
 	export default {
+
+		props: {
+			message: Array,
+			numb:Number
+		},
 		data() {
 			return {
 				images: [
-					'https://img.yzcdn.cn/vant/apple-1.jpg',
-					'https://img.yzcdn.cn/vant/apple-2.jpg'
+					
 				],
 				current: 0,
 				canshu: false,
@@ -70,7 +74,7 @@
 	.pinglu {
 		height: 720px;
 		width: 100%;
-		background: rgba(225, 225, 225, .5);
+		background: #fff;
 		h1 {
 			font-size: 30px;
 			font-weight: bold;

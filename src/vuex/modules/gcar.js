@@ -2,36 +2,7 @@
  * App通用配置
  */
 const state = {
-	car: [{
-			productId: 1,
-			title: '小罐茶 心意茶叶礼盒茶特级大红袍18罐茶叶礼盒装礼物送礼佳品',
-			yan: '分红',
-			sellPrice: 30,
-			img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-			selected: false,
-			num: 3
-		},
-		{
-			productId: 2,
-			title: '小罐茶 心意茶叶礼盒茶特级大红袍18罐茶叶礼盒装礼物送礼佳品',
-			yan: '分红',
-			sellPrice: 50,
-			img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-			selected: false,
-			num: 4
-		},
-		{
-			productId: 3,
-			title: '小罐茶',
-			yan: '分红',
-			sellPrice: 60,
-			img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-			num: 1,
-			selected: false,
-
-		}
-	],
-//  car:JSON.parse(localStorage.getItem('gouwucar')) || [],
+	car:JSON.parse(localStorage.getItem('gouwucar'))||[],
 	all_money: 0, //总价
 	all_selsect: false, //全选状态
 }
@@ -39,12 +10,6 @@ const state = {
 const getters = {
 	//购物车列表
 	carList(state) {
-		// 初始化全选状态
-		if(state.all_selsect) {
-			state.car.forEach((item) => {
-				item.selected = true
-			})
-		}
 		localStorage.setItem("search", JSON.stringify(state.car));
 		return state.car
 	},
@@ -53,7 +18,7 @@ const getters = {
 		let all_money = 0
 		state.car.forEach((item) => {
 			if(item.selected) {
-				all_money += item.num * item.sellPrice
+				all_money += item.num * item.now_price
 			}
 		})
 		return state.all_money = all_money
@@ -66,18 +31,20 @@ const getters = {
 // 改变state里的初始值 同步的
 const mutations = {
 	//添加商品
-
+	CARLIST(state,res){
+		state.car =res
+	},
 	//购物车页面数量加减
-	ADDNUM(state, productId) {
+	ADDNUM(state, id) {
 		let index = state.car.findIndex(item => {
-			return item.productId == productId
+			return item.id == id
 		})
 		return state.car[index].num++
 	},
 	//购物车页面数量加减
-	JIANNUM(state, productId) {
+	JIANNUM(state, id) {
 		let index = state.car.findIndex(item => {
-			return item.productId == productId
+			return item.id == id
 		})
 		if(state.car[index].num <= 1) {
 			return state.car[index].num = 1
@@ -86,9 +53,9 @@ const mutations = {
 		}
 	},
 	//购物车单选
-	SELECT(state, productId) {
+	SELECT(state, id) {
 		let index = state.car.findIndex(item => {
-			return item.productId == productId
+			return item.id == id
 		})
 		state.car[index].selected = !state.car[index].selected;
 		let flag=state.car.some((item)=>{
@@ -139,6 +106,10 @@ const mutations = {
 }
 // 异步触发mutations里面的方法 在外部组件里进行全局执行actions里面方法的时候，你只需要用执行this.$store.dispatch('headTitle'，132) 这样就可以全局改变改变标题的值了
 const actions = {
+	carsnum({commit}, res){
+		localStorage.setItem('gouwucar', JSON.stringify(res))		 		
+        commit('CARLIST', res)		
+	},
 	addGoods({
 		commit
 	}, data) {

@@ -9,7 +9,12 @@ const state = {
 	taber:JSON.parse(localStorage.getItem('taber')) || 0,
 	phonenum:JSON.parse(localStorage.getItem('phone')) || '',//电话输入保存
 	userData:JSON.parse(localStorage.getItem('userData')) || '',
-	morendata:JSON.parse(localStorage.getItem('adress')) || ''
+	morendata:JSON.parse(localStorage.getItem('adress')) || '',
+	lit:JSON.parse(localStorage.getItem('chodd')) || 0,
+	getadrss:JSON.parse(localStorage.getItem('getadrss')) ||'',
+	orderl:JSON.parse(localStorage.getItem('order')) || 0,
+	
+	
 
 	
 	
@@ -39,7 +44,23 @@ const actions = {
     setUserData({commit}, res){
     	localStorage.setItem('userData',JSON.stringify(res))
     	commit(types.SET_USER_DATA,res)
+    },
+    //选择种类
+    chooseilt({commit},res){
+    	localStorage.setItem('chodd',JSON.stringify(res))
+    	commit('CHOSELIT',res)  	
+    },
+    //收货地址存储
+    getaDta({commit},res){
+    	localStorage.setItem('getadrss',JSON.stringify(res))
+    	commit('GETADRESS',res)  	   	
+    },
+    //选择订单选项
+    orderchoose({commit},res){
+    	localStorage.setItem('order',JSON.stringify(res))
+    	commit('ORDERCHSE',res)  	   	
     }
+    
 }
 const getters = {
     loading: state => state.loading,
@@ -48,6 +69,9 @@ const getters = {
     phonenum:state => state.phonenum,
     userData:state=> state.userData,
     morendata:state=>state.morendata,
+    lit:state=>state.lit,
+    getadrss:state=>state.getadrss,
+    orderl:state=>state.orderl
 }
 const mutations = {
 	[types.PHONE_NUM](state,res){
@@ -64,7 +88,16 @@ const mutations = {
     },
     [types.TABE_R](state,res){
     	state.taber = res
-    }
+    },
+    CHOSELIT(state,res){
+    	state.lit=res
+    },
+    GETADRESS(state,res){
+    	state.getadrss=res
+    },
+    ORDERCHSE(state,res){
+    	state.orderl=res
+    },
 }
 
 

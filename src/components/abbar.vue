@@ -57,13 +57,13 @@
 		},
 		created() {
 			this.select = this.taber;
-
 		},
 		methods: {
 			...mapActions(
 				[
 					'maisellztInfo',
-					'settaber'
+					'settaber',
+					'chooseilt'
 				]
 			),
 			changestyle(index) {
@@ -72,9 +72,8 @@
 				if(index == 0) {
 					this.$router.push('/home')
 				} else if(index == 1) {
+					this.chooseilt(0)
 					this.$router.push('/overall')
-
-
 				} else if(index == 2) {
 					this.$router.push('/shop')
 

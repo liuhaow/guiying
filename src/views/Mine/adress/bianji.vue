@@ -5,10 +5,10 @@
 		</div>
 		<div class="ad-l-s-t">
 			<div class="d-t-l">
-				<span>收件人：</span><input type="text" placeholder="请输入收件人名称" />
+				<span>收件人：</span><input v-model="nickname" type="text" placeholder="请输入收件人名称" />
 			</div>
 			<div class="d-t-l">
-				<span>手机号：</span><input type="number" placeholder="请输入手机号码" />
+				<span>手机号：</span><input type="number" v-model="mobile" placeholder="请输入手机号码" />
 			</div class="d-t-l">
 			<div class="d-t-d">
 				<span>所在地：{{carmodel}}</span>
@@ -18,9 +18,11 @@
 
 			</div>
 			<div class="d-t-l">
-				<span>详细地址：</span><input type="text" placeholder="门牌号、小区、楼栋号、单元室等" />
+				<span>详细地址：</span><input type="text" v-model="addr" placeholder="门牌号、小区、楼栋号、单元室等" />
 			</div>
-
+			<div class="btndate">
+				<button @click="xiugaijiaData">确定修改</button>
+			</div>
 		</div>
 		<van-popup v-model="show" position="bottom">
 			<van-area :area-list="areaList" :columns-num="3" ref="myArea" title="标题" @change="onChange" @confirm="onConfirm" @cancel="onCancel" />
@@ -32,15 +34,44 @@
 	//	import threeLevelAddress from '../../../components/provcityarea.json'
 
 	import areaList from './area.js'
+	import { mapGetters, mapActions } from 'vuex'
+	import { BjideAddrlist, BianjAddrlist } from '@/api/mine'
+	import { Toast } from 'vant';
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
 				areaList,
 				show: false,
-				carmodel: '北京-北京-朝阳'
+				carmodel: '',
+				nickname: '',
+				mobile: '',
+				addr: ''
 			}
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId,
+				addr_id: this.$route.params.id
 
+			}
+			console.log(data)
+			BjideAddrlist(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.carmodel = res.data.data.area;
+					this.nickname = res.data.data.name;
+					this.mobile = res.data.data.mobile;
+					this.addr = res.data.data.addr
+				}
+			})
+
+		},
 		methods: {
 			back() {
 				this.$router.go(-1)
@@ -48,6 +79,30 @@
 			showPopup() {
 				this.show = true;
 
+			},
+			xiugaijiaData() {
+				if(!this.nickname||!this.mobile||!this.carmodel||!this.addr){
+					Notify({ type: 'warning', message: '信息需要填写完整' });
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					addr_id: this.$route.params.id,
+					nickname: this.nickname,
+					mobile: this.mobile,
+					area: this.carmodel,
+					addr: this.addr
+
+				}
+				BianjAddrlist(data).then(res => {
+					console.log(res)
+					if(res.data.code==200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+
+						Notify({ type: 'danger', message: res.data.msg  });
+					}
+				})
 			},
 			//value=0改变省，1改变市，2改变区
 			onChange(picker, index, value) {
@@ -61,15 +116,15 @@
 			},
 			//确定选择城市
 			onConfirm(val) {
-				let adre =val[0].name + "-" + val[1].name+"-"+val[2].name;
-				this.carmodel=adre
-				
+				let adre = val[0].name + "-" + val[1].name + "-" + val[2].name;
+				this.carmodel = adre
+
 				this.show = false //关闭弹框
 			},
 			//取消选中城市
 			onCancel() {
 				this.show = false;
-				this.carmodel=''
+				this.carmodel = ''
 				this.$refs.myArea.reset() // 重置城市列表
 			}
 
@@ -91,6 +146,19 @@
 		.ad-l-s-t {
 			padding: 0 35px;
 			box-sizing: border-box;
+			.btndate {
+				margin-top: 140px;
+				button {
+					width: 680px;
+					height: 80px;
+					background: rgba(63, 185, 77, 1);
+					border-radius: 40px;
+					font-size: 36px;
+					margin: 0 auto;
+					color: #fff;
+					border: 0!important;
+				}
+			}
 			.d-t-d {
 				height: 100px;
 				display: flex;
@@ -122,7 +190,7 @@
 					font-size: 28px;
 					font-family: PingFang SC;
 					font-weight: 500;
-					color: rgba(210, 207, 207, 1)
+					color: #333
 				}
 			}
 		}

@@ -4,11 +4,12 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+
 export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/vip/Vipmeber'
+      redirect: '/need/login'
     },
     {
       path: '/home',
@@ -55,6 +56,15 @@ export default new Router({
       }
     
     },
+     {
+      path: '/home/fash',
+      name: 'fash',
+      component: resolve => require(['@/views/Home/hotactivi/hotty'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    
+    },
     //秒杀
     {
       path: '/fsale',
@@ -75,6 +85,8 @@ export default new Router({
       }
     
     },
+    
+    
     //团购
     {
       path: '/group',
@@ -87,7 +99,7 @@ export default new Router({
     },
     //秒杀详情
      {
-      path: '/home/pintuan/:id',
+      path: '/pintu/pintuan/:id',
       name: 'pintuan',
       component: resolve => require(['@/views/Home/activity/pintuan'], resolve),
        meta: {
@@ -97,7 +109,7 @@ export default new Router({
     },
     //商品评价
     {
-      path: '/home/pingjia/:id',
+      path: '/home/pingjia',
       name: 'pingjiad',
       component: resolve => require(['@/views/Home/activity/pingjia'], resolve),
        meta: {
@@ -119,6 +131,16 @@ export default new Router({
       path: '/need/code',
       name: 'Code',
       component: resolve => require(['@/views/login/code'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    
+    },
+    //其他商品的详情
+    {
+      path: '/overall/detail/:id',
+      name: 'Datilall',
+      component: resolve => require(['@/components/alldetail'], resolve),
        meta: {
         keepAlive: false 
       }
@@ -170,7 +192,7 @@ export default new Router({
     },
     //付款
     {
-    	path:'/myorder/payinfo',
+    	path:'/myorder/payinfo/:id',
     	name: 'payinfo',
       component: resolve => require(['@/views/Mine/order/pay/payinfo'], resolve),
        meta: {
@@ -216,6 +238,15 @@ export default new Router({
     	path:'/myorder/sqjindu',
     	name: 'sqjindu',
       component: resolve => require(['@/views/Mine/order/outhuo/outhuo'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+    //取消订单
+     {
+    	path:'/myorder/quxiao/:id',
+    	name: 'quxiao',
+      component: resolve => require(['@/views/Mine/order/outhuo/quxiao'], resolve),
        meta: {
         keepAlive: false 
       }
@@ -322,7 +353,7 @@ export default new Router({
       }
     },
     {
-    	path:'/mine/suoy',
+    	path:'/mine/suoy/:id',
     	name: 'suoy',
       component: resolve => require(['@/views/Mine/jiany/suoy'], resolve),
        meta: {
@@ -502,6 +533,22 @@ export default new Router({
     	path:'/vip/Vipmeber',
     	name: 'Vipmeber',
       component: resolve => require(['@/views/Vipmeber/Vipmeber'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+     {
+    	path:'/vip/viplist',
+    	name: 'viplist',
+      component: resolve => require(['@/views/Vipmeber/viplist'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+    {
+    	path:'/vip/viprule',
+    	name: 'viprule',
+      component: resolve => require(['@/views/Vipmeber/viprule'], resolve),
        meta: {
         keepAlive: false 
       }

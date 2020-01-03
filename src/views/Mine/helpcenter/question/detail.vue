@@ -1,7 +1,7 @@
 <template>
 	<div class="d-t-i-l">
 		<headt :message='name'></headt>
-		<div class="d-c-o-n">
+		<div class="d-c-o-n" v-html='content'>
 			{{content}}
 		</div>
 			
@@ -12,7 +12,7 @@
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
 	
-	import { questiondetail} from '@/api/api'
+	import { problemInfoLog} from '@/api/mine'
 	
 	export default {
 		data() {
@@ -36,7 +36,7 @@
 				problem_id:idt
 				
 			}
-				questiondetail(data).then(res=>{
+				problemInfoLog(data).then(res=>{
 					console.log(res)
 					if(res.data.code == 200){
 						this.name= res.data.data.name;
@@ -68,12 +68,14 @@
 			flex: 1;
 			overflow: auto;
 			background: #fff;
-			padding-top: 20px;
+			padding: 20px;
 			font-size: 28px;
+			box-sizing: border-box;
 			color: #333;
 			line-height: 42px;
 			text-indent: 15px;
 			letter-spacing: 4px;
+			word-wrap: break-word;
 		}
 	}
 </style>

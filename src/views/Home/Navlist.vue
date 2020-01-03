@@ -15,7 +15,9 @@
 						<p class="nav-title">{{item.title}}</p>
 						<div class="nav-z-k">
 							<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-							<h2></h2>
+							<h2 @click="addhouwuAdd(item.id)">
+								<img src="../../../static/img/jgwc.png"/>
+							</h2>
 						</div>
 					</div>
 				</li>
@@ -27,7 +29,9 @@
 
 <script>
 	import { shangpingData } from '@/api/api'
-
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { addshopcar} from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -69,22 +73,27 @@
 						name: '会员专享'
 					}
 
-				],
+				]
 			}
 		},
-		watch:{
-			selected(newId){
-				let data={
-					type:newId,
-					page:1
+		watch: {
+			selected(newId) {
+				let data = {
+					type: newId,
+					page: 1
 				}
 				shangpingData(data).then(res => {
-				console.log(res)
-				if(res.data.code == 200) {
-					this.tlist = res.data.data
-				}
-			})
+					console.log(res)
+					if(res.data.code == 200) {
+						this.tlist = res.data.data
+					}
+				})
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
 		},
 		mounted() {
 			let data = {
@@ -98,9 +107,26 @@
 				}
 			})
 		},
-		methods:{
-			changestyle(idt){
-				this.selected =idt
+		methods: {
+			changestyle(idt) {
+				this.selected = idt
+			},
+			addhouwuAdd(idt){
+				let data={
+					token:this.TokenId,
+					cid:idt,
+					num:1,
+					type:1,
+					classify:1
+				}
+				addshopcar(data).then(res=>{
+					console.log(res)
+					if(res.data.code == 200){
+						Notify({ type: 'success', message: res.data.msg });
+					}else{
+						Notify({ type: 'warning', message: res.data.msg });
+					}
+				})
 			}
 		}
 	}
@@ -139,7 +165,7 @@
 					width: 36px;
 					height: 4px;
 					left: 40%;
-					top:80px;
+					top: 80px;
 					background: linear-gradient(-36deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
 					border-radius: 2px;
 				}
@@ -196,10 +222,11 @@
 							}
 						}
 						h2 {
-							width: 48px;
-							height: 48px;
-							background: linear-gradient(-36deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
-							border-radius: 50%;
+							img {
+								width: 48px;
+								height: 48px;
+								border-radius: 50%;
+							}
 						}
 					}
 				}

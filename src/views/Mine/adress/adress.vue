@@ -6,22 +6,22 @@
 		<div class="adress-l">
 			<div style="height: 100%;overflow: auto;">
 				<ul>
-					<li v-for="(item,index) in list" :key='index'>
+					<li v-for="(item,index) in fileList" :key='index'>
 						<div class="ad-t">
-							<h2><span class="spn-a">{{item.name}}</span><span>{{item.moble}}</span></h2>
-							<h3>{{item.adress}}</h3>
+							<h2><span class="spn-a">{{item.name}}</span><span>{{item.mobile}}</span></h2>
+							<h3>{{item.area}}{{item.addr}}</h3>
 						</div>
 						<div class="ad-f">
 							<div class="ad-f-l">
 								<h2 :class="{'morende':item.moren ==1 }">
-									<img src="../../../../static/img/chos.png"  v-if="item.moren ==1 " alt="" />
-									<img src="../../../../static/img/choss.png" @click="shezhimoData(item.id)" v-else="" alt="" />								
+									<img src="../../../../static/img/chos.png"  v-if="item.is_default ==1 " alt="" />
+									<img src="../../../../static/img/choss.png" @click="shezhimoData(item)" v-else="" alt="" />								
 									设为默认
 								</h2>
 							</div>
 							<div class="ad-f-r">
 								<h3>切换为此地址</h3>
-								<h4 @click="bianjiData(1)">编辑</h4>
+								<h4 @click="bianjiData(item.id)">编辑</h4>
 							</div>
 						</div>
 					</li>
@@ -35,36 +35,43 @@
 </template>
 
 <script>
+	import { AddrlistInfo, ShezhiAddr } from '@/api/mine'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
-				list: [{
-						name: '小凤仙',
-						moble: '13567676767',
-						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
-						moren: 1,
-						id: 1
-					},
-					{
-						name: '小凤仙',
-						moble: '13567676767',
-						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
-						moren: 2,
-						id: 2
-
-					},
-					{
-						name: '小凤仙',
-						moble: '13567676767',
-						adress: '浙江省 杭州市 余杭区好运街风雅乐府20幢二单元...',
-						moren: 2,
-						id: 3
-
-					}
-				]
+				fileList: []
 			}
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			AddrlistInfo(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.fileList = res.data.data
+				} else {
+					Notify({
+						type: 'danger',
+						message: res.data.msg
+					});
+				}
+			})
+
+		},
 		methods: {
+			...mapActions(
+				[
+					'getaDta'
+				]
+			),
 			back() {
 				this.$router.go(-1)
 			},
@@ -72,20 +79,41 @@
 				var that = this
 				that.$router.push('/mine/adddizhi')
 			},
-			bianjiData() {
+			bianjiData(idt) {
 				var that = this
-				that.$router.push('/mine/bianji/2')
+				that.$router.push('/mine/bianji/' + idt)
 			},
-			shezhimoData(idt) {
-				console.log(idt)
+			shezhimoData(ite) {
+				var that = this
 
-				let index = this.list.findIndex(item => {
-					return item.id == idt
-				})
-				for(let i in this.list) {
-					this.list[i].moren = 2
+				let data = {
+					token: that.TokenId,
+					addr_id: ite.id
 				}
-				this.list[index].moren = 1
+				ShezhiAddr(data).then(res => {
+					if(res.data.code == 200) {
+						that.getaDta(ite)						
+						let index = that.fileList.findIndex(item => {
+							return item.id == ite.id
+						})
+						for(let i in that.fileList) {
+							that.fileList[i].is_default = 0
+						}
+						that.fileList[index].is_default = 1;
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+
+					} else {
+						Notify({
+							type: 'danger',
+							message: res.data.msg
+						});
+
+					}
+				})
+
 			}
 		}
 	}
@@ -143,7 +171,7 @@
 						align-items: center;
 						.ad-f-l {
 							.morende {
-								color: rgba(63, 185, 77, 1)!important;							
+								color: rgba(63, 185, 77, 1)!important;
 							}
 							h2 {
 								font-size: 26px;

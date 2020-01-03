@@ -3,7 +3,8 @@
 		<mhead></mhead>
 		<tool></tool>
 		<help></help>
-		<guess></guess>
+		<baokuan></baokuan>
+		
 	</div>
 </template>
 
@@ -12,7 +13,7 @@
 	import tool from '@/views/Mine/shouye/tool'
 	import help from '@/views/Mine/shouye/help'
 	import guess from '@/views/Mine/shouye/guess'
-
+	import baokuan from '@/components/baokuan'
 	
 	
 	
@@ -25,7 +26,7 @@
 			mhead,
 			tool,
 			help,
-			guess
+			baokuan
 		},
 	}
 </script>

@@ -1,16 +1,18 @@
 <template>
 	<div class="guess-i">
-		<div class=""></div>
+		<van-divider :style="{ color: '#9999', borderColor: '#999', padding: '0 40px' }">
+			猜你喜欢
+		</van-divider>
 		<ul class="guess-list">
-			<li v-for="(item,index) in 10">
+			<li v-for="(item,index) in mlist">
 				<div class="list-t">
-					<img src="http://img3.imgtn.bdimg.com/it/u=2300348621,1925735194&fm=15&gp=0.jpg" />
+					<img :src="item.cover" />
 				</div>
-				<p>女童秋装套装2019新款洋气韩版时髦儿童装开学季网红背带裤两件套</p>
+				<p>{{item.title}}</p>
 				<div class="goumai">
-					<h2>&yen;89</h2>
-					<h3>
-						<img src="../../../assets/gw.jpg" />
+					<h2>&yen;{{item.now_price}}</h2>
+					<h3 @click="addhouwuAdd(item.id)">
+						<img src="../../../../static/img/jgwc.png" />
 					</h3>					
 				</div>
 			</li>
@@ -19,6 +21,44 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { addshopcar } from '@/api/mine'
+	export default{
+		data(){
+			return{
+				mlist:[]
+			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data={
+				token:this.TokenId
+			}
+			guessylove(data).then(res => {
+				if(res.data.code == 200){
+					this.mlist= res.data.data
+				}
+			})
+		},
+		methods:{
+			addhouwuAdd(idt){
+				let data={
+					token:this.TokenId,
+					cid:idt,
+					num:1,
+					type:1
+				}
+				addshopcar(data).then(res=>{
+					console.log(res)
+				})
+			}
+		}
+	}
 </script>
 
 <style lang="stylus" scoped>
@@ -59,7 +99,7 @@
 					display: flex;
 					margin-top: 30px;
 					justify-content: space-between;
-					align-items: flex-end;
+					align-items: center;
 					h2 {
 						font-size: 34px;
 						font-family: PingFang SC;

@@ -8,8 +8,8 @@
 					</div>
 
 					<div class="m-tou-mc">
-						<p class="mingchen" style="">{{userdata.username}}</p>
-						<p class="phoe">{{userdata.mobile}}</p>
+						<p class="mingchen" style="">{{userinfo.username}}</p>
+						<p class="phoe">{{userinfo.mobile}}</p>
 					</div>
 				</div>
 				<h2 class="m-tou-r" @click="gerenData()"> 
@@ -19,15 +19,15 @@
 			<div class="mh-nav">
 				<ul>
 					<li @click='chongzData'>
-						<p>{{userdata.money}}</p>
+						<p>{{userinfo.money}}</p>
 						<p>钱包(元)</p>
 					</li>
 					<li @click='qiankData'>
-						<p>{{userdata.debt}}</p>
+						<p>{{userinfo.debt}}</p>
 						<p>欠款(元)</p>
 					</li>
 					<li @click='youhuData'>
-						<p>{{userdata.coupons_num}}</p>
+						<p>{{coupons_num}}</p>
 						<p>优惠券(张)</p>
 					</li>
 
@@ -80,24 +80,26 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-
+	import { mineInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
 				select: 0,
+				userinfo: '',
+				coupons_num: '',
 				lsit: [{
 						name: '待付款',
-						img: '../../../static/imges/my/dfk.png'
+						img: '../../../static/img/dfk.png'
 					},
 					{
 						name: '待收货',
-						img: '../../../static/imges/my/dfk.png'
+						img: '../../../static/img/dfh.png'
 					}, {
 						name: '待评价',
-						img: '../../../static/imges/my/dfk.png'
+						img: '../../../static/img/dpj.png'
 					}, {
 						name: '售后服务',
-						img: '../../../static/imges/my/dfk.png'
+						img: '../../../static/img/shoiuh.png'
 					},
 				],
 				list: [{
@@ -128,13 +130,28 @@
 				userdata: 'userData'
 			})
 		},
+		mounted() {
+			let data = {
+				token: this.userdata.token
+			}
+			mineInfo(data).then(res => {
+
+				if(res.data.code == 200) {
+					this.userinfo = res.data.data.user_info;
+					this.coupons_num = res.data.data.coupons_num
+				}
+			})
+		},
 		methods: {
+			...mapActions(['orderchoose']),
+
 			changestyle(index) {
 				this.select = index
-
 			},
 			chankandata() {
 				var that = this
+				this.orderchoose(0)
+				
 				that.$router.push('/myorder')
 
 			},
@@ -153,14 +170,16 @@
 			gerenData() {
 				var that = this
 				that.$router.push('/mine/perpson')
-				
+
 			},
-			tiaozhuanData(idt){
+			tiaozhuanData(idt) {
 				console.log(idt)
 				var that = this
-				
-				if(idt==3){
-					that.$router.push('/myorder/tuihuo')					
+				this.orderchoose(idt+1)
+				if(idt == 3) {
+					that.$router.push('/myorder/tuihuo')
+				} else {
+					that.$router.push('/myorder')
 				}
 			}
 		}
