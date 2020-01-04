@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import qs from 'qs'
 const service = axios.create({
-	baseURL: "http://dev.gysmapp.com/public/index.php",
+	baseURL: "http://gysm.pfkweb.com/",
 	timeout: 30000
 })
 // request拦截器

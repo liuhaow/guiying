@@ -1,16 +1,10 @@
 <template>
 	<div class="viplist">
 		<headt message='会员专区'></headt>
-		<div class="nav-ul">
-			<ul>
-				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'chost':selected===index}">
-					{{item.name}}
-				</li>
-			</ul>
-		</div>
+
 		<div class="allpin">
 			<ul>
-				<li v-for="(item,index) in 16">
+				<li v-for="(item,index) in tlist" :key='index'>
 					<img class="spimg" src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
 					<div class="hy-list">
 						<div class="hy-l-l">
@@ -30,51 +24,29 @@
 
 <script>
 	import headt from '@/components/heda'
-
+	import { shangpingData } from '@/api/api'
+	import { mapGetters, mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
 				selected: 0,
-				list: [{
-						name: '全部'
-					},
-					{
-						name: '新鲜蔬菜'
-
-					},
-					{
-						name: '肉禽蛋品'
-
-					}, {
-						name: '粮油米面'
-
-					}, {
-						name: '酒水饮料'
-
-					}, {
-						name: '调味干货'
-
-					}, {
-						name: '水产海鲜'
-
-					}, {
-						name: '餐厨用品'
-
-					}, {
-						name: '火锅专用'
-
-					}, {
-						name: '烧烤专用'
-					},
-					{
-						name: '会员专享'
-					}
-
-				]
+				tlist:[]
 			}
 		},
 		components: {
 			headt
+		},
+		mounted() {
+			let datad = {
+				type: 10,
+				page: 1
+			}
+			shangpingData(datad).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.tlist = res.data.data.splice(0, 4)
+				}
+			})
 		},
 		methods: {
 			changestyle(index) {

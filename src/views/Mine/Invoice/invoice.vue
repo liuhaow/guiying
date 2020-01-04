@@ -1,19 +1,21 @@
 <template>
 	<div class="fapiao">
 		<div class="mor-t">
-			<img @click="back" src="../../../assets/back.jpg" alt="" /> 发票信息
+			<img @click="back" src="../../../../static/img/fanhui.png" alt="" /> 发票信息
 		</div>
-		<ul class="issus-list">
-			<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">{{item.name}}</li>
-		</ul>
-		<div class="" v-if="select==0">
-			<shenp></shenp>
-		</div>
-		<div class="" v-if="select==1">
-			<yikai></yikai>
-		</div>
-		<div class="" v-if="select==2">
-			<putong></putong>
+		<div class="fa-p-i">
+			<ul class="issus-list">
+				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">{{item.name}}</li>
+			</ul>
+			<div class="f-p-gong" v-if="select==0">
+				<shenp></shenp>
+			</div>
+			<div class="f-p-gong" v-if="select==1">
+				<yikai></yikai>
+			</div>
+			<div class="f-p-gong" v-if="select==2">
+				<putong></putong>
+			</div>
 		</div>
 
 	</div>
@@ -23,7 +25,7 @@
 	import putong from './fapiao/putong'
 	import shenp from './shenp/shenp'
 	import yikai from './yikai/yikai'
-	
+
 	export default {
 		data() {
 			return {
@@ -69,6 +71,10 @@
 		padding-bottom: 30px;
 		box-sizing: border-box;
 		overflow: auto;
+		.fa-p-i {
+			flex: 1;
+			overflow: auto;
+		}
 		.mor-t {
 			height: 88px;
 			position: relative;
@@ -81,8 +87,8 @@
 			margin-bottom: 2px;
 			img {
 				position: absolute;
-				height: 36px;
-				width: 20px;
+				height: 40px;
+				width: 40px;
 				z-index: 3;
 				left: 20px;
 				padding-left: 20px;

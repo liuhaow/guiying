@@ -2,8 +2,7 @@
 	<div class="addxuqu">
 		<headt message='消息详情'></headt>
 		<div class="a-d-d">
-			
-
+				{{contenct}}
 		</div>
 
 	</div>
@@ -14,11 +13,15 @@
 	export default {
 		data() {
 			return {
-
+				contenct:''
 			}
 		},
 		components: {
 			headt
+		},
+		mounted(){
+			this.contenct = this.$route.query.contd;
+
 		},
 		methods: {
 
@@ -42,45 +45,12 @@
 
 		.a-d-d {
 			margin-top: 20px;
-			.a-d-d-lst {
-				height: 140px;
-				background: #fff;
-				padding: 0 34px;
-				box-sizing: border-box;
-				display: flex;
-				justify-content: space-between;
-				align-items: center;
-				margin-bottom: 2px;
-				h2 {
-					font-size: 28px;
-					font-family: PingFang SC;
-					font-weight: 600;
-					color: rgba(51, 51, 51, 1);
-				}
-				.a-d-r {
-					display: flex;
-					height: 100%;
-					width: 100%;
-					align-items: center;
-					justify-content: space-between;
-					input {
-						width: 50%;
-						font-size: 32px;
-						font-weight: 500;
-						color: rgba(51, 51, 51, 1);
-					}
-					i {
-						font-size: 32px;
-						color: #333;
-						font-weight: 600;
-						margin-left: 20px;
-						width: 80px;
-						line-height: 140px;
-						text-align: center;
-						height: 140px;
-					}
-				}
-			}
+			padding:20px;
+			box-sizing: border-box;
+			font-size: 32px;
+			letter-spacing: 3px;
+			text-indent: 20px;
+
 		}
 	}
 </style>

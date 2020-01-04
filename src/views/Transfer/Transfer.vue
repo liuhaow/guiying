@@ -3,11 +3,11 @@
 		<div class="t-r-t">
 			<div class="t-t-l">
 				<div class="toux">
-					<img src="../../../static/img/fewod.png" alt="" />
+					<img :src="userinfo.avatar" alt="" />
 				</div>
 				<div class="geren">
-					<h2>陪你到世界终结</h2>
-					<h3><img src="../../../static/img/phk.png" alt="" /><span>13216115876</span></h3>
+					<h2>{{userinfo.username}}</h2>
+					<h3><img src="../../../static/img/phk.png" alt="" /><span>{{userinfo.mobile}}</span></h3>
 				</div>
 			</div>
 			<div class="t-t-r">
@@ -34,6 +34,9 @@
 	import newoder from './neworder'
 	import peisong from './peisong'
 	import alive from './alive'
+	import { Notify } from 'vant';
+	import { mapGetters, mapActions } from 'vuex'
+	import { mineInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -48,12 +51,35 @@
 					{
 						name: '已送达'
 					}
-				]
+				],
+				userinfo:''
 			}
 		},
 		components: {
 			newoder,peisong,alive
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted(){
+			
+			let data = {
+				token: this.TokenId
+			}
+			mineInfo(data).then(res => {
+				if(res.data.code == 200) {
+					this.userinfo = res.data.data.user_info
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+				}
+			})
+		},
+		
 		methods: {
 			changestyle(idt) {
 				this.selectd = idt

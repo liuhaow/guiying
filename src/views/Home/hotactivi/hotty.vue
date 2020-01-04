@@ -21,8 +21,11 @@
 				</ul>
 			</div>
 			<div class="list-inf">
+				<van-divider :style="{ color: '#fff', borderColor: '#fff', padding: '0 16px' }">
+					新品力荐
+				</van-divider>
 				<ul>
-					<li v-for="(item,index) in 11" :key='index'>
+					<li v-for="(item,index) in listd" :key='index'>
 						<img class="Imgt" src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
 						<p>网易猪场原生态黑猪</p>
 						<div class="di-bu">
@@ -30,7 +33,6 @@
 							<h3><img src="../../../../static/img/jgwc.png"/></h3>
 						</div>
 					</li>
-
 
 				</ul>
 			</div>
@@ -41,55 +43,80 @@
 
 <script>
 	import headt from '@/components/heda'
-
+	import { Newtryinfo } from '@/api/api'
 	export default {
 		data() {
 			return {
 				selected: 0,
 				list: [{
-						name: '全部'
-					},
-					{
 						name: '新鲜蔬菜'
-
 					},
 					{
 						name: '肉禽蛋品'
-
-					}, {
+					},
+					{
 						name: '粮油米面'
-
-					}, {
+					},
+					{
 						name: '酒水饮料'
 
-					}, {
+					},
+					{
 						name: '调味干货'
 
-					}, {
+					},
+					{
 						name: '水产海鲜'
 
-					}, {
+					},
+					{
 						name: '餐厨用品'
 
-					}, {
+					},
+					{
 						name: '火锅专用'
 
-					}, {
+					},
+					{
 						name: '烧烤专用'
 					},
 					{
 						name: '会员专享'
 					}
 
-				]
+				],
+				listd: []
 			}
 		},
 		components: {
 			headt
 
 		},
-
-		methods: {}
+		mounted() {
+			let data = {
+				type: 1,
+				page: 1
+			}
+			Newtryinfo(data).then(res => {
+				if(res.data.code == 200) {
+					this.listd = res.data.data
+				}
+			})
+		},
+		methods: {
+			changestyle(itd) {
+				this.selected = itd;
+				let data = {
+					type: itd + 1,
+					page: 1
+				}
+				Newtryinfo(data).then(res => {
+					if(res.data.code == 200) {
+						this.listd = res.data.data
+					}
+				})
+			}
+		}
 	}
 </script>
 <style scoped lang="stylus">
@@ -105,15 +132,15 @@
 			flex: 1;
 			background: #50B46C;
 			overflow: auto;
-			.list-inf{
-				ul{
+			.list-inf {
+				ul {
 					display: flex;
 					flex-wrap: wrap;
 					justify-content: space-between;
 					padding: 0 10px;
 					box-sizing: border-box;
 					margin-top: 30px;
-					li{
+					li {
 						width: 32%;
 						height: 400px;
 						background: #fff;
@@ -125,33 +152,32 @@
 						box-sizing: border-box;
 						margin-bottom: 10px;
 						border-radius: 5px;
-						.Imgt{
+						.Imgt {
 							width: 200px;
 							height: 200px;
 						}
-						p{
-							font-size:26px;
+						p {
+							font-size: 26px;
 							color: #333;
 							margin: 20px 0 30px;
 							line-height: 30px;
 						}
-						.di-bu{
+						.di-bu {
 							display: flex;
 							width: 100%;
 							justify-content: space-between;
 							align-items: center;
-							h2{
+							h2 {
 								font-size: 34px;
 								color: #FF6501;
 							}
-							h3{
-								img{
+							h3 {
+								img {
 									height: 50px;
 									width: 50px;
 								}
 							}
 						}
-						
 					}
 				}
 			}

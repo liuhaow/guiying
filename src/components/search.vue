@@ -8,29 +8,30 @@
 			<p>
 				<i slot="icon" class="icon iconfont ">&#xe615;</i>
 				<input type="text" placeholder="请输入" v-model="seach" />
+
 			</p>
-			<h2 @click="quxiaoData">取消</h2>
+			<h2 @click="quxiaoData">搜索</h2>
 		</div>
 
 		<div class="seach-w" v-if="seahinfo">
 			<van-dropdown-menu>
 				<van-dropdown-item v-model="value1" :options="option1" />
 				<van-dropdown-item v-model="value2" :options="option2" />
-				<van-dropdown-item v-model="value3" :options="option3" />			
+				<van-dropdown-item v-model="value3" :options="option3" />
 			</van-dropdown-menu>
 			<ul>
-				<li v-for='item in mlist' >
+				<li v-for='item in mlist'>
 					<div class="t-g-imh">
-						<img :src="item.img" alt="" />
+						<img :src="item.cover" alt="" />
 					</div>
 					<p class="mingc">{{item.title}} </p>
-					
+
 					<div class="t-g-f-t">
 						<div class="t-g-f-j">
-<p>秒杀价：&yen;{{item.miaos}} <span class="yuanjia">&yen;{{item.yu}}</span></p>
+							<p>&yen;{{item.now_price}} </p>
 						</div>
-						<div class="t-g-f-b">
-							<img src="../../static/gw.jpg" />
+						<div class="t-g-f-b" @click="addhouwuAdd(item.id)">
+							<img src="../../static/img/gwuc.jpg" />
 						</div>
 					</div>
 				</li>
@@ -42,7 +43,7 @@
 				<h2><i slot="icon" class="icon iconfont ">&#xe614;</i>清楚记录</h2>
 			</div>
 			<ul class="seach-lst">
-				<li v-for="(item,index) in list" @click="seachData()">
+				<li v-for="(item,index) in list" @click="seachDataindfo()">
 					{{item.name}}
 				</li>
 			</ul>
@@ -52,6 +53,11 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { seachData } from '@/api/api'
+	import { addshopcar } from '@/api/mine'
+	
 	export default {
 		data() {
 			return {
@@ -59,60 +65,12 @@
 				seahinfo: false,
 				value1: 0,
 				value2: 'a',
-				value3:'d',
-				mlist: [{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-					{
-
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						yu: '109'
-					},
-				],
+				value3: 'd',
+				mlist: [],
 				option1: [{
-						text: '综合',
-						value: 0
-				}
-				],
+					text: '综合',
+					value: 0
+				}],
 				option2: [{
 						text: '价格低',
 						value: 'a'
@@ -152,16 +110,71 @@
 				]
 			}
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
 			back() {
 				this.$router.go(-1)
 
 			},
 			quxiaoData() {
+				let data = {
+					word: this.seach,
+					page: 1,
+					now_price: 'asc',
+					sold_num: 'asc'
+				}
+				seachData(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						if(res.data.data.length == 0) {
+							Notify({
+								type: 'success',
+								message: '没有您要早的商品，个人中心可以提需求'
+							});
+							this.seahinfo = false
+						} else {
+							this.mlist = res.data.data
+							this.seahinfo = true
 
+						}
+
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			},
-			seachData() {
-				this.seahinfo = true
+			seachDataindfo() {
+//				this.seahinfo = true
+			},
+			addhouwuAdd(idt) {
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}
@@ -174,21 +187,19 @@
 		top: 0;
 		right: 0;
 		bottom: 0;
-		background: #fff;
+		background: #E1E1E1;
 		overflow: auto;
-		padding-top: 20px;
+
 		display: flex;
 		flex-direction: column;
 		.seach-w {
 			flex: 1;
-
 			overflow: auto;
 			ul {
 				height: 90%;
 				overflow: auto;
 				padding: 0 20px;
 				box-sizing: border-box;
-				
 				li {
 					width: 345px;
 					height: 496px;
@@ -211,21 +222,24 @@
 						font-weight: 500;
 						line-height: 32px;
 						color: rgba(51, 51, 51, 1);
-						margin: 20px 0 10px;
+						margin: 30px 0 20px;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
 					}
-					.t-g-f-t{
-						height: 48px;
+					.t-g-f-t {
+						height: 50px;
 						display: flex;
 						justify-content: space-between;
 						align-items: center;
-						.t-g-f-b{
-							img{
-								height: 48px;
-								width: 48px;
+						.t-g-f-b {
+							img {
+								height: 80px!important;
+								width: 80px;
 							}
 						}
 					}
-					.t-g-f-j{
+					.t-g-f-j {
 						p {
 							font-size: 26px;
 							font-weight: 500;
@@ -241,10 +255,10 @@
 						}
 					}
 				}
-				li:nth-child(n){
+				li:nth-child(n) {
 					float: left;
 				}
-				li:nth-child(2n){
+				li:nth-child(2n) {
 					float: right;
 				}
 			}
@@ -252,6 +266,7 @@
 		.seach-s {
 			flex: 1;
 			padding: 80px 20px 0;
+			background: #fff;
 			box-sizing: border-box;
 			.seach-lst {
 				display: flex;
@@ -289,8 +304,9 @@
 			}
 		}
 		.s-e {
-			height: 70px;
+			height: 90px;
 			display: flex;
+			background: #fff;
 			justify-content: space-between;
 			align-items: center;
 			padding: 0 20px;

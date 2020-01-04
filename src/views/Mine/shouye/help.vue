@@ -23,17 +23,17 @@
 
 				lsit: [{
 						name: '常见问题',
-						img: '../../../static/img/cjian.png'
+						img: './static/img/cjian.png'
 					},
 					{
 						name: '服务中心',
-						img: '../../../static/img/fwu.png'
+						img: './static/img/fwu.png'
 					}, {
 						name: '在线客服',
-						img: '../../../static/img/gfu.png'
+						img: './static/img/gfu.png'
 					}, {
 						name: '设置',
-						img: '../../../static/img/szhu.png'
+						img: './static/img/szhu.png'
 					}
 				]
 			}

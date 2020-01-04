@@ -13,6 +13,7 @@ const state = {
 	lit:JSON.parse(localStorage.getItem('chodd')) || 0,
 	getadrss:JSON.parse(localStorage.getItem('getadrss')) ||'',
 	orderl:JSON.parse(localStorage.getItem('order')) || 0,
+	peisong:JSON.parse(localStorage.getItem('peisong')) || 0,
 	
 	
 
@@ -59,6 +60,10 @@ const actions = {
     orderchoose({commit},res){
     	localStorage.setItem('order',JSON.stringify(res))
     	commit('ORDERCHSE',res)  	   	
+    },
+    peidata({commit},res){
+    	localStorage.setItem('peisong',JSON.stringify(res))
+    	commit('PEISONG',res)  
     }
     
 }
@@ -71,7 +76,8 @@ const getters = {
     morendata:state=>state.morendata,
     lit:state=>state.lit,
     getadrss:state=>state.getadrss,
-    orderl:state=>state.orderl
+    orderl:state=>state.orderl,
+    peisong:state=>state.peisong
 }
 const mutations = {
 	[types.PHONE_NUM](state,res){
@@ -98,6 +104,10 @@ const mutations = {
     ORDERCHSE(state,res){
     	state.orderl=res
     },
+    PEISONG(state,res){
+    	state.peisong=res
+    	
+    }
 }
 
 

@@ -11,7 +11,7 @@
 				<div class="huiyu-t-l">
 					<img src="../../../static/img/hj.png" />
 					<div class="huyshj">
-						<h2>黄金会员</h2>
+						<h2>{{dengji}}</h2>
 						<h3>截止2019.12.16</h3>
 					</div>
 				</div>
@@ -30,7 +30,7 @@
 			<h3 class="laix">600+超值低价商品等你来享</h3>
 			<div class="allpin">
 				<ul>
-					<li v-for="(item,index) in 5">
+					<li v-for="(item,index) in tlist" :key='index'>
 						<img class="spimg" src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
 						<div class="hy-list">
 							<div class="hy-l-l">
@@ -53,11 +53,50 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { Vipinfodata, Vipinfodeng ,shangpingData} from '@/api/api'
 	export default {
 		data() {
 			return {
-				duih: false
+				duih: false,
+				dengji: '',
+				dafo: '',
+				tlist:[]
+
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId,
+				page: 1
+			}
+			let pary  ={
+				token: this.TokenId				
+			}
+			Vipinfodata(data).then(res=>{
+				console.log(res)
+			})
+			Vipinfodeng(pary).then(res=>{
+				if(res.data.code ==200){
+					this.dengji = res.data.msg
+				}
+			})
+			let datad = {
+					type: 10,
+					page: 1
+				}
+				shangpingData(datad).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						this.tlist = res.data.data.splice(0,4)
+					}
+				})
 		},
 		methods: {
 			back() {
@@ -66,11 +105,11 @@
 			makeData() {
 
 			},
-			allListData(){
-				this.$router.push('/vip/viplist')			
+			allListData() {
+				this.$router.push('/vip/viplist')
 			},
-			ruleData(){
-				this.$router.push('/vip/viprule')							
+			ruleData() {
+				this.$router.push('/vip/viprule')
 			}
 		}
 	}
@@ -100,8 +139,9 @@
 				margin-bottom: 30px;
 			}
 			.allpin {
-				height: 1120px;
+				max-height: 1120px;
 				background: #fff;
+				padding-bottom: 60px;
 				.ckall {
 					width: 670px;
 					height: 80px;
@@ -114,8 +154,10 @@
 					margin: 60px auto 0;
 				}
 				ul {
-					height: 900px;
+					min-height: 300px;
+					max-height: 900px;
 					padding-top: 20px;
+					overflow: auto;
 					li {
 						height: 180px;
 						display: flex;
@@ -155,7 +197,7 @@
 										border-radius: 16px;
 										color: #fff!important;
 									}
-									.zhek{
+									.zhek {
 										color: #666666!important;
 									}
 								}

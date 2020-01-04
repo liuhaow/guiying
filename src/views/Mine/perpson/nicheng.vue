@@ -1,38 +1,93 @@
 <template>
 	<div class="addxuqu">
-		<headt message='昵称'></headt>
+		<headt message='昵称头像修改'></headt>
 		<div class="a-d-d">
 			<div class="a-d-d-lst">
 				<div class="a-d-r">
-					<input type="" v-model='nich' placeholder="请输入要修改的昵称" />
+					<input type="" v-model='username' placeholder="请输入要修改的昵称" />
 					<i slot="icon" class="icon iconfont " @click="qingchuDtat">&#xe65c;</i>
 				</div>
+			</div>
+			<div class="x-g-h">
+				<h2>头像修改：</h2>
+				<van-uploader v-model="fileList" deletable multiple :max-count="1" :after-read="afterRead" />
 			</div>
 
 		</div>
 		<div class="btnd">
-			<button>确定</button>
+			<button @click="makesureData">确定</button>
 		</div>
 	</div>
 </template>
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { uploadinfo,xiugaigeren } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				nich: ''
+				username: '',
+				fileList: [],
+
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
 			qingchuDtat() {
-				this.nich = ''
+				this.username = ''
 			},
-			nextData() {}
+			afterRead(file){
+//				let data ={
+//					image:file.content,
+//					token:this.TokenId
+//				}
+//				uploadinfo(data).then(res=>{
+//					console.log(res)
+//				})
+			},
+			nextData() {},
+			makesureData() {
+				let actimg;
+				if(!this.fileList[0]){
+					actimg=''
+				}else{
+					actimg = this.fileList[0].content
+				}
+				
+				let data = {
+					token:this.TokenId,
+					username:this.username,
+					avatar:actimg
+				}
+
+				
+				xiugaigeren(data).then(res=>{
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+				
+			},
+
 		}
+
 	}
 </script>
 
@@ -49,8 +104,6 @@
 		box-sizing: border-box;
 		overflow: auto;
 		.btnd {
-			position: fixed;
-			top: 370px;
 			width: 100%;
 			display: flex;
 			justify-content: center;
@@ -66,8 +119,18 @@
 		}
 		.a-d-d {
 			margin-top: 20px;
+			.x-g-h{
+				>>>.van-uploader {
+					margin: 20px;
+				}
+				h2{
+					font-size: 38px;
+					color: #999;
+					padding: 20px;
+				}
+			}
 			.a-d-d-lst {
-				height: 140px;
+				height: 110px;
 				background: #fff;
 				padding: 0 34px;
 				box-sizing: border-box;

@@ -31,16 +31,6 @@
 						<div class="lst-t-d">
 							{{item.num}}件，合计&yen;{{item.total}}
 						</div>
-						<!--<div class="lis-f-f">
-							<div class="dinzh" v-if='dingd ==1'>
-								<button>取消订单</button>
-								<button class="btde">去支付</button>
-							</div>
-							<div class="dinzh" v-if='dingd ==2'>
-								<button>删除订单</button>
-								<button class="btde">重新购买</button>
-							</div>
-						</div>-->
 					</div>
 
 				</li>
@@ -87,7 +77,7 @@
 		<div class="quanbu" v-if="select == 2">
 			<ul>
 				<li v-for='(item,index) in lstdata' :key='index'>
-					
+
 					<div class="list-t">
 						<div class="list-t-l">
 							{{item.create_time}}
@@ -264,6 +254,7 @@
 				this.$router.push('/myorder/alldan/' + id)
 			},
 			querenData(idt) {
+
 				this.$router.push('/myorder/bourse/' + idt)
 			},
 			payData(idt) {
@@ -271,8 +262,8 @@
 			},
 			quxiaoData(idt) {
 				this.$router.push('/myorder/quxiao/' + idt)
-
 			},
+			quxiaoOrder(idt) {},
 			shanchuoder(idt) {
 				let data = {
 					token: this.TokenId,
@@ -284,16 +275,16 @@
 							type: 'success',
 							message: res.data.msg
 						});
-						let data = {
-							token: this.TokenId,
-							page: 1,
-							status: 4
-						}
-						orderallData(data).then(res => {
-							if(res.data.code == 200) {
-								this.lstdata = res.data.data
-							}
-						})
+//						let data = {
+//							token: this.TokenId,
+//							page: 1,
+//							status: 4
+//						}
+//						orderallData(data).then(res => {
+//							if(res.data.code == 200) {
+//								this.lstdata = res.data.data
+//							}
+//						})
 					} else {
 						Notify({
 							type: 'warning',

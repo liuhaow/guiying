@@ -1,28 +1,53 @@
 <template>
 	<div class="addxuqu">
-		<headt message='在线客服'></headt>
-		<div class="a-d-d">
-			
-
-		</div>
-
+		  <iframe :src="url1" width="100%" height="100%"  frameborder="0"></iframe>
 	</div>
 </template>
 
 <script>
 	import headt from '@/components/heda'
+	import { kefuId } from  "@/api/api"
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
 	export default {
+
 		data() {
 			return {
-
+				fromid: 10,
+				url1:'',
+				toid:''
 			}
 		},
 		components: {
 			headt
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId',
+				userData:'userData'
+			})
+		},
+		created() {
+
+		},
+		destroyed() {
+
+		},
+		mounted(){
+			let data ={
+				token:this.TokenId
+			}
+			kefuId(data).then(res=>{
+				if(res.data.code ==200){
+					let frid= res.data.data[0].user_id;
+					console.log(frid)
+					this.url1= 'http://gysm.pfkweb.com/index/chat/index?fromid='+this.userData.id+'&toid='+frid;
+					console.log(this.url1)
+				}
+			})
+		},
 		methods: {
-
-
+			
 		}
 	}
 </script>
@@ -36,12 +61,9 @@
 		bottom: 0;
 		display: flex;
 		flex-direction: column;
-		padding-bottom: 30px;
-		box-sizing: border-box;
 		overflow: auto;
-
 		.a-d-d {
-			margin-top: 20px;
+			flex: 1;
 			.a-d-d-lst {
 				height: 140px;
 				background: #fff;
@@ -80,6 +102,91 @@
 						height: 140px;
 					}
 				}
+			}
+		}
+	}
+	
+	.test3 {
+		text-align: center;
+	}
+	
+	.msg {
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		padding-top: 5px;
+		margin-bottom: 6px;
+		.msg-item {
+			position: relative;
+			overflow: hidden;
+			p {
+				display: inline-block;
+				border-radius: 10px;
+				background: #3C3D5A;
+				color: #000;
+				float: left;
+				padding: 20px 30px;
+				font-size: 32px;
+				margin: 0 0 2px 0;
+				max-width: 70%;
+				text-align: left;
+				box-sizing: border-box;
+			}
+			&.mine {
+				p {
+					float: right;
+					font-size: 32px;
+					width: 320px;
+					padding: 20px 30px;
+					font-size: 32px;
+					background: rgba(63, 185, 77, 1);
+					border-radius: 10px;
+					color: #fff;
+				}
+			}
+		}
+	}
+	
+	.input-group {
+		height: 114px;
+		background: #fff;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		.yuyin {
+			width: 56px;
+			height: 56px;
+			background: blue;
+			border-radius: 50%;
+		}
+		.sendin {
+			background: none;
+			border: 0;
+		}
+		.shuru {
+			width: 520px;
+			height: 80px;
+			background: rgba(250, 248, 249, 1);
+			border: 2px solid rgba(225, 225, 225, 1);
+			border-radius: 40px;
+			display: flex;
+			align-items: center;
+			margin: 0 23px;
+			input {
+				height: 80px;
+				width: 450px;
+				background: none;
+				padding-left: 30px;
+				box-sizing: border-box;
+				font-size: 28px;
+				color: #999;
+			}
+			span {
+				width: 48px;
+				height: 48px;
+				background: red;
+				border-radius: 50%;
 			}
 		}
 	}

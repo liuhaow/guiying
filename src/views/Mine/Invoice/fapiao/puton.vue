@@ -2,32 +2,32 @@
 	<div class="putong">
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>发票抬头</h2> <input type="" placeholder="请输入营业执照注册名称" name="" id="" value="" />
+				<h2><span>*</span>发票抬头</h2> <input type="" v-model="name" placeholder="请输入营业执照注册名称" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>纳税人识别号</h2> <input type="" v-model="taxid" placeholder="请输入纳税人识别号" name="" id="" value="" />
+				<h2><span>*</span>纳税人识别号</h2> <input type="" v-model="taxid" placeholder="请输入纳税人识别号" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>注册地址</h2> <input type="" v-model="addr" placeholder="请输入详细注册地址" name="" id="" value="" />
+				<h2><span>*</span>注册地址</h2> <input type="" v-model="addr" placeholder="请输入详细注册地址" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>注册电话</h2> <input type="" v-model="mobile" placeholder="请输入注册电话" name="" id="" value="" />
+				<h2><span>*</span>注册电话</h2> <input type="" v-model="mobile" placeholder="请输入注册电话" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>开户银行</h2> <input type="" v-model="bank_account" placeholder="请输入开户银行" name="" id="" value="" />
+				<h2><span>*</span>开户银行</h2> <input type="" v-model="bank_account" placeholder="请输入开户银行" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div style="border: none!important;">
-				<h2><span>*</span>银行账号</h2> <input type="" v-model="account_num" placeholder="请输入银行账号" name="" id="" value="" />
+				<h2><span>*</span>银行账号</h2> <input type="" v-model="account_num" placeholder="请输入银行账号" value="" />
 			</div>
 		</div>
 		<div class="p-t-d">
@@ -35,17 +35,17 @@
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>联系人</h2> <input type="" v-model="contact_person" placeholder="请输入联系人信息" name="" id="" value="" />
+				<h2><span>*</span>联系人</h2> <input type="" v-model="contact_person" placeholder="请输入联系人信息" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>联系电话</h2> <input type="" v-model="phone" placeholder="请输入联系人电话" name="" id="" value="" />
+				<h2><span>*</span>联系电话</h2> <input type="" v-model="phone" placeholder="请输入联系人电话" value="" />
 			</div>
 		</div>
 		<div class="p-t-f">
 			<div>
-				<h2><span>*</span>详细地址</h2> <input type="" v-model="dettail_addr" placeholder="请输入详细地址" name="" id="" value="" />
+				<h2><span>*</span>详细地址</h2> <input type="" v-model="dettail_addr" placeholder="请输入详细地址" value="" />
 			</div>
 		</div>
 		<div class="butn">
@@ -58,11 +58,12 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { fapiaosqInfo } from '@/api/mine'
+	import { Notify } from 'vant';
+
 	export default {
 		data() {
 			return {
-				select: 2,
-				chd: 2,
+				name: '',
 				taxid: '',
 				addr: '',
 				mobile: '',
@@ -71,23 +72,12 @@
 				contact_person: '',
 				phone: '',
 				dettail_addr: '',
-				
-				list: [{
-						name: '已申请发票'
-					},
-					{
-						name: '已开发票'
-					},
-					{
-						name: '发票开票信息 '
-					}
-				]
 			}
 		},
 		computed: {
 			...mapGetters({
 				TokenId: 'TokenId',
-				userData:'userData'
+				userData: 'userData'
 			})
 		},
 		methods: {
@@ -95,19 +85,31 @@
 				let data = {
 					type: 1,
 					token: this.TokenId,
-					name:this.userData.id,
-					taxid:this.taxid,
-					addr:this.addr,
-					mobile:this.mobile,
-					bank_account:this.bank_account,
-					account_num:this.account_num,
-					phone:this.phone,
-					dettail_addr:this.dettail_addr
-					
-					
+					name: this.name,
+					taxid: this.taxid,
+					addr: this.addr,
+					mobile: this.mobile,
+					bank_account: this.bank_account,
+					contact_person: this.contact_person,
+					account_num: this.account_num,
+					phone: this.phone,
+					email: '1221',
+					dettail_addr: this.dettail_addr
 				}
+				console.log(data)
 				fapiaosqInfo(data).then(res => {
-
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
 				})
 			}
 		}
@@ -125,6 +127,7 @@
 			border-radius: 40px;
 			font-size: 28px;
 			font-family: PingFang SC;
+			border: 0;
 			font-weight: 500;
 			color: rgba(255, 255, 255, 1);
 		}

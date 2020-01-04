@@ -15,7 +15,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-
+	import { Dialog } from 'vant';
 	export default {
 		data() {
 			return {
@@ -52,9 +52,11 @@
 				return routeLength > 2 ? false : true;
 			},
 			...mapGetters({
-				taber: 'taber'
+				taber: 'taber',
+				TokenId: 'TokenId'
 			})
 		},
+		//"bbb28deb-8fb0-455f-ab47-09285ee6bc98"/tokenId
 		created() {
 			this.select = this.taber;
 		},
@@ -67,20 +69,50 @@
 				]
 			),
 			changestyle(index) {
-				this.settaber(index)
 				this.select = index;
+				this.settaber(index)
 				if(index == 0) {
+
 					this.$router.push('/home')
 				} else if(index == 1) {
 					this.chooseilt(0)
 					this.$router.push('/overall')
 				} else if(index == 2) {
+					if(this.TokenId == '') {
+						console.log(123)
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录后才可以查看呦'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
+					}
+
 					this.$router.push('/shop')
 
 				} else if(index == 3) {
+					if(this.TokenId == '') {
+						console.log(123)
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录后才可以查看呦'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
+					}
 					this.$router.push('/mycar')
-
 				} else if(index == 4) {
+					if(this.TokenId == '') {
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录后才可以查看呦'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
+					}
 					this.$router.push('/mine')
 
 				}
@@ -111,7 +143,7 @@
 			justify-content: center;
 			align-items: center;
 			.icon {
-				font-size:40px;
+				font-size: 40px;
 				margin-bottom: 6px;
 			}
 		}

@@ -1,5 +1,5 @@
 <template>
-	<div class="xianshi">
+	<div class="xianshi" v-if="mlist.lenght>0">
 		<div class="xmiao">
 			<div class="xmiao-t">
 				<p>限时秒杀</p>

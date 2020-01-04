@@ -1,7 +1,7 @@
 <template>
 	<div class="adress">
 		<div class="mor-t">
-			<img @click="back" src="../../../assets/back.jpg" alt="" /> 选择收货地址
+			<img @click="back" src="../../../../static/img/fanhui.png" alt="" />选择收货地址
 		</div>
 		<div class="adress-l">
 			<div style="height: 100%;overflow: auto;">
@@ -250,12 +250,12 @@
 			margin-bottom: 2px;
 			img {
 				position: absolute;
-				height: 36px;
-				width: 20px;
+				height: 40px;
+				width: 40px;
 				z-index: 3;
 				left: 20px;
 				padding-left: 20px;
-				top: 28px;
+				top: 20px;
 			}
 		}
 	}

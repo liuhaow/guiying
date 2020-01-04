@@ -1,75 +1,65 @@
 <template>
 	<div class="youh">
 		<div class="mor-t">
-			<img @click="back" src="../../../assets/back.jpg" alt="" /> 优惠券
+			<img @click="back" src="../../../../static/img/fanhui.png" alt="" /> 优惠券
 		</div>
-		<div class="you-nav" v-if="select==0">
+		<div class="you-nav">
 			<ul class="you-n-ul">
 				<li v-for='(item,index) in list' :key='index' @click="changestyle(index)" :class="{'actt':select===index}">
-					{{item.name}}(45)
+					{{item.name}}
 				</li>
 			</ul>
-			<div class="you-j-l">
+			<div class="you-j-l" v-if="select==0">
 				<ul>
-					<li v-for="(item,index) in 7">
+					<li v-for="(item,index) in listd" :key='index'>
 						<div class="lingqu">
-							<h2><span>&yen;</span>20</h2>
+							<h2><span>&yen;</span>{{item.used_amount}}</h2>
 							<div class="manj">
-								<p>满18使用</p>
-								<h3>2019.10.30-201912.30</h3>
+								<p>满{{item.with_amount}}使用</p>
+								<h3>{{item.valid_start_time}}-{{item.valid_end_time}}</h3>
 							</div>
 						</div>
-						<button> 立即领取</button>
+						<button @click="lingqudata(index,item.id)"> 立即领取</button>
 					</li>
 				</ul>
 			</div>
-		</div>
-		<div class="you-nav" v-if="select==1">
-			<ul class="you-n-ul">
-				<li v-for='(item,index) in list' :key='index' @click="changestyle(index)" :class="{'actt':select===index}">
-					{{item.name}}(45)
-				</li>
-			</ul>
-			<div class="you-j-l">
+			<div class="you-j-l" v-if="select==1">
 				<ul>
-					<li v-for="(item,index) in 7">
+					<li v-for="(item,index) in listd" :key='index'>
 						<div class="lingqu">
-							<h2><span>&yen;</span>20</h2>
+							<h2><span>&yen;</span>{{item.used_amount}}</h2>
 							<div class="manj">
-								<p>满18使用</p>
-								<h3>2019.10.30-201912.30</h3>
+								<p>满{{item.with_amount}}使用</p>
+								<h3>{{item.valid_start_time}}-{{item.valid_end_time}}</h3>
 							</div>
 						</div>
 						<button> 去使用</button>
 					</li>
 				</ul>
 			</div>
-		</div>
-		<div class="you-nav" v-if="select==2">
-			<ul class="you-n-ul">
-				<li v-for='(item,index) in list' :key='index' @click="changestyle(index)" :class="{'actt':select===index}">
-					{{item.name}}(45)
-				</li>
-			</ul>
-			<div class="you-j-l you-j-g">
+			<div class="you-j-l you-j-g " v-if="select==2">
 				<ul>
-					<li v-for="(item,index) in 7">
+					<li v-for="(item,index) in listd" :key='index'>
 						<div class="lingqu">
-							<h2><span>&yen;</span>20</h2>
+							<h2><span>&yen;</span>{{item.used_amount}}</h2>
 							<div class="manj">
-								<p>满18使用</p>
-								<h3>2019.10.30-201912.30</h3>
+								<p>满{{item.with_amount}}使用</p>
+								<h3>{{item.valid_start_time}}-{{item.valid_end_time}}</h3>
 							</div>
 						</div>
-						<button> 已使用</button>
+						<button>已过期</button>
 					</li>
 				</ul>
 			</div>
 		</div>
+
 	</div>
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { youhuiData, youhuilinquData } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -85,8 +75,26 @@
 						name: '已过期'
 					}
 
-				]
+				],
+				listd: []
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId,
+				type: 1
+			}
+			youhuiData(data).then(res => {
+				if(res.data.code == 200) {
+					this.listd = res.data.data
+				}
+			})
+
 		},
 		methods: {
 			back() {
@@ -94,9 +102,42 @@
 
 			},
 			changestyle(index) {
-				this.select = index
+				this.select = index;
+				let chost = index + 1
+				let data = {
+					token: this.TokenId,
+					type: chost
+				}
+				youhuiData(data).then(res => {
+					if(res.data.code == 200) {
+						this.listd = res.data.data
+					}
+				})
 
 			},
+			lingqudata(ind, idt) {
+				let data = {
+					coupons_id: idt,
+					token: this.TokenId,
+
+				}
+				console.log(data)
+				youhuilinquData(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						this.listd.splice(ind, 1);
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			}
 		}
 	}
 </script>
@@ -130,8 +171,8 @@
 								}
 							}
 						}
-						button{
-							background:rgba(204,204,204,1)!important;
+						button {
+							background: rgba(204, 204, 204, 1)!important;
 						}
 					}
 				}
@@ -225,8 +266,8 @@
 			margin-bottom: 2px;
 			img {
 				position: absolute;
-				height: 36px;
-				width: 20px;
+				height: 40px;
+				width: 40px;
 				z-index: 3;
 				left: 20px;
 				padding-left: 20px;

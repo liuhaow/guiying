@@ -2,7 +2,7 @@
 	<div class="addxuqu">
 		<headt message='意见与反馈'></headt>
 		<div class="a-d-d">
-			<textarea v-model="title"  placeholder="我们想听听你的心声，如果愿意，你也可以留下联系方式，我们期待与你的真诚沟通。"></textarea>
+			<textarea v-model="title" placeholder="我们想听听你的心声，如果愿意，你也可以留下联系方式，我们期待与你的真诚沟通。"></textarea>
 			<p>{{this.titleMaxLength - this.title.length}}/150</p>
 		</div>
 		<div class="btnd">
@@ -15,8 +15,8 @@
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { yijianData} from '@/api/mine'
-	
+	import { yijianData } from '@/api/mine'
+
 	export default {
 		data() {
 			return {
@@ -42,16 +42,30 @@
 		},
 		methods: {
 			nextData() {
-				let data={
-					content:this.title,
-					token:this.TokenId
+				if(!this.title) {
+					Notify({
+						type: 'warning',
+						message: '您需要写点东西'
+					});
+					return
 				}
-				yijianData(data).then(res=>{
-					if(res.data.code == 200){
-						this.title=''
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+				let data = {
+					content: this.title,
+					token: this.TokenId
+				}
+
+				yijianData(data).then(res => {
+					if(res.data.code == 200) {
+						this.title = ''
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}
@@ -86,7 +100,6 @@
 				font-family: PingFang SC;
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
-
 			}
 		}
 		.a-d-d {

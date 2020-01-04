@@ -23,31 +23,31 @@
 				select: 0,
 				lsit: [{
 						name: '我的地址',
-						img: '../../../static/img/doizy.png'
+						img: './static/img/doizy.png'
 					},
 					{
 						name: '去开票',
-						img: '../../../static/img/kpio.png'
+						img: './static/img/kpio.png'
 					}, {
 						name: '检疫证明',
-						img: '../../../static/img/jyi.png'
+						img: './static/img/jyi.png'
 					}, {
 						name: '我的钥匙',
-						img: '../../../static/img/yaods.png'
+						img: './static/img/yaods.png'
 					},
 					{
 						name: '退押金',
-						img: '../../../static/img/yyjin.png'
+						img: './static/img/yyjin.png'
 					},
 					{
 						name: '新品需要',
-						img: '../../../static/img/xppi.png'
+						img: './static/img/xppi.png'
 					}, {
 						name: '资质条款',
-						img: '../../../static/img/ziuan.png'
+						img: './static/img/ziuan.png'
 					}, {
 						name: '我是配送员',
-						img: '../../../static/img/psy.png'
+						img: './static/img/psy.png'
 					}
 				]
 			}

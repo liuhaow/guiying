@@ -3,20 +3,42 @@
 		<headt message='资质证明'></headt>
 		<div class="z-z-m">
 			<ul>
-				<li v-for='(item,index) in 10'><img src="https://img.yzcdn.cn/vant/leaf.jpg" alt="" /></li>
+				<li v-for='(item,index) in mlist' :key='index'>
+				<img :src="item.image" alt="" />
+				</li>
 			</ul>
 		</div>
 	</div>
 </template>
 
 <script>
-	import headt from '../../../components/heda'
+	import headt from '../../../components/heda' 
+	import { zhiziZming } from '@/api/mine'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
 	export default {
 		data() {
-			return {}
+			return {
+			mlist:[]
+			}
 		},
 		components: {
 			headt
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data={
+				token:this.TokenId
+			}
+			zhiziZming(data).then(res => {
+				if(res.data.code == 200){
+					this.mlist= res.data.data
+				}
+			})
 		},
 		methods: {
 			

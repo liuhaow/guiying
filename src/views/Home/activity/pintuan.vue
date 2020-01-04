@@ -89,6 +89,8 @@
 	import { Notify } from 'vant';
 	import { tuangoudetail } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
+	import { Dialog } from 'vant';
+	
 	export default {
 		data() {
 			return {
@@ -130,6 +132,16 @@
 		},
 		methods: {
 			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
 				let data = {
 					token: this.TokenId,
 					cid: idt,
@@ -154,6 +166,15 @@
 				})
 			},
 			addShopdata(idt) {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
 				let data = {
 					token: this.TokenId,
 					cid: idt,

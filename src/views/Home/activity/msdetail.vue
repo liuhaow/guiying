@@ -86,6 +86,7 @@
 	import pinglun from './pinglun'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
+	import { Dialog } from 'vant';
 	
 	import { Mkilldetail } from '@/api/api'
 	import {addshopcar} from '@/api/mine'
@@ -130,6 +131,16 @@
 		},
 		methods: {
 			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
 				let data = {
 					token: this.TokenId,
 					cid: idt,
@@ -154,6 +165,16 @@
 				})
 			},
 			addShopdata(idt) {
+				if(this.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
 				let data = {
 					token: this.TokenId,
 					cid: idt,

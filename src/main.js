@@ -10,10 +10,12 @@ import axios from 'axios'
 import 'mint-ui/lib/style.css'
 import Vant from 'vant'
 import 'vant/lib/index.css'
-import '@/common/font/reset.css'
-import '@/common/font/iconfont.css'
-import '@/common/font/iconfont.js'
+import '@/assets/Iconfont/css/reset.css'
+import '@/assets/Iconfont/css/iconfont.css'
+import '@/assets/Iconfont/font/iconfont.js'
+import Mui from 'vue-awesome-mui';
 
+Vue.use(Mui);
 Vue.use(MintUI)
 Vue.use(Vant)
 Vue.prototype.$ajax = axios

@@ -12,7 +12,7 @@
 		</div>
 		<div class="p-t-f">
 			<div style="border: none!important;">
-				<h2><span style="opacity: 0;">*</span>邮箱</h2> <input type=""  v-model="email" placeholder="请输入纳税人识别号" name="" id="" value="" />
+				<h2><span style="opacity: 0;">*</span>邮箱</h2> <input type="" v-model="email" placeholder="请输入纳税人识别号" name="" id="" value="" />
 			</div>
 		</div>
 		<div class="p-t-d">
@@ -41,7 +41,7 @@
 		<div class="butn">
 
 			<button @click="btnDatatijiao">提交</button>
-			
+
 		</div>
 	</div>
 
@@ -53,22 +53,11 @@
 	export default {
 		data() {
 			return {
-				select: 2,
-				chd: 2,
-				list: [{
-						name: '已申请发票'
-					},
-					{
-						name: '已开发票'
-					},
-					{
-						name: '发票开票信息 '
-					}
-				],
-				name:'',
+				name: '',
 				taxid: '',
 				addr: '',
 				mobile: '',
+				email: '',
 				bank_account: '',
 				account_num: '',
 				contact_person: '',
@@ -77,10 +66,42 @@
 
 			}
 		},
-
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
-			btnDatatijiao(){
-				console.log(2)
+			btnDatatijiao() {
+				let data = {
+					type: 2,
+					token: this.TokenId,
+					name: this.name,
+					taxid: this.taxid,
+					addr: this.addr,
+					mobile: this.mobile,
+					bank_account: this.bank_account,
+					contact_person: this.contact_person,
+					account_num: this.account_num,
+					phone: this.phone,
+					email: '1221',
+					dettail_addr: this.dettail_addr
+				}
+				console.log(data)
+				fapiaosqInfo(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}

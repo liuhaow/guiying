@@ -1,7 +1,7 @@
 <template>
 	<div class="neword">
 		<ul v-if='shif' class="peis-z">
-			<li v-for="item in 20" class="peis-list">
+			<li v-for="(item,index) in songdao" :key='index' class="peis-list">
 				<div class="quhuo">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
@@ -44,12 +44,38 @@
 </template>
 
 <script>
+	
+	import { yigongdaoInfo } from '@/api/api'
+	import { Notify } from 'vant';
+	import { mapGetters, mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
-				shif: true
+				shif: true,
+				songdao:[]
 			}
-		}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			yigongdaoInfo(data).then(res => {
+				if(res.data.code == 200) {
+					this.songdao = res.data.data
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+				}
+			})
+		
+		},
 	}
 </script>
 

@@ -4,7 +4,7 @@
 			<div class="mh-t-t">
 				<div class="m-tou-l">
 					<div class="m-tou">
-						<img class="" :src="userdata.avatar" />
+						<img class="" :src="userinfo.avatar" />
 					</div>
 
 					<div class="m-tou-mc">
@@ -29,6 +29,10 @@
 					<li @click='youhuData'>
 						<p>{{coupons_num}}</p>
 						<p>优惠券(张)</p>
+					</li>
+					<li @click="jifenqian">
+						<p>积分</p>
+						<p>签到</p>
 					</li>
 
 				</ul>
@@ -55,7 +59,7 @@
 		</div>
 		<div class="chongzhi">
 			<div class="dan-t">
-				<p>在线充值</p>
+				<p >在线充值</p>
 
 			</div>
 			<ul class="czhilist">
@@ -69,7 +73,7 @@
 
 			</ul>
 			<div class="cbtn">
-				<button>立即充值</button>
+				<button @click='chongzData'>立即充值</button>
 			</div>
 		</div>
 	</div>
@@ -89,17 +93,17 @@
 				coupons_num: '',
 				lsit: [{
 						name: '待付款',
-						img: '../../../static/img/dfk.png'
+						img: './static/img/dfk.png'
 					},
 					{
 						name: '待收货',
-						img: '../../../static/img/dfh.png'
+						img: './static/img/dfh.png'
 					}, {
 						name: '待评价',
-						img: '../../../static/img/dpj.png'
+						img: './static/img/dpj.png'
 					}, {
 						name: '售后服务',
-						img: '../../../static/img/shoiuh.png'
+						img: './static/img/shoiuh.png'
 					},
 				],
 				list: [{
@@ -127,12 +131,13 @@
 		},
 		computed: {
 			...mapGetters({
-				userdata: 'userData'
+				TokenId: 'TokenId'
+				
 			})
 		},
 		mounted() {
 			let data = {
-				token: this.userdata.token
+				token: this.TokenId
 			}
 			mineInfo(data).then(res => {
 
@@ -162,6 +167,11 @@
 			qiankData() {
 				var that = this
 				that.$router.push('/mine/qiank')
+			},
+			jifenqian(){
+				var that = this
+				that.$router.push('/jifen/jifen')
+				
 			},
 			youhuData() {
 				var that = this
@@ -345,7 +355,7 @@
 				display: flex;
 				justify-content: space-between;
 				li {
-					width: 33%;
+					width: 25%;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;

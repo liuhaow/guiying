@@ -29,6 +29,8 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	import {addshopcar} from '@/api/mine'
+	import { Dialog } from 'vant';
+	
 	export default {
 		data() {
 			return {
@@ -62,6 +64,16 @@
 				
 			},
 			addhouwuAdd(idt){
+				if(this.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
 				let data={
 					token:this.TokenId,
 					cid:idt,

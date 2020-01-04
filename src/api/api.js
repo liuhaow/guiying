@@ -18,6 +18,12 @@ export const loginInfo = data => Axios({
 	method: 'post',
 	data
 })
+//搜索
+export const seachData= data => Axios({
+	url:'/api/allcategories/search',
+	method: 'post',
+	data
+})
 //首页轮播
 export const lunboData = data=>Axios({
 	url:'/api/index/banners',
@@ -79,4 +85,79 @@ export const shangpingData = data =>Axios({
 	method:'post',
 	data
 })
+//搜索功能
 
+export const seachinfo = data =>Axios({
+	url:'/api/allcategories/search',
+	method:'post',
+	data
+})
+//活动专区 新品尝鲜
+export const Newtryinfo = data =>Axios({
+	url:'/api/index/worth_buy_list',
+	method:'post',
+	data
+})
+//会员专区
+
+export const Vipinfodata = data =>Axios({
+	url:'/api/personal/member_growth_value',
+	method:'post',
+	data
+})
+//会员等级
+export const Vipinfodeng = data =>Axios({
+	url:'/api/personal/user_grade',
+	method:'post',
+	data
+})
+//会员规则
+export const Vipinforule = data =>Axios({
+	url:'/api/personal/member_rule',
+	method:'post',
+	data
+})
+//积分规则
+export const Jifeninforule = data =>Axios({
+	url:'/api/personal/score_rule',
+	method:'post',
+	data
+})
+//客服id
+export const kefuId = data =>Axios({
+	url:'/api/index/kf_list',
+	method:'post',
+	data
+})
+
+//最新订单
+export const peisongdata = data =>Axios({
+	url:'/api/delivery/order_list',
+	method:'post',
+	data
+})
+///取货地址
+
+export const peisongqu = data =>Axios({
+	url:'api/delivery/addr',
+	method:'post',
+	data
+})
+//接单
+export const jiedanData = data =>Axios({
+	url:'/api/delivery/orders',
+	method:'post',
+	data
+})
+//配送中
+export const peisongzHong = data =>Axios({
+	url:'/api/delivery/ordering',
+	method:'post',
+	data
+})
+//已完成
+export const yigongdaoInfo = data =>Axios({
+	url:'/api/delivery/order_over',
+	method:'post',
+	data
+})

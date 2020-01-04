@@ -3,18 +3,13 @@
 		<headt message='消息中心'></headt>
 		<div class="a-d-d">
 			<ul>
-				<li v-for='item in 20' @click="detailData()">
+				<li v-for='(item,index) in mlist' :key='index' @click="detailData(item.content)">
 					<div class="m-s-a-t">
 						公告
 					</div>
 					<div class="m-s-a-f">
-						<h2>关于元旦节放假通知！</h2>
-						<h3>
-                                中国铁路客户服务中心(12306网)是铁路服务客户的
-重要窗口信息查询服务。
-                            </h3>
-						<h4>2019-12-03  08:23</h4>
-
+						<h2>{{item.title}}</h2>
+						<h4>{{item.create_time}}</h4>
 					</div>
 				</li>
 			</ul>
@@ -25,19 +20,42 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { indexmessage } from '@/api/api'
+	import { Notify } from 'vant';
+
 	export default {
 		data() {
 			return {
-
+				mlist: []
 			}
 		},
 		components: {
 			headt
 		},
+		mounted() {
+			let data = {
+				page: 1
+			}
+			indexmessage(data).then(res => {
+				if(res.data.code == 200) {
+					this.mlist = res.data.data.notice
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+				}
+			})
+		},
 		methods: {
-			detailData(){
-					this.$router.push('/home/mgeList')
-				
+			detailData(idt) {
+				this.$router.push({
+					path: '/home/mgeList',
+					query: {
+						contd: idt
+					}
+				})
+
 			}
 		}
 	}

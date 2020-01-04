@@ -4,76 +4,214 @@
 			<div class="j-f-t-c">
 				<div class="duihaun">
 					<h3>是否兑换当前积分？</h3>
-					<h4>您当前有5568积分</h4>
+					<h4>您当前有{{datinfo.score}}积分</h4>
 					<div class="dui-btn">
-						<h2  @click="duih=false">取消</h2>
+						<h2 @click="duih=false">取消</h2>
 						<h2 class="makes" @click="makeData">确定</h2>
 					</div>
 				</div>
 				<img @click="duih=false" src="../../../../static/img/gbi.png" alt="" />
 			</div>
 		</div>
+
 		<div class="j-f-t">
 			<h2 @click="back"><img src="../../../../static/img/fanhui.png" alt="" /></h2>
 			<h3>我的积分</h3>
-			<h4>积分规则</h4>
+			<h4 @click="jifenData()">积分规则</h4>
 		</div>
-		<div class="j-f-b-n">
-			<div class="j-f-b-n-l">
-				<h3>我的积分</h3>
-				<h4>50<span>=0.50元</span></h4>
+		<div class="ji-info">
+			<div class="j-f-b-n">
+				<div class="j-f-b-n-l">
+					<h3>我的积分</h3>
+					<h4>{{datinfo.score}}<span>={{datinfo.money}}元</span></h4>
+				</div>
+				<h2 class="j-f-b-n-r" @click="duih=true"> 兑换积分</h2>
 			</div>
-			<h2 class="j-f-b-n-r" @click="duih=true"> 兑换积分</h2>
-		</div>
 
-		<div class="qiand">
-			<div class="qiand-t">
-				<h2>连签30天，共可获15元买菜金</h2>
-				<h3>连签<span>2</span>/30天</h3>
+			<div class="qiand">
+				<div class="qiand-t">
+					<h2>连签30天，共可获15元买菜金</h2>
+					<h3>连签<span>{{datinfo.continuous}}</span>天</h3>
+				</div>
+				<div class="qiand-n">
+					<ul>
+						<li v-for="(item,index) in list" :key='index' :class="{'actt':item.selt}">
+							<div class="" v-if="item.selt">
+								<img src="../../../../static/img/qiand.png" alt="" />
+								<h2>签到</h2>
+							</div>
+							<div class="" v-else>
+								<img src="../../../../static/img/jifen.png" alt="" />
+								<h2>未签到</h2>
+							</div>
+
+						</li>
+					</ul>
+				</div>
+				<div class="qiand-f">
+					<button class="qianw" v-if="is_qd==0" @click="qidaodyInfo">每日签到+50积分</button>
+					<button class="qiang" v-else>今日已签到，明天再来吧~</button>
+
+				</div>
 			</div>
-			<div class="qiand-n">
+			<div class="qiandao">
+				<h3>积分明细</h3>
 				<ul>
-					<li v-for="(item,index) in 30">
-						<div class="">
-							<img src="../../../../static/img/jifen.png" alt="" />
-							<h2>{{item}}天</h2>
+					<li v-for='(item,index) in listinfo' :key='index'>
+						<div class="q-d-ao">
+							<h2 v-if='item.type == 1'>签到</h2>
+							<h2 v-else>兑换</h2>
+							<p> <span>{{item.create_time}}</span></p>
 						</div>
+						<h4 v-if='item.type == 1'> +{{item.score}} </h4>
+						<h4 v-else class="jians"> -{{item.score}} </h4>
 
 					</li>
 				</ul>
 			</div>
-			<div class="qiand-f">
-				<button>每日签到+50积分</button>
-			</div>
-		</div>
-		<div class="qiandao">
-			<h3>积分明细</h3>
-			<ul>
-				<li v-for='(item,index) in 10' :key='index'>
-					<div class="q-d-ao">
-						<h2>签到</h2>
-						<p><span>9-20</span> <span>18:20:26</span></p>
-					</div>
-					<h4> +50 </h4>
-				</li>
-			</ul>
 		</div>
 	</div>
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { jifenDatainfo, qiandaoinfo, jifnlistinfo, jifnduihuaninfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				duih: false
+				duih: false,
+				continuous: '',
+				datinfo: '',
+				is_qd: '0',
+				listinfo: [],
+				list: [{
+						selt: false
+					},
+					{
+
+						selt: false
+					},
+					{
+
+						selt: false
+					},
+					{
+
+						selt: false
+					},
+					{
+
+						selt: false
+					},
+					{
+
+						selt: false
+					},
+					{
+
+						selt: false
+					}
+				]
 			}
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			this.huoquedetai()
+			this.huoqulist()
+
+		},
 		methods: {
+			huoquedetai() {
+				let data = {
+					token: this.TokenId
+				}
+				jifenDatainfo(data).then(res => {
+					if(res.data.code == 200) {
+						this.datinfo = res.data.data;
+						let continuous = res.data.data.continuous%7;
+						
+						
+						for(var i=0;i< continuous;i++){
+							this.list[i].selt = true
+						}						
+						this.is_qd = res.data.data.is_qd
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			},
+			huoqulist() {
+				let pary = {
+					token: this.TokenId,
+					page: 1
+				}
+				jifnlistinfo(pary).then(res => {
+					if(res.data.code == 200) {
+						this.listinfo = res.data.data
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			},
 			back() {
 				this.$router.go(-1)
 			},
 			makeData() {
+				let data = {
+					token: this.TokenId
+				}
+				jifnduihuaninfo(data).then(res => {
+					if(res.data.code == 200) {
+						this.huoquedetai()
+						this.huoqulist()
+						this.duih = false
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
 
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			},
+			jifenData() {
+				this.$router.push('/jifen/jifenrule')
+			},
+			qidaodyInfo() {
+				let data = {
+					token: this.TokenId
+				}
+				qiandaoinfo(data).then(res => {
+					if(res.data.code == 200) {
+						this.huoquedetai()
+						this.huoqulist()
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}
@@ -87,8 +225,12 @@
 		top: 0;
 		bottom: 0;
 		overflow: auto;
-		padding-bottom: 40px;
-		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		.ji-info {
+			flex: 1;
+			overflow: auto;
+		}
 		.j-f-d-h {
 			height: 100%;
 			position: fixed;
@@ -112,22 +254,22 @@
 					height: 300px;
 					background: rgba(255, 255, 255, 1);
 					border-radius: 10px;
-					display:flex;
+					display: flex;
 					flex-direction: column;
 					justify-content: space-between;
-					.dui-btn{
+					.dui-btn {
 						display: flex;
 						height: 88px;
 						border-top: 2px solid #E1E1E1;
-						h2{
+						h2 {
 							width: 50%;
 							height: 88px;
 							line-height: 88px;
 							text-align: center;
-							font-size:26px;
+							font-size: 26px;
 							color: #999;
 						}
-						.makes{
+						.makes {
 							border-left: 2px solid #E1E1E1;
 							color: #FC9C15!important;
 						}
@@ -140,9 +282,7 @@
 					}
 					h4 {
 						font-size: 26px;
-
 						text-align: center;
-						
 						color: rgba(252, 156, 21, 1);
 					}
 				}
@@ -182,6 +322,14 @@
 				display: flex;
 				justify-content: center;
 				margin-top: 60px;
+				.qianw {
+					color: rgba(228, 163, 71, 1);
+					background: linear-gradient(0deg, rgba(247, 210, 78, 1), rgba(245, 244, 154, 1));
+				}
+				.qiang {
+					background: #E1E1E1;
+					color: #999999;
+				}
 				button {
 					width: 670px;
 					height: 80px;
@@ -189,9 +337,6 @@
 					line-height: 80px;
 					text-align: center;
 					border: none;
-					color: rgba(228, 163, 71, 1);
-					background: linear-gradient(0deg, rgba(247, 210, 78, 1), rgba(245, 244, 154, 1));
-					box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.3);
 					border-radius: 40px;
 				}
 			}
@@ -202,8 +347,16 @@
 					width: auto;
 					padding-left: 20px;
 					box-sizing: border-box;
+					.actt {
+						background: #f6f6f6!important;
+						div{
+							h2{
+								color: #999!important;
+							}
+						}
+					}
 					li {
-						width: 86px;
+						width: 96px;
 						height: 146px;
 						background: #FFF9D9;
 						margin-right: 28px;
@@ -231,7 +384,6 @@
 			}
 		}
 		.qiandao {
-			height: 680px;
 			width: 96%;
 			background: #FFF;
 			margin: 30px auto 0;
@@ -247,7 +399,8 @@
 				color: rgba(0, 0, 0, 1);
 			}
 			ul {
-				height: 600px;
+				background: #fff;
+				max-height: 1000px;
 				overflow: auto;
 				li {
 					display: flex;
@@ -273,6 +426,9 @@
 					h4 {
 						font-size: 36px;
 						color: rgba(252, 156, 21, 1);
+					}
+					.jians {
+						color: #3FB94D!important;
 					}
 				}
 			}

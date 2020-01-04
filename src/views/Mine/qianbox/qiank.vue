@@ -2,52 +2,32 @@
 	<div class="qiank">
 		<div class="c-head">
 			<h1 @click="back">
-				<img src="../../../../static/back.jpg"/>
+				<img src="../../../../static/img/fanhui.png"/>
 			</h1>
 			<h2>欠款</h2>
-			<h3>明细</h3>
+			<h3 @click="mingxidata">明细</h3>
 		</div>
 		<div class="qianq">
 			<h2>欠款金额</h2>
-			<h3>52,000</h3>
+			<h3>{{debt}}</h3>
 			<h4>为了日后更好的合作，请您尽快还款呦~</h4>
 		</div>
 		<div class="chong-f-s">
 			<h2>还款方式</h2>
-			<div class="chong-f-chos">
-				<ul>
-					<li>
-						<div class="z-f-c-f">
-							钱包余额：¥8848.60
-						</div>
-						<p @click="chos=1">
-							<img v-if="chos==1" src="../../../../static/imges/my/cho.png" />
+			<van-radio-group v-model="radio">
+				<van-cell-group>
+					<van-cell :title="money" clickable @click="radio = '1'">
+						<van-radio slot="right-icon" name="1" />
+					</van-cell>
+					<van-cell title="微信" clickable @click="radio = '2'">
+						<van-radio slot="right-icon" name="2" />
+					</van-cell>
+					<van-cell title="支付宝" clickable @click="radio = '3'">
+						<van-radio slot="right-icon" name="3" />
+					</van-cell>
+				</van-cell-group>
+			</van-radio-group>
 
-							<img v-if="chos==2" src="../../../../static/imges/my/quan.png" />
-
-						</p>
-					</li>
-					<li>
-						<div class="z-f-c-w">
-							<img src="http://img1.imgtn.bdimg.com/it/u=4068955607,178387580&fm=26&gp=0.jpg" alt="" />微信支付
-						</div>
-						<p @click="chos=2">
-							<img v-if="chos==2" src="../../../../static/imges/my/cho.png" />
-							<img v-if="chos==1" src="../../../../static/imges/my/quan.png" />
-						</p>
-					</li>
-					<li>
-						<div class="z-f-c-f">
-							<img src="http://img1.imgtn.bdimg.com/it/u=4068955607,178387580&fm=26&gp=0.jpg" alt="" />支付宝支付
-						</div>
-						<p @click="chos=3">
-							<img v-if="chos==1" src="../../../../static/imges/my/quan.png" />
-
-							<img v-if="chos==2" src="../../../../static/imges/my/cho.png" />
-						</p>
-					</li>
-				</ul>
-			</div>
 		</div>
 		<div class="qian-f-f">
 			<button>立即还款</button>
@@ -56,18 +36,43 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { zichanyue } from '@/api/mine'
 	export default {
 		data() {
 			return {
-
+				money:'',
+				debt:'',
 				chos: 1,
-
+				radio: ''
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data={
+				token:this.TokenId
+			}
+			zichanyue(data).then(res => {
+				if(res.data.code == 200){
+					this.money = '钱包余额：'+res.data.data.money,
+					this.debt = res.data.data.debt
+				}
+			})
 		},
 		methods: {
 			back() {
 				this.$router.go(-1)
+			},
+			mingxidata() {
+				var that = this
+				that.$router.push('/mine/hkmingxi')
 			}
+
 		}
 	}
 </script>
@@ -151,7 +156,7 @@
 			}
 		}
 		.qianq {
-			height: 550px;
+			height: 500px;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;
@@ -185,10 +190,13 @@
 			background: #ffff;
 			box-sizing: border-box;
 			h1 {
+				height:100%;
+				display: flex;
+				width: 50px;
+				align-items: center;
 				img {
-					height: 36px;
-					width: 20px;
-					padding: 40px;
+					height: 40px;
+					width: 40px;
 				}
 			}
 			h2 {

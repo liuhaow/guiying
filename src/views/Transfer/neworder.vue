@@ -1,13 +1,13 @@
 <template>
 	<div class="neword">
-		<ul>
-			<li v-for="item in 20">
+		<ul v-if='list.lenght !=0'>
+			<li v-for="(item,index) in list" :key='index'>
 				<div class="quhuo">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
 						<span>取货</span>
 					</h2>
-					<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
+					<h3>{{quhuo}}</h3>
 				</div>
 				<div class="quhuo">
 					<h2>
@@ -15,12 +15,12 @@
 						<span>送达</span>
 					</h2>
 					<div class="gongda">
-						<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
-						<p><span>联系人：</span> <span>联系电话：</span></p>
+						<h3>{{item.addr}}</h3>
+						<p><span>联系人：{{item.name}}</span> <span>联系电话：{{item.mobile}}</span></p>
 					</div>
 
 				</div>
-				<h4 class="jiedan">立即接单</h4>
+				<h4 class="jiedan" @click="jiedanInfo(item.id)">立即接单</h4>
 			</li>
 		</ul>
 
@@ -28,10 +28,75 @@
 </template>
 
 <script>
+	import { peisongqu, peisongdata, jiedanData } from '@/api/api'
+	import { Notify } from 'vant';
+	import { mapGetters, mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
+				quhuo: '',
+				list: []
+			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			peisongqu(data).then(res => {
+				if(res.data.code == 200) {
+					this.quhuo = res.data.data
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+				}
+			})
+			this.listdata()
+		},
+		methods: {
+			listdata() {
+				let data = {
+					token: this.TokenId
+				}
+				peisongdata(data).then(res => {
+					if(res.data.code == 200) {
+						this.list = res.data.data
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			},
+			jiedanInfo(idt) {
+				var that = this
+				let data = {
+					order_id: idt,
+					type: 2,
+					token: that.TokenId
+				}
+				jiedanData(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+						that.listdata()
 
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}
@@ -49,7 +114,7 @@
 			box-sizing: border-box;
 			li {
 				margin: 0 auto 20px;
-				width:96%;
+				width: 96%;
 				height: 422px;
 				background: rgba(255, 255, 255, 1);
 				border-radius: 16px;
@@ -64,11 +129,8 @@
 					font-size: 28px;
 					font-family: PingFang SC;
 					font-weight: 500;
-					border-radius:0 0 16px 16px;
-					
+					border-radius: 0 0 16px 16px;
 					color: rgba(255, 255, 255, 1);
-
-					
 				}
 				.quhuo {
 					display: flex;
@@ -97,6 +159,7 @@
 						line-height: 40px;
 					}
 					.gongda {
+						flex: 1;
 						p {
 							font-size: 28px;
 							font-family: PingFang SC;

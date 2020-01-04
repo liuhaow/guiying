@@ -3,14 +3,14 @@
 		<div class="mai-t">
 			<div class="mai-head">
 				<div class="mai-t-l" @click="kefuData">
-					<i slot="icon" class="icon iconfont " >&#xe665;</i>
-					
+					<i slot="icon" class="icon iconfont ">&#xe665;</i>
+
 				</div>
 				<div class="mai-t-c" @click="seachData">
-					<i slot="icon" class="icon iconfont " >&#xe615;</i>养生花茶
+					<i slot="icon" class="icon iconfont ">&#xe615;</i>养生花茶
 				</div>
-				<div class="mai-t-r" @click="messData()">					
-					<i slot="icon" class="icon iconfont " >&#xe61e;</i>				
+				<div class="mai-t-r" @click="messData()">
+					<i slot="icon" class="icon iconfont ">&#xe61e;</i>
 				</div>
 			</div>
 			<div class="mai-sw">
@@ -26,10 +26,10 @@
 		<div class="nav-l">
 			<div class="nav-t">
 				<div class="la-b-a">
-				<i slot="icon" class="icon iconfont " >&#xe61f;</i>
-					
+					<i slot="icon" class="icon iconfont ">&#xe61f;</i>
+
 				</div>
-				<div class="marquee_box ">					
+				<div class="marquee_box ">
 					<ul class="marquee_list" :class="{marquee_top:animate}">
 						<li v-for="(item, index) in announcementArr" :key="index">
 							<span>{{item.title}}</span>
@@ -53,16 +53,17 @@
 					<h2>值得买的</h2>
 					<h3>TOP清单</h3>
 					<p class="imgh">
-						<img src="http://a.hiphotos.baidu.com/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg" alt="" />
-						<img src="http://a.hiphotos.baidu.com/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg" alt="" />
+						<img src="../../assets/xia.png" alt="" />
+						<img src="../../assets/xia1.png" alt="" />
 					</p>
 				</div>
 				<div class="zhide">
 					<h2>值得买的</h2>
 					<h3>TOP清单</h3>
 					<p class="imgh">
-						<img src="http://a.hiphotos.baidu.com/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg" alt="" />
-						<img src="http://a.hiphotos.baidu.com/image/h%3D300/sign=a62e824376d98d1069d40a31113eb807/838ba61ea8d3fd1fc9c7b6853a4e251f94ca5f46.jpg" alt="" />
+						<img src="../../assets/xia.png" alt="" />
+						<img src="../../assets/xia1.png" alt="" />
+
 					</p>
 				</div>
 
@@ -89,8 +90,10 @@
 	import Timeout from '@/views/Home/Timeout'
 	import Tuangou from '@/views/Home/Tuangou'
 	import Navlist from '@/views/Home/Navlist'
-	import { mapActions } from 'vuex'
+
+	import { mapGetters, mapActions } from 'vuex'
 	
+	import { Dialog } from 'vant';
 	import { lunboData, shangpingData, indexmessage } from '@/api/api'
 
 	export default {
@@ -98,36 +101,36 @@
 			return {
 				list: [{
 						name: '新鲜蔬菜',
-						img: '../../../static/img/sfsd.png',
+						img: './static/img/sfsd.png',
 					},
 					{
 						name: '肉禽蛋品',
-						img: '../../../static/img/rouy.png',
+						img: './static/img/rouy.png',
 					}, {
 						name: '粮油米面',
-						img: '../../../static/img/lyou.png',
+						img: './static/img/lyou.png',
 					}, {
 						name: '酒水饮料',
-						img: '../../../static/img/jius.png',
+						img: './static/img/jius.png',
 					}, {
 						name: '调味干货',
-						img: '../../../static/img/ytiw.png',
+						img: './static/img/ytiw.png',
 					}, {
 						name: '水产海鲜',
-						img: '../../../static/img/shuigb.png',
+						img: './static/img/shuigb.png',
 					}, {
 						name: '餐厨用品',
-						img: '../../../static/img/canc.png',
+						img: './static/img/canc.png',
 					}, {
 						name: '火锅专用',
-						img: '../../../static/img/hguo.png',
+						img: './static/img/hguo.png',
 					}, {
 						name: '烧烤专用',
-						img: '../../../static/img/shaok.png',
+						img: './static/img/shaok.png',
 					},
 					{
 						name: '会员专享',
-						img: '../../../static/img/hyuan.png',
+						img: './static/img/hyuan.png',
 					}
 
 				],
@@ -182,13 +185,18 @@
 			}
 
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		methods: {
 			...mapActions(
 				[
-					
+
 					'chooseilt',
 					'settaber'
-					
+
 				]
 			),
 			showMarquee: function() {
@@ -199,29 +207,47 @@
 					this.animate = false
 				}, 1000)
 			},
-			messData(){
-					this.$router.push('/home/mecenter')
-				
+			messData() {
+				this.$router.push('/home/mecenter')
+
 			},
-			kefuData(){
-					this.$router.push('/home/chat')
+			kefuData() {
+					console.log(1)
 				
+				if(this.TokenId == '') {
+					console.log(2)
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					
+					return
+				}
+				
+				this.$router.push('/home/chat')
 			},
-			seachData(){
-				
-					this.$router.push('/home/seach')
-				
+			seachData() {
+
+				this.$router.push('/home/seach')
+
 			},
-			fashData(){
-					this.$router.push('/home/fash')
-				
+			fashData() {
+//				this.$router.push('/home/fash')
+
 			},
-			tiaozhuan(idt){
+			tiaozhuan(idt) {
 				console.log(idt)
 				this.chooseilt(idt)
-				this.settaber(1)
-				this.$router.push('/overall')
-				
+				if(idt == 9) {
+					this.$router.push('/vip/Vipmeber')
+
+				} else {
+					this.$router.push('/overall')
+					this.settaber(1)
+				}
+
 			}
 		}
 	};
@@ -243,7 +269,6 @@
 		.haob {
 			width: 721px;
 			height: 206px;
-			background: darkcyan;
 			img {
 				width: 100%;
 				height: 100%;
@@ -294,7 +319,6 @@
 				}
 				.imgh {
 					height: 147px;
-					width: 110px;
 					display: flex;
 					img {
 						height: 147px;
@@ -318,12 +342,11 @@
 			align-items: center;
 			position: relative;
 			padding-left: 40px;
-
-			.la-b-a{
+			.la-b-a {
 				position: absolute;
 				left: 5px;
 				top: 4px;
-				i{
+				i {
 					color: #FD8048;
 					font-size: 34px;
 				}
@@ -334,7 +357,6 @@
 				width: 60%;
 				height: 30px;
 				overflow: hidden;
-
 				.marquee_top {
 					transition: all 0.5s;
 					margin-top: -30px
@@ -347,7 +369,7 @@
 					li {
 						height: 30px;
 						line-height: 30px;
-						font-size: 12px;
+						font-size: 32px;
 						padding-left: 20px;
 					}
 				}
@@ -359,7 +381,7 @@
 				padding: 0 20px;
 				display: flex;
 				align-items: center;
-				height:100%;
+				height: 100%;
 			}
 		}
 		.nav-list {
@@ -401,8 +423,7 @@
 			.mai-t-l {
 				height: 44px;
 				width: 44px;
-
-				i{
+				i {
 					font-size: 48px;
 					color: #ffff;
 				}
@@ -417,7 +438,7 @@
 				text-align: center;
 				font-size: 28px;
 				color: #ccc;
-				i{
+				i {
 					font-size: 30px!important;
 					margin-right: 4px;
 				}
@@ -425,7 +446,7 @@
 			.mai-t-r {
 				width: 38px;
 				height: 44px;
-				i{
+				i {
 					font-size: 48px;
 					color: #ffff;
 				}

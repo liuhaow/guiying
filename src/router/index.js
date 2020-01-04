@@ -9,7 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/need/login'
+      redirect: '/home'
     },
     {
       path: '/home',
@@ -253,7 +253,7 @@ export default new Router({
     },
     //交易成功
      {
-    	path:'/myorder/bourse',
+    	path:'/myorder/bourse/:id',
     	name: 'bourse',
       component: resolve => require(['@/views/Mine/order/bourse'], resolve),
        meta: {
@@ -481,6 +481,24 @@ export default new Router({
         keepAlive: false 
       }
     },
+    //充值明细
+    {
+    	path:'/mine/mingxi',
+    	name: 'mingxi',
+      component: resolve => require(['@/views/Mine/qianbox/mingxi'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+    //还款明细
+    {
+    	path:'/mine/hkmingxi',
+    	name: 'hkmingxi',
+      component: resolve => require(['@/views/Mine/qianbox/remingxi'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
     {
     	path:'/mine/perpson/nichen',
     	name: 'nichen',
@@ -505,6 +523,7 @@ export default new Router({
         keepAlive: false 
       }
     },
+    //配送员
     {
     	path:'/peisong/transfer',
     	name: 'transfer',
@@ -525,6 +544,14 @@ export default new Router({
     	path:'/jifen/jifen',
     	name: 'jifen',
       component: resolve => require(['@/views/Mine/jifen/jifen'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+    {
+    	path:'/jifen/jifenrule',
+    	name: 'jifenrule',
+      component: resolve => require(['@/views/Mine/jifen/jifenrule'], resolve),
        meta: {
         keepAlive: false 
       }

@@ -5,7 +5,7 @@
 		</van-divider>
 		<ul class="guess-list">
 			<li v-for="(item,index) in mlist">
-				<div class="list-t">
+				<div class="list-t" @click="checkdetail(item.id)">
 					<img :src="item.cover" />
 				</div>
 				<p>{{item.title}}</p>
@@ -13,7 +13,7 @@
 					<h2>&yen;{{item.now_price}}</h2>
 					<h3 @click="addhouwuAdd(item.id)">
 						<img src="../../static/img/jgwc.png" />
-					</h3>					
+					</h3>
 				</div>
 			</li>
 		</ul>
@@ -23,11 +23,11 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { addshopcar ,guessylove} from '@/api/mine'
-	export default{
-		data(){
-			return{
-				mlist:[]
+	import { addshopcar, guessylove } from '@/api/mine'
+	export default {
+		data() {
+			return {
+				mlist: []
 			}
 		},
 		computed: {
@@ -36,31 +36,41 @@
 			})
 		},
 		mounted() {
-			let data={
-				token:this.TokenId
+			let data = {
+				token: this.TokenId
 			}
 			guessylove(data).then(res => {
-				if(res.data.code == 200){
-					this.mlist= res.data.data
+				if(res.data.code == 200) {
+					this.mlist = res.data.data
 				}
 			})
 		},
-		methods:{
-			addhouwuAdd(idt){
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:1
-					
+		methods: {
+			checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
+			},
+			addhouwuAdd(idt) {
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+
 				}
-				addshopcar(data).then(res=>{
+				addshopcar(data).then(res => {
 					console.log(res)
-					if(res.data.code == 200){
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}
@@ -112,10 +122,9 @@
 						font-family: PingFang SC;
 						font-weight: bold;
 						color: #FF6501;
-
 					}
-					h3{
-						img{
+					h3 {
+						img {
 							width: 50px;
 							height: 50px;
 							border-radius: 50%;

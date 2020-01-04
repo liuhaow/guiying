@@ -1,36 +1,36 @@
 <template>
 	<div class="neword">
 		<ul v-if='shif' class="peis-z">
-			<li v-for="item in 20" class="peis-list">
-				<div class="quhuo" @click="sendDetail()">
+			<li v-for="(item,index) in list" :key='index' class="peis-list">
+				<!--<div class="quhuo" @click="sendDetail()">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
 						<span>取货</span>
 					</h2>
 					<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
-				</div>
+				</div>-->
 				<div class="quhuo">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
 						<span>送达</span>
 					</h2>
 					<div class="gongda">
-						<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
-						<p><span>联系人：</span> <span>联系电话：</span></p>
+						<h3>{{item.addr}}</h3>
+						<p><span>联系人：{{item.name}}</span> <span>联系电话：{{item.mobile}}</span></p>
 					</div>
 
 				</div>
 				<h5 class="q-d-xiang">商品清单</h5>
-				<ul class="q-d-l">
-					<li v-for='item in 3'>
-						<img src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
+				<ul class="q-d-l" @click="">
+					<li v-for='(ite,index ) in item.pro' :key='index'>
+						<img :src="ite.cover" alt="" />
 						<div>
-							<p> 沈厅 周庄特产1000g猪蹄酱熟食卤味美食</p>
-							<p><span>4</span>件</p>
+							<p> {{ite.commodity_name}}</p>
+							<p><span>{{ite.commodity_num}}</span>件</p>
 						</div>
 					</li>
 				</ul>
-				<h4 class="jiedan">确定送达</h4>
+				<h4 class="jiedan" @click="jiedanInfo(item.id)">确定送达</h4>
 
 			</li>
 		</ul>
@@ -44,15 +44,65 @@
 </template>
 
 <script>
+	import { peisongzHong,jiedanData } from '@/api/api'
+	import { Notify } from 'vant';
+	import { mapGetters, mapActions } from 'vuex'
 	export default {
 		data() {
 			return {
-				shif: true
+				shif: true,
+				list: []
+
 			}
 		},
-		methods:{
-			sendDetail(){
-				this.$router.push('/peisong/peidetail')			
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			this.peisonlist()
+		},
+		methods: {
+			peisonlist() {
+				let data = {
+					token: this.TokenId
+				}
+				peisongzHong(data).then(res => {
+					if(res.data.code == 200) {
+						this.list = res.data.data
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+			},
+			sendDetail() {
+				this.$router.push('/peisong/peidetail')
+			},
+			jiedanInfo(idt) {
+				var that = this
+				let data = {
+					order_id: idt,
+					type: 3,
+					token: that.TokenId
+				}
+				jiedanData(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+						that.peisonlist()
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}
@@ -112,8 +162,7 @@
 					font-size: 28px;
 					font-family: PingFang SC;
 					font-weight: 500;
-					border-radius:0 0 16px 16px;
-					
+					border-radius: 0 0 16px 16px;
 					color: rgba(255, 255, 255, 1);
 				}
 				.q-d-xiang {

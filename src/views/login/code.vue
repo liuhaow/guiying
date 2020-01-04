@@ -86,7 +86,13 @@
 						if(res.data.code == 200){
 							this.setToken(res.data.data.token)
 							this.setUserData(res.data.data);
-							this.$router.push('/home')
+							if(res.data.data.is_delivery == 0){
+								this.$router.push('/home')
+								
+							}else if(res.data.data.is_delivery == 1){
+								this.$router.push('/peisong/transfer')
+							}
+
 							
 						}
 					})

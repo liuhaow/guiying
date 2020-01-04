@@ -3,7 +3,7 @@
 		<headt message='今日团购'></headt>
 		<div class="a-d-d">
 			<ul>
-				<li v-for='item in mlist' >
+				<li v-for='item in mlist'>
 					<div class="t-g-imh" @click="tuanDatail(item.id)">
 						<img :src="item.goods_cover" alt="" />
 					</div>
@@ -13,7 +13,7 @@
 						<div class="t-g-f-j">
 							<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
 						</div>
-						<div class="t-g-f-b"@click="addhouwuAdd(item.goods_id)">
+						<div class="t-g-f-b" @click="addhouwuAdd(item.goods_id)">
 							<img src="../../../../static/img/jgwc.png" />
 						</div>
 					</div>
@@ -29,8 +29,8 @@
 	import headt from '@/components/heda'
 	import { hometugou } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
-	import {addshopcar} from '@/api/mine'
-	
+	import { addshopcar } from '@/api/mine'
+
 	import { Notify } from 'vant';
 	export default {
 		data() {
@@ -47,35 +47,50 @@
 			})
 		},
 		mounted() {
-			let data ={
-				page:1
+			let data = {
+				page: 1
 			}
-			hometugou(data).then(res =>{
+			hometugou(data).then(res => {
 				console.log(res)
-				if(res.data.code == 200){
+				if(res.data.code == 200) {
 					this.mlist = res.data.data
 				}
 			})
 		},
 		methods: {
 			tuanDatail(idt) {
-				this.$router.push('/pintu/pintuan/'+idt)
+				this.$router.push('/pintu/pintuan/' + idt)
 
 			},
-			addhouwuAdd(idt){
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:2
-					
+			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
 				}
-				addshopcar(data).then(res=>{
-					if(res.data.code == 200){
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 2
+
+				}
+				addshopcar(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}

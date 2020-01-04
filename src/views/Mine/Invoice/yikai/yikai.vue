@@ -155,10 +155,10 @@
 				border-bottom: 2px solid #ddd;
 			}
 			li:nth-child(1) {
-				width: 60%;
+				width: 50%;
 			}
 			li:nth-child(2) {
-				width: 40%;
+				width: 50%;
 			}
 		}
 		.s-p-l {
@@ -175,7 +175,7 @@
 					height: 100px;
 					border-bottom: 2px solid #ddd;
 					p {
-						width: 60%;
+						width:50%;
 						text-align: center;
 						font-size: 28px;
 						font-family: PingFang SC;
@@ -183,7 +183,7 @@
 						color: rgba(51, 51, 51, 1);
 					}
 					h2 {
-						width: 40%;
+						width: 50%;
 						text-align: center;
 						font-size: 28px;
 						font-family: PingFang SC;

@@ -5,19 +5,19 @@
 				<img src="../../../../static/img/fanhui.png"/>
 			</h1>
 			<h2>在线充值</h2>
-			<h3>明细</h3>
+			<h3 @click="mingxidata">明细</h3>
 		</div>
 		<div class="chong-j">
 			<h2>账户余额（元）</h2>
-			<h3>0.00</h3>
+			<h3>{{money}}</h3>
 		</div>
 		<div class="chong-m">
 			<h2>充值金额</h2>
 			<ul class="czhilist">
 				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">
 					<div class="c-l-l">
-						<p>{{item.mony}}<span>元</span></p>
-						<h2>赠送{{item.zsong}}元</h2>
+						<p>{{item.coin}}<span>元</span></p>
+						<h2>赠送{{item.give_coin}}元</h2>
 					</div>
 
 				</li>
@@ -58,42 +58,51 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { zichanyue, RechargeInfo } from '@/api/mine'
 	export default {
 		data() {
 			return {
 				select: 0,
 				chos: 1,
-				list: [{
-						mony: '1000',
-						zsong: '68'
-					},
-					{
-						mony: '500',
-						zsong: '68'
-					},
-					{
-						mony: '300',
-						zsong: '68'
-					},
-					{
-						mony: '100',
-						zsong: '68'
-					}, {
-						mony: '50',
-						zsong: '68'
-					},
-
-				]
+				money: '',
+				list: []
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			RechargeInfo(data).then(res => {
+				if(res.data.code == 200) {
+					this.list = res.data.data
+				}
+			})
+			zichanyue(data).then(res => {
+				if(res.data.code == 200) {
+					this.money = res.data.data.money
+				}
+			})
 		},
 		methods: {
 			changestyle(index) {
 				this.select = index
 
 			},
-			back(){
+			back() {
 				this.$router.go(-1)
+			},
+			mingxidata() {
+				var that = this
+				that.$router.push('/mine/mingxi')
 			}
+
 		}
 	}
 </script>
@@ -113,7 +122,7 @@
 				font-weight: 500;
 				color: rgba(204, 204, 204, 1);
 				margin-bottom: 24px;
-				span{
+				span {
 					color: #40BA4E!important;
 				}
 			}

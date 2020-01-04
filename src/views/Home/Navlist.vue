@@ -10,7 +10,9 @@
 		<div class="nav-list">
 			<ul class="nav-mian">
 				<li v-for="(item,index) in tlist">
-					<div class="nav-l"><img :src="item.cover" alt="" /></div>
+					<div class="nav-l" @click="checkdetail(item.id)">
+						<img :src="item.cover" alt="" />
+					</div>
 					<div class="nav-r">
 						<p class="nav-title">{{item.title}}</p>
 						<div class="nav-z-k">
@@ -31,7 +33,9 @@
 	import { shangpingData } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { addshopcar} from '@/api/mine'
+	import { Dialog } from 'vant';
+	
+	import { addshopcar } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -111,20 +115,40 @@
 			changestyle(idt) {
 				this.selected = idt
 			},
-			addhouwuAdd(idt){
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:1
+			checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
+			},
+			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+					console.log(123)
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
 				}
-				addshopcar(data).then(res=>{
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+				}
+				addshopcar(data).then(res => {
 					console.log(res)
-					if(res.data.code == 200){
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}

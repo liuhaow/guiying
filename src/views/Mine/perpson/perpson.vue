@@ -5,14 +5,13 @@
 			<div class="a-d-d-lst">
 				<h2>头像</h2>
 				<div class="a-d-r">
-					<img src="../../../../static/imges/my/bj.png" />
-					<i slot="icon" class="icon iconfont ">&#xe644;</i>
+					<img :src="userinfo.avatar" />
 				</div>
 			</div>
 			<div class="a-d-d-lst">
 				<h2>昵称</h2>
 				<div class="a-d-r" @click="chooseNic">
-					<h3>陪你到世界终结</h3>
+					<h3>{{userinfo.username}}</h3>
 					<i slot="icon" class="icon iconfont " >&#xe644;</i>
 				</div>
 			</div>
@@ -21,7 +20,7 @@
 					手机号码
 				</h2>
 				<div class="a-d-r" @click="choosePhone()">
-					<h3>13216115876</h3>
+					<h3>{{userinfo.mobile}}</h3>
 					<i slot="icon" class="icon iconfont " >&#xe644;</i>
 				</div>
 			</div>
@@ -49,12 +48,34 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	import { mineInfo } from '@/api/mine'
 	export default {
 		data() {
-			return {}
+			return {
+				fileList: [],
+				userinfo:''
+			}
 		},
 		components: {
 			headt
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+				
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId
+			}
+			mineInfo(data).then(res => {
+
+				if(res.data.code == 200) {
+					this.userinfo = res.data.data.user_info;
+				}
+			})
 		},
 		methods: {
 			chooseNic(){
