@@ -4,14 +4,15 @@
 		<div class="a-d-d">
 			<div class="top-p-t">
 				<van-swipe :autoplay="3000">
-					<van-swipe-item v-for="(image, index) in images" :key="index">
-						<img v-lazy="image" />
+					<van-swipe-item v-for="(imgt, index) in images" :key="index">
+						<img v-lazy="imgt.image" />
 					</van-swipe-item>
 				</van-swipe>
 			</div>
 			<div class="x-q-l">
+
 				<div class="x-q-l-f">
-					<p>大宅蟹礼品券石庄煮大闸蟹6只（389） 阳澄湖大宅蟹</p>
+					<p>{{messgein.title}}</p>
 				</div>
 			</div>
 
@@ -19,42 +20,75 @@
 				<div class="c-s-x-q-c">
 					<h3>参数</h3>
 					<div class="changm">
-						<p>厂名：苏州市阳澄湖九百亩生态农业
-						</p>
-						<p>
-							厂址：昆山巴城厂家
-						</p>
+						<p>品牌：{{messgein.brand}}</p>
+						<p>规格：{{messgein.specification}}</p>
 					</div>
 				</div>
 				<h2 class="c-s-x-h" @click="canshu=true">
 					<i slot="icon" class="icon iconfont ">&#xe644;</i>				
 				</h2>
 			</div>
-			<!--<pinglun></pinglun>-->
+
+			<div class="pinglu">
+				<h1>宝贝评论</h1>
+				<div class="p-l-l-s" v-if="pinglun.length!=0">
+					<ul>
+						<li v-for='(item,index) in pinglun' :key='index'>
+							<div class="l-t-op">
+								<div class="">
+									<img :src="item.avatar" alt="" /><span>{{item.username}}</span>
+								</div>
+								<p>{{item.create_time}}</p>
+							</div>
+							<div class="l-t-nav">
+								<van-rate v-model="item.level" readonly/>
+							</div>
+							<p class="l-t-ft">
+								{{item.content}}
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div class="p-l-f-t" v-if="pinglun.length!=0">
+					<button @click="checkout(messgein.id)">查看更多({{messgein.evl_count}})</button>
+				</div>
+			</div>
+			<div class="xiangq-jie" v-if='messgein.detailspic'>
+				<img v-for="(itd,index) in messgein.detailspic" :src="itd.image" alt="" />
+			</div>
+			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
+		<baokuan></baokuan>
+			
 		</div>
 		<van-goods-action>
-			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata()' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addShoping()' />
-			<van-goods-action-button color="#262C41" type="warning" @click='addShoping()' text="加入购物车" />
-			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping()' text="立即购买" />
+			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
+			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd(messgein.goods_id)' />
+			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd(messgein.goods_id)' text="加入购物车" />
+			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping(messgein.goods_id)' text="立即购买" />
 		</van-goods-action>
-		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '50%' }" >
+		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '40%' }">
 			<div class="can-s-x-q">
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
-				<p class="can-shu">面料：</p>
-				<p>身高：</p>
+				<p class="can-shu">品牌：{{messgein.brand}}</p>
+				<p class="can-shu">规格：{{messgein.specification}}</p>
+				<p class="can-shu">等级：{{messgein.grade}}</p>
+				<p class="can-shu">保存方式：{{messgein.Storage_method}}</p>
+
 			</div>
-		
+
 		</van-popup>
 	</div>
 </template>
 
 <script>
 	import headt from '@/components/heda'
-//	import pinglun from './pinglun'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { putongspInfo } from '@/api/api'
+	import { addshopcar } from '@/api/mine'
+	import { Dialog } from 'vant';
+	import baokuan from '@/components/baokuan'
+	
+	
 	export default {
 		data() {
 			return {
@@ -63,23 +97,120 @@
 					'https://img.yzcdn.cn/vant/apple-2.jpg'
 				],
 				current: 0,
-				canshu: false
+				canshu: false,
+				messgein: '',
+				pinglun: []
+
 			}
 		},
 		components: {
-			headt
-//			pinglun
+			headt,
+			baokuan
+
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let idt = this.$route.params.id
+			console.log(idt)
+			let data = {
+				cid: idt,
+				page:1
+			}
+			putongspInfo(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.messgein = res.data.data;
+					this.pinglun = res.data.data.evl;
+					this.images = res.data.data.mainpic;
+					this.time = res.data.data.countdown;
+				}
+			})
 		},
 		methods: {
-			addShoping() {
-				console.log(1)
+			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 2
+
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			},
-			addShopdata() {
-				console.log('加长')
+			addShopdata(idt) {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 2,
+					classify: 2
+
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 
 			},
 			goShoping() {
 				console.log('立即购买')
+			},
+			checkout(idt) {
+				this.$router.push({
+					path: '/home/pingjia',
+					query: {
+						cid: idt,
+						type:1			
+					}
+				})
+
 			}
 		}
 	}
@@ -89,20 +220,13 @@
 	.addxuqu {
 		padding-bottom: 100px;
 		height: 100%;
-		position: absolute;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		top: 0;
-		display: flex;
-		flex-direction:column ;
 		box-sizing: border-box;
-		>>>.van-popup{
-			.can-s-x-q{
+		>>>.van-popup {
+			.can-s-x-q {
 				height: 100%;
-				padding:70px 20px 0 ;
+				padding: 70px 20px 0;
 				box-sizing: border-box;
-				p{
+				p {
 					font-size: 34px;
 					line-height: 40px;
 					margin: 14px 0;
@@ -111,10 +235,8 @@
 			}
 		}
 		.a-d-d {
-			flex: 1;
-			overflow: auto;
 			.x-q-l {
-				height: 280px;
+				height: 140px;
 				.x-q-l-t {
 					height: 140px;
 					display: flex;
@@ -138,41 +260,36 @@
 							margin-bottom: 30px;
 						}
 						h2 {
-							font-size: 26px;
+							font-size: 32px;
 							font-family: PingFang SC;
 							font-weight: 500;
-							color: rgba(255, 255, 255, 1);
+							display: flex;
+							color: #fff;
+							span {
+								width: 121px;
+								margin-left: 6px;
+								display: block;
+								height: 33px;
+								line-height: 33px;
+								text-align: center;
+								font-size: 24px!important;
+								background: rgba(0, 0, 0, .1);
+								border-radius: 17px;
+							}
 						}
 					}
 					.x-q-l-t-r {
 						width: 40%;
 						height: 140px;
 						display: flex;
-						flex-direction: column;
 						justify-content: center;
 						align-items: center;
 						background: linear-gradient(90deg, rgba(249, 224, 170, 1), rgba(255, 237, 198, 1));
-						p {
-							width: 148px;
-							height: 40px;
-							line-height: 40px;
-							font-size: 24px;
-							color: #fff;
-							text-align: center;
-							background: linear-gradient(90deg, rgba(255, 101, 1, 1), rgba(254, 134, 56, 1));
-							border-radius: 15px;
-							margin-bottom: 30px;
-						}
 						h2 {
-							text-align: center;
-							height: 25px;
-							font-size: 24px;
+							font-size: 36px;
 							font-family: PingFang SC;
-							font-weight: 500;
-							color: rgba(252, 66, 35, 1);
-							span {
-								margin-left: 3px;
-							}
+							font-weight: bold;
+							color: rgba(254, 65, 74, 1);
 						}
 					}
 				}
@@ -263,6 +380,92 @@
 						height: auto;
 					}
 				}
+			}
+		}
+	}
+	
+	.pinglu {
+		min-height: 200px;
+		width: 100%;
+		padding-bottom: 40px;
+		background: #fff;
+		h1 {
+			font-size: 30px;
+			font-weight: bold;
+			color: rgba(51, 51, 51, 1);
+			background: #fff;
+			padding: 40px 20px;
+			box-sizing: border-box;
+		}
+		.p-l-f-t {
+			display: flex;
+			justify-content: center;
+
+			button {
+				width: 280px;
+				height: 62px;
+				border: 2px solid rgba(225, 225, 225, 1)!important;
+				border-radius: 31px;
+				font-size: 26px;
+				font-family: PingFang SC;
+				background: #fff;
+				font-weight: 500;
+				color: rgba(51, 51, 51, 1);
+			}
+		}
+		.p-l-l-s {
+			ul {
+				padding-bottom: 70px;
+				li {
+					background: #fff;
+					border-bottom: 2px solid #E1E1E1;
+					padding: 0 20px;
+					box-sizing: border-box;
+					.l-t-ft {
+						font-size: 26px;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: rgba(51, 51, 51, 1);
+						line-height: 44px;
+						padding-bottom: 40px;
+					}
+					.l-t-nav {
+						padding: 20px 0;
+					}
+					.l-t-op {
+						display: flex;
+						width: 100%;
+						justify-content: space-between;
+						padding-top: 30px;
+						p {
+							font-size: 24px;
+							font-family: PingFang SC;
+							font-weight: 500;
+							color: rgba(153, 153, 153, 1);
+						}
+						div {
+							img {
+								width: 68px;
+								height: 68px;
+								border: 1px solid rgba(225, 225, 225, 1);
+								border-radius: 50%;
+							}
+							span {
+								font-size: 28px;
+								font-family: PingFang SC;
+								font-weight: 500;
+								margin-left: 20px;
+								color: rgba(51, 51, 51, 1);
+							}
+						}
+					}
+				}
+			}
+		}
+		.xiangq-jie{
+			img{
+				width:100%;
+				height: auto;
 			}
 		}
 	}

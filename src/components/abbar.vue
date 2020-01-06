@@ -1,12 +1,12 @@
 <template>
 	<div class="tab">
-		<ul class="mit-bar" v-show="isShowTabbar" fixed>
-			<li class='issueli' v-for='(item,index) in list' @click="changestyle(index,item.y)" :class="{'actt':select===index}">
-				<i slot="icon" class="icon iconfont " v-if="item.y == 0">&#xe608;</i>
-				<i slot="icon" class="icon iconfont " v-if="item.y == 1">&#xe61c;</i>
-				<i slot="icon" class="icon iconfont " v-if="item.y == 2">&#xe61d;</i>
-				<i slot="icon" class="icon iconfont " v-if="item.y == 3">&#xe60c;</i>
-				<i slot="icon" class="icon iconfont " v-if="item.y == 4">&#xe6b1;</i> {{item.name}}
+		<ul class="mit-bar"  fixed>
+			<li class='issueli' v-for='(item,index) in list' @click="changestyle(index,item.y)" :class="{'actt':thatnum==index}">
+				<i slot="icon" class="icon iconfont " v-if="index == 0">&#xe608;</i>
+				<i slot="icon" class="icon iconfont " v-if="index == 1">&#xe61c;</i>
+				<i slot="icon" class="icon iconfont " v-if="index == 2">&#xe61d;</i>
+				<i slot="icon" class="icon iconfont " v-if="index == 3">&#xe60c;</i>
+				<i slot="icon" class="icon iconfont " v-if="index == 4">&#xe6b1;</i> {{item.name}}
 			</li>
 		</ul>
 	</div>
@@ -17,9 +17,10 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import { Dialog } from 'vant';
 	export default {
+		props: ['tabName'],
 		data() {
 			return {
-				select: '',
+				thatnum: 0,
 				list: [{
 						name: '首页',
 						y: '0',
@@ -45,20 +46,16 @@
 				]
 			}
 		},
-
+		mounted() {
+			this.thatnum = this.tabName
+			console.log(this.thatnum)
+		},
 		computed: {
-			isShowTabbar() {
-				let routeLength = this.$route.path.split('/').length;
-				return routeLength > 2 ? false : true;
-			},
+			
 			...mapGetters({
-				taber: 'taber',
+
 				TokenId: 'TokenId'
 			})
-		},
-		//"bbb28deb-8fb0-455f-ab47-09285ee6bc98"/tokenId
-		created() {
-			this.select = this.taber;
 		},
 		methods: {
 			...mapActions(
@@ -69,17 +66,14 @@
 				]
 			),
 			changestyle(index) {
-				this.select = index;
-				this.settaber(index)
+				this.thatnum = index;
 				if(index == 0) {
-
 					this.$router.push('/home')
 				} else if(index == 1) {
 					this.chooseilt(0)
 					this.$router.push('/overall')
 				} else if(index == 2) {
 					if(this.TokenId == '') {
-						console.log(123)
 						Dialog.confirm({
 							title: '提示',
 							message: '需要登录后才可以查看呦'
@@ -93,7 +87,6 @@
 
 				} else if(index == 3) {
 					if(this.TokenId == '') {
-						console.log(123)
 						Dialog.confirm({
 							title: '提示',
 							message: '需要登录后才可以查看呦'

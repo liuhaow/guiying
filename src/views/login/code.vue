@@ -9,11 +9,12 @@
 				<p>
 					{{phone}}
 				</p>
-				<button :disabled="disabled" @click="checkout">{{btnxt}}</button>
+				<h3 class="shouj"><input type="number" v-model="code" placeholder="输入验证码" /><button :disabled="disabled" @click="checkout">{{btnxt}}</button></h3>
+				<h5>注意：(操作需要  先点击获取验证码 然后输入 1234  做测试用  正式版会获取真的验证码)</h5>
 			</div>
 			<div class="nextbu">
 
-				<button class="nextbtnt"  @click='nextbuData'>登录</button>
+				<button class="nextbtnt" @click='nextbuData'>登录</button>
 			</div>
 		</div>
 	</div>
@@ -22,8 +23,8 @@
 <script>
 	import { Toast } from 'mint-ui';
 	import { mapGetters, mapActions } from 'vuex'
-	import { getSmsCode,loginInfo} from '@/api/api'
-	
+	import { getSmsCode, loginInfo } from '@/api/api'
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
@@ -39,31 +40,41 @@
 				phone: 'phonenum'
 			})
 		},
-		methods:{
+		methods: {
 			...mapActions(
 				[
-					'setPoneNumb','setToken','setUserData'
+					'setPoneNumb', 'setToken', 'setUserData'
 				]
 			),
-			back(){
+			back() {
 				this.$router.go(-1)
 			},
-			getInputValue(){
+			getInputValue() {
 				var that = this
-				that.phonenub.length>=11?that.shur = false:that.shur=true
+				that.phonenub.length >= 11 ? that.shur = false : that.shur = true
 			},
 			checkout() {
-					this.time = 60;
-					this.disabled = true;
-					this.timer();
-					let data ={
-						mobile:'13573790187',
-						event:'mobilelogin'
+				this.time = 60;
+				this.disabled = true;
+				this.timer();
+				let data = {
+					mobile: this.phone,
+					event: 'mobilelogin'
+				}
+				getSmsCode(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200){
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					}else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
-					getSmsCode(data).then(res => {
-						console.log(res)
-					})
-				
+				})
 
 			},
 			timer() {
@@ -77,39 +88,52 @@
 					this.disabled = false;
 				}
 			},
-			nextbuData(){
-				let data={
-					mobile:this.phone,
-					captcha:1234
+			nextbuData() {
+				if(!this.code){
+					Toast({
+						message: '输入验证码',
+						iconClass: 'icon icon-error',
+						position: 'center',
+					});
+					return
+				}
+
+				let data = {
+					mobile: this.phone,
+					captcha: this.code
 				}
 				loginInfo(data).then(res => {
-						if(res.data.code == 200){
-							this.setToken(res.data.data.token)
-							this.setUserData(res.data.data);
-							if(res.data.data.is_delivery == 0){
-								this.$router.push('/home')
-								
-							}else if(res.data.data.is_delivery == 1){
-								this.$router.push('/peisong/transfer')
-							}
-
-							
+					if(res.data.code == 200) {
+						this.setToken(res.data.data.token)
+						this.setUserData(res.data.data);
+						if(res.data.data.is_delivery == 0) {
+							this.$router.push('/home')
+						} else if(res.data.data.is_delivery == 1) {
+							this.$router.push('/peisong/transfer')
 						}
-					})
+
+					}else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="stylus" scoped>
-.login{
-	position: absolute;
-	right:0;
-	left: 0;
-	top: 0;
-	bottom: 0;
-	background: #fff;
-}
+	.login {
+		position: absolute;
+		right: 0;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		background: #fff;
+	}
+	
 	.back {
 		img {
 			height: 36px;
@@ -126,17 +150,39 @@
 			font-weight: bold;
 			color: rgba(51, 51, 51, 1);
 		}
-		.shouj {
-			height: 78px;
-			display: flex;
-			align-items: center;
-			border-bottom: 4px solid #DAD6D6;
-			input {
-				width: 100%;
-				border: none;
-				font-size: 34px;
-				color: #999;
-				padding-left: 10px;
+		.checkbt {
+			h5{
+				margin-top: 20px;
+				font-size: 32px;
+				line-height: 40px;
+				color: #FF0000;
+			}
+			p{
+				font-size: 38px;
+				color: #333;
+				padding-bottom: 20px;
+			}
+			.shouj {
+				height:100px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				border-bottom: 4px solid #DAD6D6;
+				input {
+					width: 60%;
+					border: none;
+					font-size: 34px;
+					color: #333;
+					padding-left: 10px;
+				}
+				button {
+					border: 0;
+					width: 30%;
+					height: 80px;
+					color: #4673EC;
+					font-size: 32px;
+					background: #3FB94D;
+				}
 			}
 		}
 		.nextbu {
@@ -152,12 +198,11 @@
 				font-weight: 500;
 				color: rgba(255, 255, 255, 1);
 			}
-			.nextbtn{
+			.nextbtn {
 				background: rgba(63, 185, 77, .5);
-				
 			}
-			.nextbtnt{
-				background:linear-gradient(90deg,rgba(63,185,77,1),rgba(110,202,115,1));
+			.nextbtnt {
+				background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
 			}
 		}
 	}

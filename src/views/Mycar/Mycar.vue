@@ -56,6 +56,8 @@
 			<!--<div class='del' v-if='del_show' @click="del()">删除</div>-->
 			<div class='pay'>去结算</div>
 		</div>
+		<tabbar tabName='3'></tabbar>
+		
 	</div>
 </template>
 
@@ -66,6 +68,8 @@
 	import { Notify } from 'vant';
 	//	import shixiao from './shixiao'
 	import baokuand from '@/components/baokuand'
+	import tabbar from "@/components/abbar"
+	
 	export default {
 
 		data() {
@@ -77,7 +81,9 @@
 		},
 		components: {
 			//			shixiao,
-			baokuand
+			baokuand,
+			tabbar,
+			
 
 		},
 		computed: {

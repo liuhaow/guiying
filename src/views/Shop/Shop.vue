@@ -11,7 +11,7 @@
 			</ul>
 			<ul class="a-l-r">
 				<li v-for="(item,index) in mlist" :key='index'>
-					<img :src="item.cover" class="mlistimg"  @click="checkdetail(item.id)" />
+					<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)" />
 					<div class="a-l-t-d">
 						<p>{{item.title}}</p>
 						<div class="listxi">
@@ -27,6 +27,8 @@
 				</li>
 			</ul>
 		</div>
+		<tabbar tabName='2'></tabbar>
+
 	</div>
 </template>
 
@@ -34,7 +36,9 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import { shangpingData } from '@/api/api'
 	import { Notify } from 'vant';
-	import {addshopcar} from '@/api/mine'
+	import { addshopcar } from '@/api/mine'
+	import tabbar from "@/components/abbar"
+
 	export default {
 		data() {
 			return {
@@ -74,8 +78,9 @@
 				mlist: []
 			}
 		},
-
-
+		components: {
+			tabbar
+		},
 		mounted() {
 			let litd = this.chose + 1
 			let data = {
@@ -120,20 +125,26 @@
 				})
 
 			},
-			addhouwuAdd(idt){
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:1
-					
+			addhouwuAdd(idt) {
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+
 				}
-				addshopcar(data).then(res=>{
-					if(res.data.code == 200){
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+				addshopcar(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}

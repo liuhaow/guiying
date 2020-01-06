@@ -49,7 +49,7 @@
 		<div class="te-s">
 			<p class="zhuanq">特色专区</p>
 			<div class="ttui">
-				<div class="zhide gm">
+				<div class="zhide gm" @click="fashData(1)">
 					<h2>值得买的</h2>
 					<h3>TOP清单</h3>
 					<p class="imgh">
@@ -57,7 +57,7 @@
 						<img src="../../assets/xia1.png" alt="" />
 					</p>
 				</div>
-				<div class="zhide">
+				<div class="zhide" @click="fashData(2)">
 					<h2>值得买的</h2>
 					<h3>TOP清单</h3>
 					<p class="imgh">
@@ -71,7 +71,7 @@
 		</div>
 
 		<div class="haol">
-			<div class="haob" @click="fashData">
+			<div class="haob">
 				<img v-if='hud' :src="hud.image" />
 			</div>
 		</div>
@@ -83,6 +83,7 @@
 			</div>
 		</div>
 		<navlist></navlist>
+		<tabbar tabName='0'></tabbar>
 	</div>
 </template>
 
@@ -90,9 +91,9 @@
 	import Timeout from '@/views/Home/Timeout'
 	import Tuangou from '@/views/Home/Tuangou'
 	import Navlist from '@/views/Home/Navlist'
-
+	import tabbar from "@/components/abbar"
 	import { mapGetters, mapActions } from 'vuex'
-	
+
 	import { Dialog } from 'vant';
 	import { lunboData, shangpingData, indexmessage } from '@/api/api'
 
@@ -144,7 +145,8 @@
 		components: {
 			Timeout,
 			Tuangou,
-			Navlist
+			Navlist,
+			tabbar
 		},
 		create() {
 			this.fundd;
@@ -212,8 +214,8 @@
 
 			},
 			kefuData() {
-					console.log(1)
-				
+				console.log(1)
+
 				if(this.TokenId == '') {
 					console.log(2)
 					Dialog.confirm({
@@ -222,10 +224,10 @@
 					}).then(() => {
 						this.$router.push('/need/login')
 					}).catch(() => {});
-					
+
 					return
 				}
-				
+
 				this.$router.push('/home/chat')
 			},
 			seachData() {
@@ -233,8 +235,13 @@
 				this.$router.push('/home/seach')
 
 			},
-			fashData() {
-//				this.$router.push('/home/fash')
+			fashData(idt) {
+				this.$router.push({
+					path: '/home/fash',
+					query: {
+						ty: idt
+					}
+				})
 
 			},
 			tiaozhuan(idt) {

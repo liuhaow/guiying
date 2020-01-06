@@ -4,6 +4,8 @@
 		<tool></tool>
 		<help></help>
 		<baokuan></baokuan>
+		<tabbar tabName='4'></tabbar>
+		
 		
 	</div>
 </template>
@@ -14,6 +16,7 @@
 	import help from '@/views/Mine/shouye/help'
 	import guess from '@/views/Mine/shouye/guess'
 	import baokuan from '@/components/baokuan'
+	import tabbar from "@/components/abbar"
 	
 	
 	
@@ -26,6 +29,7 @@
 			mhead,
 			tool,
 			help,
+			tabbar,
 			baokuan
 		},
 	}

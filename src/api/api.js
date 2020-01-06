@@ -98,6 +98,20 @@ export const Newtryinfo = data =>Axios({
 	method:'post',
 	data
 })
+//新品
+export const Newtryinfotype = data =>Axios({
+	url:'/api/index/worth_buy_nav',
+	method:'post',
+	data
+})
+//新品轮播
+export const Newlotype = data =>Axios({
+	url:'/api/index/tj_lb',
+	method:'post',
+	data
+})
+
+
 //会员专区
 
 export const Vipinfodata = data =>Axios({
@@ -158,6 +172,12 @@ export const peisongzHong = data =>Axios({
 //已完成
 export const yigongdaoInfo = data =>Axios({
 	url:'/api/delivery/order_over',
+	method:'post',
+	data
+})
+//商品详情
+export const putongspInfo = data =>Axios({
+	url:'/api/allcategories/details',
 	method:'post',
 	data
 })

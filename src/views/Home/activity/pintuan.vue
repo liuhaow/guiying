@@ -63,6 +63,9 @@
 				</div>
 			</div>
 			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
+			<div class="xiang-q">
+				<img v-for='(item,index) in messgein.img' :src="item.image" alt="" />
+			</div>
 		</div>
 		<van-goods-action>
 			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
@@ -385,9 +388,10 @@
 	}
 	
 	.pinglu {
-		height: 720px;
+		min-height: 200px;
 		width: 100%;
 		background: #fff;
+		padding-bottom: 40px;
 		h1 {
 			font-size: 30px;
 			font-weight: bold;
