@@ -1,5 +1,45 @@
 <template>
 	<div class="wrapper">
+		<div class="nreprp" v-if="newpro">
+			<div class="nreprp-m">
+				<div class="nr-m-p">
+					<h5 class="banbi" @click="newpro = false">
+						<img src="../../assets/img/shib.png"/>
+					</h5>
+					<h2 class="c-jiang">新人红包限时领</h2>
+					<div class="new-nac">
+						<div class="j-q-a">
+							<h3>
+								<span>&yen;</span>{{nuewx.used_amount}}
+							</h3>
+							<h4>
+								<span>新人专享</span>
+								<span>47:59:55</span>
+								
+							</h4>
+						</div>
+						<button @click="qushiyongdata()">去使用</button>
+					</div>
+					<ul class="n-ew-l">
+						<li v-for="(item,index) in liebiao" :key='index'>
+							<img :src="item.cover" alt="" />
+							<div class="x-n-qig">
+								<p>{{item.title}}</p>
+								<h2>
+									<span >
+										&yen;{{item.now_price}}
+									</span>
+									<button @click="newxiadan(item.id)">去下单</button>
+								</h2>
+							</div>
+						</li>
+					</ul>
+					<div class="c-new-k">
+						查看更多
+					</div>
+				</div>
+			</div>
+		</div>
 		<div class="mai-t">
 			<div class="mai-head">
 				<div class="mai-t-l" @click="kefuData">
@@ -40,7 +80,7 @@
 			</div>
 			<ul class="nav-list">
 				<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index)">
-					<img :src="item.img" alt="" />
+					<img :src="item.logo" alt="" />
 					<p>{{item.name}}</p>
 				</li>
 			</ul>
@@ -95,51 +135,21 @@
 	import { mapGetters, mapActions } from 'vuex'
 
 	import { Dialog } from 'vant';
-	import { lunboData, shangpingData, indexmessage } from '@/api/api'
+	import { lunboData, shangpingData, indexmessage, indexList, newyouhui } from '@/api/api'
 
 	export default {
 		data() {
 			return {
-				list: [{
-						name: '新鲜蔬菜',
-						img: './static/img/sfsd.png',
-					},
-					{
-						name: '肉禽蛋品',
-						img: './static/img/rouy.png',
-					}, {
-						name: '粮油米面',
-						img: './static/img/lyou.png',
-					}, {
-						name: '酒水饮料',
-						img: './static/img/jius.png',
-					}, {
-						name: '调味干货',
-						img: './static/img/ytiw.png',
-					}, {
-						name: '水产海鲜',
-						img: './static/img/shuigb.png',
-					}, {
-						name: '餐厨用品',
-						img: './static/img/canc.png',
-					}, {
-						name: '火锅专用',
-						img: './static/img/hguo.png',
-					}, {
-						name: '烧烤专用',
-						img: './static/img/shaok.png',
-					},
-					{
-						name: '会员专享',
-						img: './static/img/hyuan.png',
-					}
-
-				],
+				newpro: false,
+				list: [],
 				announcementArr: [],
 				animate: false,
 				lunb: [],
 				hud: '',
-				hud1: ''
+				hud1: '',
+				liebiao: [],
+				nuewx:''
+
 			}
 		},
 		components: {
@@ -152,8 +162,35 @@
 			this.fundd;
 
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		mounted() {
 			var that = this
+			if(!this.TokenId) {
+
+			} else {
+				let pdet = {
+					token: this.TokenId
+
+				}
+				newyouhui(pdet).then(res => {
+					if(res.data.code == 200) {
+						this.liebiao = res.data.data.commodity
+						this.nuewx = res.data.data.coupons
+						if(res.data.data.is_coupons == 1) {
+							this.newpro = true
+
+						} else {
+							this.newpro = false
+
+						}
+
+					}
+				})
+			}
 			fundd: {
 				let parem = {
 					page: 1
@@ -183,15 +220,16 @@
 
 					}
 				})
+				indexList().then(res => {
+					if(res.data.code == 200) {
+						this.list = res.data.data
+					}
+				})
 
 			}
 
 		},
-		computed: {
-			...mapGetters({
-				TokenId: 'TokenId'
-			})
-		},
+
 		methods: {
 			...mapActions(
 				[
@@ -265,6 +303,159 @@
 		width: 100%;
 		background: rgba(225, 225, 225, .3);
 		padding-bottom: 98px;
+		box-sizing: border-box;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+	}
+	
+	.nreprp {
+		height: 100%;
+		width: 100%;
+		position: fixed;
+		left: 0;
+		top: 0;
+		background: rgba(0, 0, 0, 0.5);
+		z-index: 999;
+		.nreprp-m {
+			height: 100%;
+			width: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			.nr-m-p {
+				width: 580px;
+				height: 824px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				position: relative;
+				background: linear-gradient(-10deg, rgba(235, 51, 43, 1), rgba(247, 147, 61, 1));
+				border-radius: 16px;
+				.banbi {
+					position: absolute;
+					bottom: -100px;
+					img {
+						height: 80px;
+						width: 80px;
+					}
+				}
+				.c-jiang {
+					font-size: 60px;
+					font-family: FZZhengHeiS-M-GB;
+					font-weight: 400;
+					color: rgba(255, 255, 255, 1);
+					padding: 51px 0 44px;
+				}
+				.c-new-k {
+					width: 468px;
+					height: 92px;
+					line-height: 92px;
+					text-align: center;
+					font-size: 36px;
+					color: #FA662A;
+					background: linear-gradient(0deg, rgba(251, 181, 69, 1), rgba(253, 243, 154, 1));
+					box-shadow: 0px 8px 0px 0px rgba(250, 102, 42, 1);
+					border-radius: 46px;
+				}
+				.n-ew-l {
+					width: 520px;
+					height: 358px;
+					margin: 10px 0 24px;
+					overflow: auto;
+					background: rgba(255, 255, 255, 1);
+					border-radius: 16px;
+					li {
+						height: 174px;
+						display: flex;
+						justify-content: space-between;
+						align-items: center;
+						padding: 0 10px;
+						box-sizing: border-box;
+						img {
+							width: 140px;
+							height: 140px;
+							border-radius: 16px;
+						}
+						.x-n-qig {
+							height: 140px;
+							display: flex;
+							width: 340px;
+							flex-direction: column;
+							justify-content: space-between;
+							p {
+								font-size: 32px;
+								color: #333;
+								overflow: hidden;
+								text-overflow: ellipsis;
+								white-space: nowrap;
+							}
+							h2 {
+								display: flex;
+								justify-content: space-between;
+								span {
+									font-size: 34px;
+									color: #FB0E3A;
+								}
+								button {
+									width: 120px;
+									height: 46px;
+									background: linear-gradient(90deg, rgba(255, 101, 1, 1), rgba(254, 149, 81, 1));
+									border-radius: 23px;
+									font-size: 26px;
+									color: #fff;
+									border: 0;
+								}
+							}
+						}
+					}
+				}
+				.new-nac {
+					width: 520px;
+					height: 160px;
+					background: rgba(253, 239, 227, 1);
+					border-radius: 16px;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					button {
+						width: 140px;
+						height: 52px;
+						background: linear-gradient(90deg, rgba(255, 101, 1, 1), rgba(254, 149, 81, 1));
+						border-radius: 26px;
+						font-size: 30px;
+						color: #fff;
+						border: 0;
+						margin-right: 10px;
+					}
+					.j-q-a {
+						display: flex;
+						width: 345px;
+						justify-content: space-around;
+						align-items: center;
+						h3 {
+							font-size: 50px;
+							color: rgba(235, 51, 43, 1);
+							span {
+								font-size: 24px!important;
+							}
+						}
+						h4 {
+							font-size: 28px;
+							color: #EB332B;
+							display: flex;
+							flex-direction: column;
+							span {
+								margin: 10px 0;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	.haol {
@@ -341,7 +532,7 @@
 		padding: 80px 27px 0;
 		box-sizing: border-box;
 		height: 500px;
-		background: #fff;
+		background: red;
 		.nav-t {
 			height: 40px;
 			display: flex;
@@ -421,7 +612,8 @@
 		padding-top: 40px;
 		box-sizing: border-box;
 		position: relative;
-		background: linear-gradient(0deg, rgba(69, 185, 84, 1) 0%, rgba(91, 231, 126, 1) 100%);
+		/*background: linear-gradient(0deg, rgba(69, 185, 84, 1) 0%, rgba(91, 231, 126, 1) 100%);*/
+		background: red;
 		.mai-head {
 			height: 64px;
 			display: flex;

@@ -18,6 +18,12 @@ export const loginInfo = data => Axios({
 	method: 'post',
 	data
 })
+//新人优惠
+export const newyouhui = data => Axios({
+	url:'/api/user/newman',
+	method: 'post',
+	data
+})
 //搜索
 export const seachData= data => Axios({
 	url:'/api/allcategories/search',
@@ -36,6 +42,14 @@ export const indexmessage = data=>Axios({
 	method:'post',
 	data
 })
+
+//首页列表
+export const indexList = data=>Axios({
+	url:"/api/index/nav",
+	method:'get',
+	data
+})
+
 //首页秒杀
 export const homemiaosha = data=>Axios({
 	url:"/api/spikemysql/home_spike_list",

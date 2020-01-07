@@ -1,9 +1,9 @@
 <template>
-	<div class="xianshi" v-if="mlist.lenght>0">
+	<div class="xianshi">
 		<div class="xmiao">
 			<div class="xmiao-t">
 				<p>限时秒杀</p>
-				<van-count-down :time="time" />
+				<span>{{h}}:{{m}}:{{s}}</span>
 			</div>
 			<h2 @click="moreData"> 更多</h2>
 		</div>
@@ -20,40 +20,44 @@
 				</div>
 			</li>
 
-
 		</ul>
 	</div>
 </template>
 
 <script>
-
 	import { homemiaosha } from '@/api/api'
-	
+
 	export default {
 		data() {
 			return {
-				time: 1.0 * 60 * 60 * 1000,
-				mlist: []
+				time: '',
+				mlist: [],
+				h: '',
+				m: '',
+				s: '',
+				timed: ''
 			}
 
 		},
 		mounted() {
-			homemiaosha().then(res =>{
+			homemiaosha().then(res => {
 				console.log(res)
-				if(res.data.code == 200){
-					this.mlist= res.data.data.commodity;
-//					this.time = res.data.data.countdown
+				if(res.data.code == 200) {
+					this.mlist = res.data.data.commodity;
+					let tm = res.data.data.countdown;
+					this.timed = tm
+
 				}
 			})
 		},
 		methods: {
+
 			moreData() {
 				this.$router.push('/fsale')
-
 			},
-			mshaData(idt){
-				this.$router.push('/home/msdetail/'+idt)
-				
+			mshaData(idt) {
+				this.$router.push('/home/msdetail/' + idt)
+
 			}
 		}
 	}
@@ -61,7 +65,6 @@
 
 <style lang="stylus" scoped>
 	.xianshi {
-
 		background: #fff;
 		width: 100%;
 		.xlist {

@@ -105,8 +105,8 @@
 
 			if(this.$route.query.ty == 1) {
 				tzt = 4
-			} else {
-				tzt: 5
+			} else if(this.$route.query.ty == 2){
+				tzt= 5
 			}
 			let pary = {
 				t: tzt
