@@ -23,11 +23,11 @@
 				</van-divider>
 				<ul>
 					<li v-for="(item,index) in listd" :key='index'>
-						<img class="Imgt" :src="item.cover" alt="" />
+						<img class="Imgt" :src="item.cover" alt=""  @click="checkdetail(item.id)"/>
 						<p>{{item.title}}</p>
 						<div class="di-bu">
 							<h2>&yen;{{item.now_price}}</h2>
-							<h3 @click="addhouwu(item.id)"><img src="../../../../static/img/jgwc.png"/></h3>
+							<h3 @click="addhouwuAdd(item.id)"><img src="../../../../static/img/jgwc.png"/></h3>
 						</div>
 					</li>
 
@@ -41,6 +41,8 @@
 <script>
 	import headt from '@/components/heda'
 	import { Newtryinfo, Newtryinfotype, Newlotype } from '@/api/api'
+	import { addshopcar } from '@/api/mine'
+	
 	export default {
 		data() {
 			return {
@@ -132,8 +134,42 @@
 					}
 				})
 			},
-			addhouwu(idt) {
-				console.log(idt)
+			checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
+			},
+			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+					console.log(123)
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+				}
+				addshopcar(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
 			}
 		}
 	}

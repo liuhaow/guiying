@@ -88,7 +88,7 @@
 			display: flex;
 			li {
 				width: 360px;
-				height: 560px;
+				height: 450px;
 				background: #fff;
 				margin-bottom: 10px;
 				border-radius: 10px;
@@ -96,20 +96,23 @@
 				box-sizing: border-box;
 				.list-t {
 					width: 100%;
-					height: 360px;
+					height: 300px;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 					img {
-						width: 220px;
-						height: 220px;
+						width: 260px;
+						height: 260px;
 					}
 				}
 				p {
 					font-size: 26px;
 					line-height: 30px;
 					font-weight: 500;
-					height: 90px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					height: 30px;
 					color: rgba(51, 51, 51, 1);
 				}
 				.goumai {

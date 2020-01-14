@@ -234,8 +234,9 @@ export default new Router({
         keepAlive: false 
       }
     },
+    //退货进度
     {
-    	path:'/myorder/sqjindu',
+    	path:'/myorder/sqjindu/:id',
     	name: 'sqjindu',
       component: resolve => require(['@/views/Mine/order/outhuo/outhuo'], resolve),
        meta: {
@@ -576,6 +577,14 @@ export default new Router({
     	path:'/vip/viprule',
     	name: 'viprule',
       component: resolve => require(['@/views/Vipmeber/viprule'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+     {
+    	path:'/mine/chongzhifu',
+    	name: 'chongzhifu',
+      component: resolve => require(['@/views/Mine/qianbox/zhifub'], resolve),
        meta: {
         keepAlive: false 
       }

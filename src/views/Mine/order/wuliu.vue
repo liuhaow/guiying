@@ -51,8 +51,18 @@
 			Wuliudata(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
+					Notify({
+							type: 'success',
+							message: res.data.msg
+						});
 					this.wuliu = res.data.data
-				}
+				}else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+
+					}
 			})
 		}
 	}

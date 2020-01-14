@@ -49,16 +49,19 @@
 						</li>
 					</ul>
 				</div>
-				<div class="p-l-f-t" v-if="pinglun.length!=0">
-					<button @click="checkout(messgein.id)">查看更多({{messgein.evl_count}})</button>
+				<div class="p-l-f-t" v-if="current>3">
+					<button @click="checkout(messgein.id)">查看更多({{current}})</button>
 				</div>
 			</div>
 			<div class="xiangq-jie" v-if='messgein.detailspic'>
-				<img v-for="(itd,index) in messgein.detailspic" :src="itd.image" alt="" />
+				<van-divider :style="{ color: '#333', borderColor: '#333', padding: '0 10px' }">
+					详情
+				</van-divider>
+				<img class="imgdy" v-for="(itd,index) in messgein.detailspic" :src="itd.image" alt="" />
 			</div>
 			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
-		<baokuan></baokuan>
-			
+			<baokuan></baokuan>
+
 		</div>
 		<van-goods-action>
 			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
@@ -87,8 +90,7 @@
 	import { addshopcar } from '@/api/mine'
 	import { Dialog } from 'vant';
 	import baokuan from '@/components/baokuan'
-	
-	
+
 	export default {
 		data() {
 			return {
@@ -118,7 +120,7 @@
 			console.log(idt)
 			let data = {
 				cid: idt,
-				page:1
+				page: 1
 			}
 			putongspInfo(data).then(res => {
 				console.log(res)
@@ -127,6 +129,8 @@
 					this.pinglun = res.data.data.evl;
 					this.images = res.data.data.mainpic;
 					this.time = res.data.data.countdown;
+					this.current = res.data.data.count_evl
+
 				}
 			})
 		},
@@ -207,7 +211,7 @@
 					path: '/home/pingjia',
 					query: {
 						cid: idt,
-						type:1			
+						type: 1
 					}
 				})
 
@@ -220,6 +224,13 @@
 	.addxuqu {
 		padding-bottom: 100px;
 		height: 100%;
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		display: flex;
+		flex-direction: column;
 		box-sizing: border-box;
 		>>>.van-popup {
 			.can-s-x-q {
@@ -235,6 +246,8 @@
 			}
 		}
 		.a-d-d {
+			flex: 1;
+			overflow: auto;
 			.x-q-l {
 				height: 140px;
 				.x-q-l-t {
@@ -376,11 +389,19 @@
 						}
 					}
 					img {
-						width: 80%;
-						height: auto;
+						width: 100%;
+						height: 100%;
 					}
 				}
 			}
+		}
+	}
+	
+	.xiangq-jie {
+		width: 100%;
+		.imgdy {
+			width: 100%;
+			height: auto;
 		}
 	}
 	
@@ -400,7 +421,6 @@
 		.p-l-f-t {
 			display: flex;
 			justify-content: center;
-
 			button {
 				width: 280px;
 				height: 62px;
@@ -460,12 +480,6 @@
 						}
 					}
 				}
-			}
-		}
-		.xiangq-jie{
-			img{
-				width:100%;
-				height: auto;
 			}
 		}
 	}

@@ -38,18 +38,18 @@
 				]
 			}
 		},
-		methods:{
-			helpData(idt){
+		methods: {
+			helpData(idt) {
 				if(idt == 0) {
 					this.$router.push('/mine/quetion')
 
 				} else if(idt == 1) {
 					this.$router.push('/mine/savecent')
 				} else if(idt == 2) {
-					this.$router.push('/mine/online')
+					this.$router.push('/home/chat')
 				} else if(idt == 3) {
 					this.$router.push('/mine/setting')
-				} 
+				}
 			}
 		}
 	}
@@ -67,7 +67,6 @@
 			box-sizing: border-box;
 			background: rgba(255, 255, 255, 1);
 			border-radius: 16px;
-
 			.dan-t {
 				height: 88px;
 				border-bottom: 2px solid #F5F5F5;

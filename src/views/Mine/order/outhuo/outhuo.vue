@@ -1,24 +1,29 @@
 <template>
 	<div class="wuliu">
-		<headt message='申请成功' v-if='idtcgty==1'></headt>
-		<headt message='申请失败' v-else></headt>
+		<headt message='退货进度' ></headt>
+
 
 		<div class="wu-l">
-			<div class="zhisuss" v-if='idtcgty==1'>
+			<div class="zhisuss" v-if='idtcgty==7'>
+				<h4 class="chuli"> 订单正在处理中，耐心等待</h4>			
+			</div>
+
+			<div class="zhisuss" v-if='idtcgty==8'>
 				<img src="../../../../../static/img/zhipay.png" alt="" />
-				<h2>退款退货成功</h2>
-				<h4> 退款金额：<span>85.20元</span></h4>
-				<p>退款成功时间：2019-09-30 09:00:15:20</p>
+				<h2>商家同意退款</h2>
+				<h4> 退款金额：<span>{{dainfo.money}}元</span></h4>
+				<p>退款成功时间：{{dainfo.agree_time}}</p>
 				<div class="btnf">
-					<button class="jixu">继续购买</button>
+					<button class="jixu" @click="goumaiagin">继续购买</button>
 				</div>
 			</div>
-			<div class="zhisuss" v-else>
+			
+			<div class="zhisuss" v-if='idtcgty==10'>
 				<img src="../../../../../static/img/shib.png" alt="" />
 				<h2>很抱歉，您的申请失败！</h2>
 				<p>商家拒绝了您的申请</p>
 				<div class="btnd">
-					<button class="xiuh">修改申请</button><button class="jixu">继续购买</button>
+					<button class="xiuh" @click="tuihuoData()">修改申请</button><button class="jixu" @click="goumaiagin">继续购买</button>
 				</div>
 			</div>
 
@@ -29,26 +34,64 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters } from 'vuex'
+	import { Notify } from 'vant';
+
+	import { tuihuojindu } from '@/api/mine'
 
 	export default {
 		data() {
 			return {
-				idtcgty: 1,
-				chsg: 1
+				idtcgty: '',
+				dainfo:''
+
 			}
 		},
 		components: {
 			headt
 
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
 		mounted() {
-			this.idtcg = this.$route.params.id;
+			let data ={
+				token:this.TokenId,
+				order_id:this.$route.params.id
+			}
+			tuihuojindu(data).then(res=>{
+				if(res.data.code == 200){
+					this.idtcgty= res.data.data.status,
+					this.dainfo = res.data.data
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
 
+				}
+			})
 		},
 
 		methods: {
 			pingjiaData(idt) {
 				this.$router.push('/myorder/pingjia/2')
+			},
+			tuihuoData() {
+
+				this.$router.push({
+					path: '/myorder/sqingth',
+					query: {
+						idt: this.dainfo.order_id,
+						totle: this.dainfo.money
+					}
+				})
+			},
+			goumaiagin(){
+				this.$router.push('/home')
+				
 			}
 		}
 	}
@@ -78,6 +121,11 @@
 				flex-direction: column;
 				justify-content: center;
 				align-items: center;
+				.chuli{
+					font-size: 40px;
+					font-weight: 600px;
+					color: #333;
+				}
 				img {
 					height: 92px;
 					width: 92px;

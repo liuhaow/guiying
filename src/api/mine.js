@@ -252,3 +252,51 @@ export const xiugaigeren = data => Axios({
 	data
 
 })
+//退货列表
+export const tuihuodata = data => Axios({
+	url: '/api/personal/return_list',
+	method: 'post',
+	data
+
+})
+//退货申请
+export const tuihuosqingdata = data => Axios({
+	url: '/api/personal/returns_apply',
+	method: 'post',
+	data
+
+})
+//退货申请进度
+export const tuihuojindu = data => Axios({
+	url: '/api/personal/progress',
+	method: 'post',
+	data
+
+})
+//配送员申请
+export const peisqingdata = data => Axios({
+	url: '/api/delivery/fill_info',
+	method: 'post',
+	data
+
+})
+
+//配送员状态申请
+export const peisongdata = data => Axios({
+	url: '/api/personal/is_delivery',
+	method: 'post',
+	data
+
+})
+//充值pay
+export const paywzhidata = data =>Axios({
+	url:'/api/pay/alipay_recharge',
+	method:'post',
+	data
+})
+//充值类型选择
+export const chonzhidata= data =>Axios({
+	url:'/api/personal/rechargemenu',
+	method:'post',
+	data
+})

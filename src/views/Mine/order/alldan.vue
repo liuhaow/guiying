@@ -4,15 +4,21 @@
 		<div class="all-list">
 			<div class="all-t">
 				<span>商品</span>
-				<span>共5件</span>
+				<span>订单号：{{xingq.order_num}}</span>
 			</div>
+			<h6 class="dizhi">地址：{{xingq.addr}}</h6>
+			<h6 class="dizhi">下单时间：{{xingq.create_time}}</h6>
+			
 			<ul class="splist">
-				<li v-for='(item,index) in mlist' :key='index'>
-					<img :src="item.img" />
+				<li v-for='(item,index) in xingq.commodity' :key='index'>
+					<img :src="item.cover" />
 					<div class="x-qing">
-						<h3>浙江省 杭州市 余杭区好运街风雅乐府好 运路</h3>
-						<h4>单价：<span>¥{{item.yu}}</span>数量：<span>{{item.num}}</span></h4>
-						<p>&yen;{{item.totle}}</p>
+						<h3>{{item.commodity_name}}</h3>
+						<h4>
+							<span>单价：¥{{item.commodity_price}}</span>
+							<span>数量：{{item.commodity_num}}</span>
+						</h4>
+						<p>&yen;{{item.total_price}}</p>
 					</div>
 				</li>
 			</ul>
@@ -23,70 +29,40 @@
 
 <script>
 	import headt from '@/components/heda'
-	
+	import { orderallDetail } from '@/api/mine'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
 	export default {
 		data() {
 			return {
-				mlist: [{
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					},
-					{
-
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					},
-					{
-
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					},
-					{
-
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					},
-					{
-
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					},{
-
-						num: 2,
-						img: 'http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg',
-						title: '兴业馆广西皇帝柑贡柑新鲜水果 柑橘 皇帝柑2.5kg装 ',
-						miaos: '90',
-						totle: 50
-
-					}
-
-				]
+				xingq:''
 			}
 		},
 		components: {
 			headt
-
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				token: this.TokenId,
+				order_id: this.$route.params.id
+			}
+			orderallDetail(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.xingq= res.data.data
+				} else {
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
+				}
+			})
+		}
 	}
 </script>
 <style scoped lang="stylus">
@@ -132,28 +108,46 @@
 							font-size: 28px;
 							font-family: PingFang SC;
 							font-weight: 500;
-							color: rgba(51, 51, 51, 1);
-							overflow: hidden; 
-							text-overflow: ellipsis; 
+							color:#000;
+							overflow: hidden;
+							text-overflow: ellipsis;
 							white-space: nowrap;
 							padding-top: 10px;
 						}
 						h4 {
-							font-size: 24px;
+							font-size: 26px;
 							font-family: PingFang SC;
 							font-weight: 500;
 							color: rgba(153, 153, 153, 1);
-							margin: 20px auto 40px;
+							margin: 20px auto 0px;
+							display: flex;
+							flex-direction: column;
+							span{
+								font-size: 26px;
+								margin-bottom: 10px;
+								color: #333;
+							}
 						}
 						p {
-							font-size: 26px;
+							font-size: 32px;
 							font-family: PingFang SC;
-							font-weight: 400;
+							font-weight: 600;
 							color: rgba(51, 51, 51, 1);
 							text-align: right;
 						}
 					}
 				}
+			}
+			.dizhi{
+				background: #fff;
+				font-size: 32px;
+				font-weight: 600;
+				height: 80px;
+				line-height: 80px;
+				padding-left: 10px;
+				box-sizing: border-box;
+				width: 96%;
+				margin-bottom: 6px;
 			}
 			.all-t {
 				height: 80px;

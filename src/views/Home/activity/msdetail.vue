@@ -57,9 +57,15 @@
 						</li>
 					</ul>
 				</div>
-				<div class="p-l-f-t" v-if="pinglun.length!=0">
+				<div class="p-l-f-t" v-if="current>3">
 					<button @click="checkout(messgein.goods_id)">查看更多({{messgein.evl_count}})</button>
 				</div>
+			</div>
+			<div class="xiang-q">
+				<van-divider :style="{ color: '#333', borderColor: '#333', padding: '0 10px' }">
+					详情
+				</van-divider>
+				<img v-for='(item,index) in messgein.detailpic' :key='index' :src="item.image" alt="" />
 			</div>
 		</div>
 		<van-goods-action>
@@ -126,6 +132,7 @@
 					this.pinglun = res.data.data.evl;
 					this.images = res.data.data.zhutu;
 					this.time = res.data.data.countdown;
+					this.current =res.data.data.evl_count
 				}
 			})
 		},
@@ -244,6 +251,12 @@
 		.a-d-d {
 			flex: 1;
 			overflow: auto;
+			.xiang-q {
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
 			.x-q-l {
 				height: 280px;
 				.x-q-l-t {
@@ -402,8 +415,8 @@
 						}
 					}
 					img {
-						width: 80%;
-						height: auto;
+						width: 100%;
+						height: 100%;
 					}
 				}
 			}
@@ -424,7 +437,7 @@
 		.p-l-f-t {
 			display: flex;
 			justify-content: center;
-			height: 200px;
+			padding-bottom: 30px;
 			button {
 				width: 280px;
 				height: 62px;
@@ -439,7 +452,7 @@
 		}
 		.p-l-l-s {
 			ul {
-				padding-bottom: 70px;
+				padding-bottom: 30px;
 				li {
 					background: #fff;
 					border-bottom: 2px solid #E1E1E1;

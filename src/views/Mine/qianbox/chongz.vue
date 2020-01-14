@@ -14,7 +14,7 @@
 		<div class="chong-m">
 			<h2>充值金额</h2>
 			<ul class="czhilist">
-				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">
+				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index,item.id)" :class="{'actt':select===index}">
 					<div class="c-l-l">
 						<p>{{item.coin}}<span>元</span></p>
 						<h2>赠送{{item.give_coin}}元</h2>
@@ -28,23 +28,13 @@
 			<h2>充值方式</h2>
 			<div class="chong-f-chos">
 				<ul>
-					<li>
+					<li v-for='(item,index) in paylist' :key='index'>
 						<div class="z-f-c-w">
-							<img src="http://img1.imgtn.bdimg.com/it/u=4068955607,178387580&fm=26&gp=0.jpg" alt="" />微信支付
+							<img :src="item.image" alt="" />{{item.name}}
 						</div>
-						<p @click="chos=1">
-							<img v-if="chos==1" src="../../../../static/imges/my/cho.png" />
-							<img v-if="chos==2" src="../../../../static/imges/my/quan.png" />
-						</p>
-					</li>
-					<li>
-						<div class="z-f-c-f">
-							<img src="http://img1.imgtn.bdimg.com/it/u=4068955607,178387580&fm=26&gp=0.jpg" alt="" />支付宝支付
-						</div>
-						<p @click="chos=2">
-							<img v-if="chos==1" src="../../../../static/imges/my/quan.png" />
-
-							<img v-if="chos==2" src="../../../../static/imges/my/cho.png" />
+						<p @click="chosedata(item.id)">
+							<img v-if="chos==item.id" src="../../../../static/imges/my/cho.png" />
+							<img v-if="chos!=item.id" src="../../../../static/imges/my/quan.png" />
 						</p>
 					</li>
 				</ul>
@@ -52,7 +42,7 @@
 		</div>
 		<div class="chong-z-f-t">
 			<h2>充值即表示同意<span>《预付卡章程及购卡协议》</span></h2>
-			<button>立即充值</button>
+			<button @click="paydatachong()">立即充值</button>
 		</div>
 	</div>
 </template>
@@ -60,14 +50,18 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { zichanyue, RechargeInfo } from '@/api/mine'
+	import { Toast } from 'vant';
+	import { zichanyue, RechargeInfo, paywzhidata, chonzhidata } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				select: 0,
-				chos: 1,
+				select: '',
+				chos: 0,
 				money: '',
-				list: []
+				coin: '',
+				list: [],
+				paylist: []
+
 			}
 		},
 		computed: {
@@ -89,20 +83,52 @@
 					this.money = res.data.data.money
 				}
 			})
+			chonzhidata(data).then(res => {
+				console.log(res)
+				if(res.data.code == 200) {
+					this.paylist = res.data.data
+				}
+			})
 		},
 		methods: {
-			changestyle(index) {
-				this.select = index
-
+			changestyle(index, idt) {
+				this.select = index,
+					this.coin = idt;
 			},
 			back() {
 				this.$router.go(-1)
 			},
+			chosedata(idt) {
+				this.chos = idt
+
+			},
 			mingxidata() {
 				var that = this
 				that.$router.push('/mine/mingxi')
+			},
+			paydatachong() {
+				if(!this.chos || !this.chos) {
+					Toast.fail('选择充值金额和充值方式');
+					return
+				}
+				let data = {
+					token: this.TokenId,
+					rid: this.coin,
+					pid: this.chos
+				}
+				console.log(data)
+				paywzhidata(data).then(res => {
+					console.log(res)
+					if(res.data.code = 200) {
+						this.$router.push({
+							path: '/mine/chongzhifu',
+							query: {
+								htmlData:res.data.data
+							}
+						})
+					}
+				})
 			}
-
 		}
 	}
 </script>

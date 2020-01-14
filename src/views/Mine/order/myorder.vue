@@ -103,6 +103,8 @@
 						<div class="lis-f-f">
 							<div class="dinzh">
 								<button @click="checkenwul(item.id)">查看物流</button>
+								<button @click="tuihuoData(item)">退货申请</button>
+								
 								<button class="btde" @click="querenData(item.id)">确认收货</button>
 							</div>
 
@@ -203,6 +205,8 @@
 			let std = ''
 			if(this.orderl == 3) {
 				std = 4
+			} else if(this.orderl ==2 ) {
+				std = 3			
 			} else {
 				std = this.orderl
 			}
@@ -229,7 +233,10 @@
 				let std = ''
 				if(index == 3) {
 					std = 4
-				} else {
+				} else if (index==2){
+					std = 3
+				
+				}else {
 					std = index
 				}
 
@@ -264,6 +271,17 @@
 				this.$router.push('/myorder/quxiao/' + idt)
 			},
 			quxiaoOrder(idt) {},
+			//退货
+			tuihuoData(item) {
+				console.log(item)
+				this.$router.push({
+					path: '/myorder/sqingth',
+					query: {
+						idt: item.id,
+						totle: item.total
+					}
+				})
+			},
 			shanchuoder(idt) {
 				let data = {
 					token: this.TokenId,
@@ -275,16 +293,16 @@
 							type: 'success',
 							message: res.data.msg
 						});
-//						let data = {
-//							token: this.TokenId,
-//							page: 1,
-//							status: 4
-//						}
-//						orderallData(data).then(res => {
-//							if(res.data.code == 200) {
-//								this.lstdata = res.data.data
-//							}
-//						})
+						//						let data = {
+						//							token: this.TokenId,
+						//							page: 1,
+						//							status: 4
+						//						}
+						//						orderallData(data).then(res => {
+						//							if(res.data.code == 200) {
+						//								this.lstdata = res.data.data
+						//							}
+						//						})
 					} else {
 						Notify({
 							type: 'warning',

@@ -37,7 +37,17 @@
 					<i slot="icon" class="icon iconfont ">&#xe644;</i>				
 				</h2>
 			</div>
-
+			<div class="share">
+				<div class="sh-t">
+					<p>火爆团购中，仅剩49件</p>
+					<h2>
+						<img v-for="item in 5" src="../../../assets/cat.jpg"/>
+					</h2>
+				</div>
+				<div class="share-r">
+					邀请好友拼团
+				</div>
+			</div>
 			<div class="pinglu">
 				<h1>宝贝评论</h1>
 				<div class="p-l-l-s" v-if="pinglun.length!=0">
@@ -58,12 +68,15 @@
 						</li>
 					</ul>
 				</div>
-				<div class="p-l-f-t" v-if="pinglun.length!=0">
+				<div class="p-l-f-t" v-if="current>3">
 					<button @click="checkout(messgein.goods_id)">查看更多({{messgein.evl_count}})</button>
 				</div>
 			</div>
 			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
 			<div class="xiang-q">
+				<van-divider :style="{ color: '#333', borderColor: '#333', padding: '0 10px' }">
+					详情
+				</van-divider>
 				<img v-for='(item,index) in messgein.img' :src="item.image" alt="" />
 			</div>
 		</div>
@@ -93,7 +106,7 @@
 	import { tuangoudetail } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
 	import { Dialog } from 'vant';
-	
+
 	export default {
 		data() {
 			return {
@@ -130,6 +143,8 @@
 					this.pinglun = res.data.data.evl;
 					this.images = res.data.data.zhutu;
 					this.time = res.data.data.countdown;
+					this.current =res.data.data.evl_count
+					
 				}
 			})
 		},
@@ -210,7 +225,7 @@
 					path: '/home/pingjia',
 					query: {
 						cid: idt,
-						type:2					
+						type: 2
 					}
 				})
 
@@ -222,7 +237,14 @@
 <style lang="stylus" scoped>
 	.addxuqu {
 		padding-bottom: 100px;
-		height: 100%;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
 		box-sizing: border-box;
 		>>>.van-popup {
 			.can-s-x-q {
@@ -238,6 +260,54 @@
 			}
 		}
 		.a-d-d {
+			flex: 1;
+			overflow: auto;
+			.xiang-q {
+				img {
+					width: 100%;
+					height: auto;
+				}
+			}
+			.share {
+				height: 140px;
+				margin-bottom: 20px;
+				background: rgba(63, 185, 77, .4);
+				width: 100%;
+				display: flex;
+				justify-content: space-between;
+				padding: 0 30px;
+				box-sizing: border-box;
+				align-items: center;
+				.sh-t {
+					height: 110px;
+					display: flex;
+					flex-direction: column;
+					justify-content: space-between;
+					p {
+						color: #3FB94D;
+						font-size: 24px;
+						font-weight: 600;
+					}
+					h2 {
+						img {
+							width: 72px;
+							height: 72px;
+							border-radius: 50%;
+							margin-right: 5px;
+						}
+					}
+				}
+				.share-r {
+					width: 240px;
+					height: 68px;
+					font-size: 28px;
+					line-height: 68px;
+					color: #fff;
+					text-align: center;
+					background: linear-gradient(90deg, rgba(63, 185, 77, 1), rgba(110, 202, 115, 1));
+					border-radius: 34px;
+				}
+			}
 			.x-q-l {
 				height: 280px;
 				.x-q-l-t {
@@ -379,8 +449,8 @@
 						}
 					}
 					img {
-						width: 80%;
-						height: auto;
+						width: 100%;
+						height: 100%;
 					}
 				}
 			}
@@ -388,10 +458,11 @@
 	}
 	
 	.pinglu {
-		min-height: 200px;
+		min-height: 100px;
 		width: 100%;
 		background: #fff;
 		padding-bottom: 40px;
+		margin-bottom: 20px;
 		h1 {
 			font-size: 30px;
 			font-weight: bold;
@@ -403,7 +474,7 @@
 		.p-l-f-t {
 			display: flex;
 			justify-content: center;
-			height: 200px;
+
 			button {
 				width: 280px;
 				height: 62px;
@@ -418,7 +489,7 @@
 		}
 		.p-l-l-s {
 			ul {
-				padding-bottom: 70px;
+				padding-bottom: 30px;
 				li {
 					background: #fff;
 					border-bottom: 2px solid #E1E1E1;

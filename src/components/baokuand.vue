@@ -5,7 +5,7 @@
 		</van-divider>
 		<ul class="guess-list">
 			<li v-for="(item,index) in mlist">
-				<div class="list-t">
+				<div class="list-t" @click="checkdetail(item.id)">
 					<img :src="item.cover" />
 				</div>
 				<p>{{item.title}}</p>
@@ -13,7 +13,7 @@
 					<h2>&yen;{{item.now_price}}</h2>
 					<h3 @click="addhouwuAdd(item.id)">
 						<img src="../../static/img/jgwc.png" />
-					</h3>					
+					</h3>
 				</div>
 			</li>
 		</ul>
@@ -23,11 +23,11 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { addshopcar ,hotgoudata} from '@/api/mine'
-	export default{
-		data(){
-			return{
-				mlist:[]
+	import { addshopcar, hotgoudata } from '@/api/mine'
+	export default {
+		data() {
+			return {
+				mlist: []
 			}
 		},
 		computed: {
@@ -36,33 +36,43 @@
 			})
 		},
 		mounted() {
-			let data={
-				page:1
+			let data = {
+				page: 1
 			}
 			hotgoudata(data).then(res => {
-				if(res.data.code == 200){
-					this.mlist= res.data.data
+				if(res.data.code == 200) {
+					this.mlist = res.data.data
 				}
 			})
 		},
-		methods:{
-			addhouwuAdd(idt){
+		methods: {
+			checkdetail(idt) {
 				var that = this
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:1
-					
+				that.$router.push('/overall/detail/' + idt)
+			},
+			addhouwuAdd(idt) {
+				var that = this
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 1
+
 				}
-				addshopcar(data).then(res=>{
+				addshopcar(data).then(res => {
 					console.log(res)
-					if(res.data.code == 200){
+					if(res.data.code == 200) {
 						that.$emit("click");
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}
@@ -80,7 +90,7 @@
 			display: flex;
 			li {
 				width: 360px;
-				height: 560px;
+				height: 450px;
 				background: #fff;
 				margin-bottom: 10px;
 				border-radius: 10px;
@@ -88,20 +98,23 @@
 				box-sizing: border-box;
 				.list-t {
 					width: 100%;
-					height: 360px;
+					height: 300px;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 					img {
-						width: 220px;
-						height: 220px;
+						width: 260px;
+						height: 260px;
 					}
 				}
 				p {
 					font-size: 26px;
 					line-height: 30px;
 					font-weight: 500;
-					height: 90px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					height: 30px;
 					color: rgba(51, 51, 51, 1);
 				}
 				.goumai {
@@ -114,10 +127,9 @@
 						font-family: PingFang SC;
 						font-weight: bold;
 						color: #FF6501;
-
 					}
-					h3{
-						img{
+					h3 {
+						img {
 							width: 50px;
 							height: 50px;
 							border-radius: 50%;

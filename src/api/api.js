@@ -24,6 +24,12 @@ export const newyouhui = data => Axios({
 	method: 'post',
 	data
 })
+//关闭新人优惠
+export const newpeipodata = data=>Axios({
+	url:'/api/index/only_coupons',
+	method:'post',
+	data
+})
 //搜索
 export const seachData= data => Axios({
 	url:'/api/allcategories/search',

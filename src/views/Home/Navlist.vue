@@ -159,7 +159,7 @@
 <style lang="stylus" scoped>
 	.navlist {
 		width: 100%;
-		min-height: 900px;
+
 		background: #fff;
 		.nav-ul {
 			height: 100px;
@@ -196,8 +196,7 @@
 			}
 		}
 		.nav-mian {
-			height: 900px;
-			overflow: auto;
+
 			li {
 				display: flex;
 				height: 173px;

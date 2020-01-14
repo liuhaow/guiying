@@ -3,7 +3,7 @@
 		<div class="nreprp" v-if="newpro">
 			<div class="nreprp-m">
 				<div class="nr-m-p">
-					<h5 class="banbi" @click="newpro = false">
+					<h5 class="banbi" @click="newdataclose()">
 						<img src="../../assets/img/shib.png"/>
 					</h5>
 					<h2 class="c-jiang">新人红包限时领</h2>
@@ -14,7 +14,7 @@
 							</h3>
 							<h4>
 								<span>新人专享</span>
-								<span>47:59:55</span>
+								<span>{{countDownList}}</span>
 								
 							</h4>
 						</div>
@@ -34,58 +34,66 @@
 							</div>
 						</li>
 					</ul>
-					<div class="c-new-k">
+					<div class="c-new-k" @click="qushiyongdata()">
 						查看更多
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="mai-t">
-			<div class="mai-head">
-				<div class="mai-t-l" @click="kefuData">
-					<i slot="icon" class="icon iconfont ">&#xe665;</i>
 
+		<div class="h-t-o-u">
+
+			<div class="mai-t">
+				<div class="mai-head">
+					<div class="mai-t-l" @click="kefuData">
+						<i slot="icon" class="icon iconfont ">&#xe665;</i>
+
+					</div>
+					<div class="mai-t-c" @click="seachData">
+						<i slot="icon" class="icon iconfont ">&#xe615;</i>养生花茶
+					</div>
+					<div class="mai-t-r" @click="messData()">
+						<i slot="icon" class="icon iconfont ">&#xe61e;</i>
+					</div>
 				</div>
-				<div class="mai-t-c" @click="seachData">
-					<i slot="icon" class="icon iconfont ">&#xe615;</i>养生花茶
-				</div>
-				<div class="mai-t-r" @click="messData()">
-					<i slot="icon" class="icon iconfont ">&#xe61e;</i>
+				<div class="mai-sw">
+					<mt-swipe>
+						<mt-swipe-item v-for='(item,index) in lunb' :key='index'>
+							<img :src="item.image" style="width:100%;height: 100%;border-radius:16px;" alt="" />
+						</mt-swipe-item>
+
+					</mt-swipe>
 				</div>
 			</div>
-			<div class="mai-sw">
-				<mt-swipe>
-					<mt-swipe-item v-for='(item,index) in lunb' :key='index'>
-						<img :src="item.image" style="width:100%;height: 100%;border-radius:16px;" alt="" />
-					</mt-swipe-item>
 
-				</mt-swipe>
+			<div class="nav-l">
+				<div class="nav-t">
+					<div class="la-b-a">
+						<i slot="icon" class="icon iconfont ">&#xe61f;</i>
+
+					</div>
+					<div class="marquee_box ">
+						<ul class="marquee_list" :class="{marquee_top:animate}">
+							<li v-for="(item, index) in announcementArr" :key="index">
+								<span>{{item.title}}</span>
+							</li>
+						</ul>
+					</div>
+					<p @click="messData()">更多</p>
+				</div>
+				<ul class="nav-list">
+					<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index)">
+						<img :src="item.logo" alt="" />
+						<p>{{item.name}}</p>
+					</li>
+				</ul>
+			</div>
+			<div class="haol">
+				<div class="haob">
+					<img v-if='hud1' :src="hud1.image" />
+				</div>
 			</div>
 		</div>
-
-		<div class="nav-l">
-			<div class="nav-t">
-				<div class="la-b-a">
-					<i slot="icon" class="icon iconfont ">&#xe61f;</i>
-
-				</div>
-				<div class="marquee_box ">
-					<ul class="marquee_list" :class="{marquee_top:animate}">
-						<li v-for="(item, index) in announcementArr" :key="index">
-							<span>{{item.title}}</span>
-						</li>
-					</ul>
-				</div>
-				<p @click="messData()">更多</p>
-			</div>
-			<ul class="nav-list">
-				<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index)">
-					<img :src="item.logo" alt="" />
-					<p>{{item.name}}</p>
-				</li>
-			</ul>
-		</div>
-
 		<div class="te-s">
 			<p class="zhuanq">特色专区</p>
 			<div class="ttui">
@@ -110,16 +118,11 @@
 			</div>
 		</div>
 
-		<div class="haol">
-			<div class="haob">
-				<img v-if='hud' :src="hud.image" />
-			</div>
-		</div>
 		<timeout></timeout>
 		<tuangou></tuangou>
 		<div class="haol">
 			<div class="haob">
-				<img v-if='hud1' :src="hud1.image" />
+				<img v-if='hud' :src="hud.image" />
 			</div>
 		</div>
 		<navlist></navlist>
@@ -135,7 +138,7 @@
 	import { mapGetters, mapActions } from 'vuex'
 
 	import { Dialog } from 'vant';
-	import { lunboData, shangpingData, indexmessage, indexList, newyouhui } from '@/api/api'
+	import { lunboData, shangpingData, indexmessage, indexList, newyouhui ,newpeipodata} from '@/api/api'
 
 	export default {
 		data() {
@@ -148,7 +151,9 @@
 				hud: '',
 				hud1: '',
 				liebiao: [],
-				nuewx:''
+				nuewx: '',
+				actEndTime: '',
+				countDownList: '00:00:00'
 
 			}
 		},
@@ -174,7 +179,6 @@
 			} else {
 				let pdet = {
 					token: this.TokenId
-
 				}
 				newyouhui(pdet).then(res => {
 					if(res.data.code == 200) {
@@ -182,7 +186,9 @@
 						this.nuewx = res.data.data.coupons
 						if(res.data.data.is_coupons == 1) {
 							this.newpro = true
-
+							this.actEndTime = res.data.data.coupons.valid_end_time;
+							
+							this.countDown()
 						} else {
 							this.newpro = false
 
@@ -239,6 +245,51 @@
 
 				]
 			),
+			newdataclose(){
+				this.newpro = false
+				let data ={
+					token: this.TokenId					
+				}
+				newpeipodata(data).then(res=>{
+					
+				})
+			},
+			timeFormat(param) {　　　　　　
+				return param < 10 ? '0' + param : param;　　　　
+			},
+			countDown(it) {　　　　　　
+				var interval = setInterval(() => {　　　　　　　　
+					　　　　　　　　
+					let newTime = new Date().getTime();　　　　　　　　
+					　　　　　　　　
+					let endTime = new Date(this.actEndTime).getTime();　　　　　　　　
+					let obj = null;　　　　　　　　
+					　　　　　　　　
+					if(endTime - newTime > 0) {　　　　　　　　　　
+						let time = (endTime - newTime) / 1000;　　
+						　　　　　　　　　　
+
+						let hou = parseInt(time % (60 * 60 * 24) / 3600);　　　　　　　　　　
+						let min = parseInt(time % (60 * 60 * 24) % 3600 / 60);　　　　　　　　　　
+						let sec = parseInt(time % (60 * 60 * 24) % 3600 % 60);　　　　　　　　　　
+						obj = {　　　　　　　　　　　　
+
+	　　　　　　　　　　　　hou: this.timeFormat(hou),
+	　　　　　　　　　　　　min: this.timeFormat(min),
+	　　　　　　　　　　　　sec: this.timeFormat(sec)　　　　　　　　　　
+						};　　　　　　　　
+					} else { // 活动已结束，全部设置为'00'
+						　　　　　　　　　　
+						obj = {　　　　　　　　　　　　
+							hou: '00',
+	　　　　　　　　　　　　  min: '00',
+	　　　　　　　　　　　　  sec: '00'　　　　　　　　　　
+						};　　　　　　　　　　
+						clearInterval(interval);　　　　　　　　
+					}　　　　　　　　
+					this.countDownList = obj.hou + ':' + obj.min + ':' + obj.sec;　　　　　　
+				}, 1000);　　　　
+			},
 			showMarquee: function() {
 				this.animate = true;
 				setTimeout(() => {
@@ -282,6 +333,15 @@
 				})
 
 			},
+			qushiyongdata() {
+				this.chooseilt(0)
+				this.$router.push('/overall')
+			},
+			newxiadan(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
+			},
+
 			tiaozhuan(idt) {
 				console.log(idt)
 				this.chooseilt(idt)
@@ -310,6 +370,12 @@
 		right: 0;
 		bottom: 0;
 		overflow: auto;
+	}
+	
+	.h-t-o-u {
+		background: url(../../assets/bjin.png) no-repeat;
+		background-size: cover;
+		padding-bottom: 20px;
 	}
 	
 	.nreprp {
@@ -459,13 +525,13 @@
 	}
 	
 	.haol {
-		height: 280px;
+		height: 220px;
 		width: 100%;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		.haob {
-			width: 721px;
+			width: 720px;
 			height: 206px;
 			img {
 				width: 100%;
@@ -531,19 +597,21 @@
 	.nav-l {
 		padding: 80px 27px 0;
 		box-sizing: border-box;
-		height: 500px;
-		background: red;
+		height: 540px;
+		/*background: red;*/
 		.nav-t {
-			height: 40px;
+			height: 80px;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 16px;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
 			position: relative;
 			padding-left: 40px;
 			.la-b-a {
-				position: absolute;
-				left: 5px;
-				top: 4px;
+				display: flex;
+				align-items: center;
+				height: 100%;
 				i {
 					color: #FD8048;
 					font-size: 34px;
@@ -553,11 +621,12 @@
 				display: block;
 				position: relative;
 				width: 60%;
-				height: 30px;
+				height: 50px;
+				margin-left: -60px;
 				overflow: hidden;
 				.marquee_top {
 					transition: all 0.5s;
-					margin-top: -30px
+					margin-top: -50px
 				}
 				.marquee_list {
 					display: block;
@@ -565,9 +634,10 @@
 					top: 0;
 					left: 0;
 					li {
-						height: 30px;
-						line-height: 30px;
-						font-size: 32px;
+						height: 50px;
+						line-height: 50px;
+						font-size: 28px;
+						color: #494949;
 						padding-left: 20px;
 					}
 				}
@@ -600,7 +670,7 @@
 				}
 				p {
 					font-size: 24px;
-					color: #4949449
+					color: #fff
 				}
 			}
 		}
@@ -613,7 +683,7 @@
 		box-sizing: border-box;
 		position: relative;
 		/*background: linear-gradient(0deg, rgba(69, 185, 84, 1) 0%, rgba(91, 231, 126, 1) 100%);*/
-		background: red;
+		/*background: red;*/
 		.mai-head {
 			height: 64px;
 			display: flex;

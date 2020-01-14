@@ -11,7 +11,7 @@
 			</ul>
 			<ul class="a-l-r">
 				<li v-for="item in mlist">
-					<img :src="item.cover" class="mlistimg" />
+					<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)"/>
 					<div class="a-l-t-d">
 						<p>{{item.title}}</p>
 						<div class="listxi">
@@ -129,6 +129,10 @@ export default {
 			})
 
 		},
+		checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
+			},
 		addhouwuAdd(idt) {
 			if(this.TokenId == '') {
 

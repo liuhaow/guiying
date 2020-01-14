@@ -3,19 +3,19 @@
 		<headt message='退货'></headt>
 		<div class="wu-l">
 			<div class="wu-l-t">
-				<h2><span>退货原因</span> <span>订单号 59595989595959</span></h2>
+				<h2><span>退货原因</span></h2>
 				<van-radio-group v-model="radio">
 					<van-cell-group>
-						<van-cell title="质量问题" clickable @click="radio = '1'">
+						<van-cell title="质量问题" clickable @click="radio = '1' ;tid='质量问题'">
 							<van-radio slot="right-icon" name="1" />
 						</van-cell>
-						<van-cell title="物流速度太慢" clickable @click="radio = '2'">
+						<van-cell title="物流速度太慢" clickable @click="radio = '2';tid='物流速度太慢' ">
 							<van-radio slot="right-icon" name="2" />
 						</van-cell>
-						<van-cell title="不想要了" clickable @click="radio = '3'">
+						<van-cell title="不想要了" clickable @click="radio = '3';tid='不想要了'">
 							<van-radio slot="right-icon" name="3" />
 						</van-cell>
-						<van-cell title="其他原因" clickable @click="radio = '4'">
+						<van-cell title="其他原因" clickable @click="radio = '4';tid='其他原因'">
 							<van-radio slot="right-icon" name="4" />
 						</van-cell>
 					</van-cell-group>
@@ -23,16 +23,16 @@
 			</div>
 
 			<div class="wu-l-n">
-				<p><span>退款金额:</span> &yen;68.00</p>
-				<p><span>退款说明:</span> <input type="text" placeholder="选填" /></p>
+				<p><span>退款金额:</span> &yen;{{totle}}</p>
+				<p><span>退款说明:</span> <input type="text" v-model="remark" placeholder="选填" /></p>
 
 			</div>
 			<div class="sh-ch">
-				<h2>上传凭证</h2>
-				<van-uploader v-model="fileList" multiple :max-count="3" />
+				<h2>上传(1张)凭证{上传了 会加快审核进度}</h2>
+				<van-uploader v-model="fileList" multiple :max-count="1" />
 			</div>
 			<div class="t-j-s">
-				<button>提交申请</button>
+				<button @click="makquedata()">提交申请</button>
 				<p>提示：申请提交72小时内商家会做出处理，请耐心等待！</p>
 			</div>
 		</div>
@@ -42,21 +42,74 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters } from 'vuex'
+	import { Notify } from 'vant';
+	import { Dialog } from 'vant';
 
+	import { tuihuosqingdata } from '@/api/mine'
 	export default {
 		data() {
 			return {
 				radio: '',
-				fileList: []
+				fileList: [],
+				tid: '',
+				totle: '',
+				remark: ''
+
 			}
 		},
 		components: {
 			headt
 
 		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			this.totle = this.$route.query.totle;
+		},
 		methods: {
-			chakanData(idt) {
-				this.$router.push('/myorder/wuliu/2')
+			makquedata() {
+				let imgs
+				if(this.fileList.length == 0) {
+					imgs = ''
+				} else {
+					imgs = this.fileList[0].content
+				}
+				if(!this.tid) {
+					Notify({
+						type: 'warning',
+						message: '需要一个理由！'
+					});
+					return
+				}
+				console.log(this.tid)
+				let data = {
+					token: this.TokenId,
+					order_id: this.$route.query.idt,
+					coin: this.$route.query.totle,
+					remark: this.remark,
+					reason: this.tid,
+					img: imgs
+				}
+				tuihuosqingdata(data).then(res => {
+					if(res.data.code == 200) {
+						Dialog.alert({
+							message: res.data.msg
+						}).then(() => {
+							this.$router.go(-1)
+
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+					}
+				})
+
 			}
 		}
 	}

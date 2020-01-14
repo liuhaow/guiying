@@ -11,13 +11,13 @@
 						</p>
 						<p v-if="item.status==0">
 							<span>即将开始</span>
-							<span>{{item.start_time}}</span> 
+							<span>{{item.start_time}}</span>
 						</p>
 						<p v-if="item.status==1">
-							<span >结束时间</span>
+							<span>结束时间</span>
 							<span>
 								{{item.end_time}}
-							</span> 
+							</span>
 						</p>
 
 					</div>
@@ -31,14 +31,15 @@
 						<img :src="item.goods_cover" class="mimgs" alt="" />
 						<div class="miao-l-r">
 							<p class="mingc">{{item.goods_name}} </p>
-							<p class="bili"><span class="bline"></span></p>
+
+							<p class="bili"><span class="bline" :style="'width:' + item.buyed_num*100/item.goods_num +'%'"></span></p>
+
 							<div class="mjia">
 								<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
 								<h3 class="zhenz" @click="mshaData(item.id)" v-if='statvd==1'>马上抢</h3>
-								<h3 class="yijin"  v-if='statvd==2'>已结束</h3>
-								<h3 class="yijin"  v-if='statvd==0'>敬请期待</h3>
-								
-								
+								<h3 class="yijin" v-if='statvd==2'>已结束</h3>
+								<h3 class="yijin" v-if='statvd==0'>敬请期待</h3>
+
 							</div>
 						</div>
 					</li>
@@ -54,15 +55,15 @@
 <script>
 	import headt from '@/components/heda'
 	import BScroll from "better-scroll";
-	import { MkillList ,MkillInfoList} from '@/api/api'
+	import { MkillList, MkillInfoList } from '@/api/api'
 	export default {
 		data() {
 			return {
 				select: 0,
 				mlistd: [],
 				mlist: [],
-				statvd:1
-				
+				statvd: 1
+
 			}
 		},
 		components: {
@@ -83,26 +84,26 @@
 			})
 		},
 		methods: {
-			changestyle(index,infom) {
+			changestyle(index, infom) {
 				this.select = index;
 				this.statvd = infom.status
-				let data ={
-					status:infom.status,
-					page:1,
-					end_time:infom.end_time,
-					start_time:infom.start_time
+				let data = {
+					status: infom.status,
+					page: 1,
+					end_time: infom.end_time,
+					start_time: infom.start_time
 				}
 				console.log(data)
-				MkillInfoList(data).then(res=>{
+				MkillInfoList(data).then(res => {
 					console.log(res)
-					if(res.data.code ==200){
-						this.mlist =res.data.data
+					if(res.data.code == 200) {
+						this.mlist = res.data.data
 					}
 				})
 			},
-			mshaData(idt){
-				this.$router.push('/home/msdetail/'+idt)
-				
+			mshaData(idt) {
+				this.$router.push('/home/msdetail/' + idt)
+
 			}
 
 		}
@@ -118,8 +119,6 @@
 		bottom: 0;
 		display: flex;
 		flex-direction: column;
-		padding-bottom: 98px;
-		box-sizing: border-box;
 		overflow: auto;
 		.a-d-d {
 			flex: 1;
@@ -166,7 +165,7 @@
 								margin: 25px 0 40px;
 								.bline {
 									display: block;
-									width: 120px;
+
 									height: 26px;
 									background: rgba(63, 185, 77, 1);
 									border-radius: 13px;
@@ -228,7 +227,7 @@
 				white-space: nowrap;
 				overflow-x: scroll;
 				float: left;
-				overflow-y:hidden ;
+				overflow-y: hidden;
 				li {
 					width: 200px;
 					height: 100px;
