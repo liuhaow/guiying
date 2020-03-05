@@ -125,26 +125,28 @@
 			...mapGetters({
 				morendata: 'getadrss',
 				TokenId: 'TokenId',
-				carList: 'carList'
+				qingdand: 'qingdand'
 			})
 		},
 		created() {
 			var that = this
 			that.zhifuwancheng()
+			
+		},
+		mounted() {
+			var  that = this
 			let allney = 0
 			let deposit = 0
-			that.carList.forEach((item) => {
+			that.qingdand.forEach((item) => {
 				if(item.selected) {
 					allney += item.num * item.now_price
 					deposit += item.num * item.deposit;
-					that.xuanzh.push(item)
 				}
 			})
+			that.xuanzh = that.qingdand
 			that.all_money = allney
 			that.deposit = deposit
-		},
-		mounted() {
-			let idt = this.$route.query.id
+			let idt = that.$route.query.id
 			let data = {
 				cid: idt,
 				page: 1
@@ -152,15 +154,15 @@
 			putongspInfo(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
-					this.messgein = res.data.data;
+					that.messgein = res.data.data;
 				}
 			})
 			let qury = {
-				token: this.TokenId
+				token: that.TokenId
 			}
 			zichanyue(qury).then(res => {
 				if(res.data.code == 200) {
-					this.money = res.data.data.money
+					that.money = res.data.data.money
 				}
 			})
 
@@ -173,8 +175,8 @@
 			),
 			qindandata() {
 				var that = this
-				console.log(that.xuanzh)
-				that.qingang(that.xuanzh)
+
+
 				that.$router.push('/mycar/qingdan')
 			},
 			zhifuwancheng() {
@@ -199,6 +201,7 @@
 					token: that.TokenId,
 					coin: coin
 				}
+				
 				keusequandata(data).then(res => {
 					console.log(res)
 					if(res.data.code = 200) {

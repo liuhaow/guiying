@@ -76,7 +76,8 @@
 		data() {
 			//这里存放数据
 			return {
-				del_show: false
+				del_show: false,
+				xuanzh:[]
 
 			};
 		},
@@ -94,15 +95,22 @@
 		},
 
 		methods: {
-			...mapActions(['headTitle', 'addNum', 'jianNum', 'select', 'selectAll', 'del', 'showBtm', 'carsnum']),
+			...mapActions(['headTitle', 'qingang','addNum', 'jianNum', 'select', 'selectAll', 'del', 'showBtm', 'carsnum']),
 			jiesuandata() {
-				if(this.allMoney == 0) {
+				var  that = this
+				if(that.allMoney == 0) {
 					Notify({
 						type: 'warning',
 						message: '您还没选择'
 					});
 					return
 				}
+				that.carList.forEach((item) => {
+				if(item.selected) {
+					that.xuanzh.push(item)
+				}
+			})
+				this.qingang(that.xuanzh)
 				this.$router.push('/mycar/payinfo')
 			},
 			delData(idt) {
