@@ -201,3 +201,32 @@ export const putongspInfo = data =>Axios({
 	method:'post',
 	data
 })
+//查找可用优惠券
+export const keusequandata= data =>Axios({
+	url:'/api/pay/can_use_coupons',
+	method:'post',
+	data
+})
+export const zhifubaosuss = data =>Axios({
+	url:'/api/order/jieguo',
+	method:'post',
+	data
+})
+export const zhifubastaosuss = data =>Axios({
+	url:'/api/order/jg',
+	method:'post',
+	data
+})
+
+export const dierleibei = data =>Axios({
+	url:'/api/allcategories/categories',
+	method:'post',
+	data
+})
+
+export const xiaofenlei = data =>Axios({
+	url:'/api/allcategories/erjicate',
+	method:'post',
+	data
+})
+

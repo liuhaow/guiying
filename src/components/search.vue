@@ -265,7 +265,7 @@
 		}
 		.seach-s {
 			flex: 1;
-			padding: 80px 20px 0;
+			padding: 20px 20px 0;
 			background: #fff;
 			box-sizing: border-box;
 			.seach-lst {

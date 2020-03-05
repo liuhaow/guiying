@@ -1,4 +1,4 @@
- <template>
+<template>
 	<div class="pay">
 		<headt message='确认订单'></headt>
 		<div class="pay-inf">
@@ -13,24 +13,20 @@
 			</div>
 			<div class="p-i-nav">
 				<ul>
-					<li>
-						<img :src="messgein.cover" alt="" />
+					<li v-for="(item,index) in xuanzh">
+						<img :src="item.cover" alt="" />
 					</li>
 				</ul>
-				<div class="shulinag">
-					<button @click="jianshao"> - </button>
-					<span>{{num}}</span>
-					<button @click="zenhjia(messgein.num)"> + </button>
-				</div>
+				<p class="chakan" @click="qindandata"> <img src="../../assets/img/zhank.png" /> </p>
 			</div>
 			<div class="zj-yj">
 				<div class="csc-s">
-					<h2>单价</h2>
-					<h3>&yen;{{messgein.now_price}}</h3>
+					<h2>总价</h2>
+					<h3>&yen;{{all_money}}</h3>
 				</div>
 				<div class="csc-s">
 					<h2>押金</h2>
-					<h3>&yen;{{messgein.deposit}}</h3>
+					<h3>&yen;{{deposit}}</h3>
 				</div>
 				<div class="csc-s">
 					<h2>优惠券</h2>
@@ -49,8 +45,8 @@
 						{{item.name}}
 						<span v-if='index==0' class="jinqian">{{money}}</span>
 					</h3>
-					<img src="../../../../../static/img/choss.png" v-if="chosd !=index" alt="" />
-					<img src="../../../../../static/img/chos.png" v-if="chosd ==index" alt="" />
+					<img src="../../../static/img/choss.png" v-if="chosd !=index" alt="" />
+					<img src="../../../static/img/chos.png" v-if="chosd ==index" alt="" />
 				</div>
 
 			</div>
@@ -64,7 +60,7 @@
 
 		<div class="pay-ft">
 			<h2>
-				实付 <span>&yen;{{Number(messgein.now_price*num).toFixed(1) + Number(messgein.deposit)-Number(value)}}</span>
+				实付 <span>&yen;{{all_money+deposit-value}}</span>
 			</h2>
 			<button @click="orderData">提交订单</button>
 		</div>
@@ -88,14 +84,14 @@
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
-	import { putongspInfo, keusequandata,zhifubaosuss } from '@/api/api'
+	import { putongspInfo, keusequandata, zhifubaosuss } from '@/api/api'
 	import { zichanyue, singopayinfo } from '@/api/mine'
 	import { Toast } from 'vant';
 	export default {
 		data() {
 			return {
 				showPicker: false,
-				columns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
+				columns: [],
 				value: '',
 				chosd: 0,
 				money: '',
@@ -103,7 +99,9 @@
 				num: 1,
 				youhui: 0,
 				remark: '',
-				listd: [],
+				all_money: '',
+				deposit: '',
+				xuanzh: [],
 				zhifu: [{
 						name: '余额'
 					},
@@ -125,16 +123,27 @@
 		computed: {
 			...mapGetters({
 				morendata: 'getadrss',
-				TokenId: 'TokenId'
+				TokenId: 'TokenId',
+				carList: 'carList'
 			})
 		},
-		created(){
-			this.zhifuwancheng()
-			
+		created() {
+			var that = this
+			that.zhifuwancheng()
+			let allney = 0
+			let deposit = 0
+			that.carList.forEach((item) => {
+				if(item.selected) {
+					allney += item.num * item.now_price
+					deposit += item.num * item.deposit;
+					that.xuanzh.push(item)
+				}
+			})
+			that.all_money = allney
+			that.deposit = deposit
 		},
 		mounted() {
 			let idt = this.$route.query.id
-
 			let data = {
 				cid: idt,
 				page: 1
@@ -156,24 +165,34 @@
 
 		},
 		methods: {
-			zhifuwancheng(){
+			...mapActions(
+				[
+					'qingang'
+				]
+			),
+			qindandata() {
+				var that = this
+				console.log(that.xuanzh)
+				that.qingang(that.xuanzh)
+				that.$router.push('/mycar/qingdan')
+			},
+			zhifuwancheng() {
 				var that = this
 				let data = {
-				token: that.TokenId
-			}
-				zhifubaosuss(data).then(res => {
-				console.log(res)
-				if(res.data.code == 200) {
-					 if(res.data.data.status == 2) {
-						that.$router.push('/myorder/paystatu')
-					}
-
+					token: that.TokenId
 				}
-			})
+				zhifubaosuss(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						if(res.data.data.status == 2) {
+							that.$router.push('/myorder/paystatu')
+						}
+					}
+				})
 			},
 			youhuodataquan() {
 				var that = this
-				let coin = Number(that.messgein.now_price * that.num).toFixed(1) + Number(that.messgein.deposit);
+				let coin = that.all_money + that.deposit;
 				that.value = ''
 				let data = {
 					token: that.TokenId,
@@ -182,15 +201,15 @@
 				keusequandata(data).then(res => {
 					console.log(res)
 					if(res.data.code = 200) {
-						if(res.data.data.length == 0){
-							Toast.fail('没有优惠券可以使用');						
-						}else if(res.data.data == null){
+						if(res.data.data.length == 0) {
 							Toast.fail('没有优惠券可以使用');
-							
-						}else{
+						} else if(res.data.data == null) {
+							Toast.fail('没有优惠券可以使用');
+
+						} else {
 							that.columns = res.data.data
 							that.showPicker = true;
-						}					
+						}
 					}
 
 				})
@@ -212,6 +231,7 @@
 			},
 			zenhjia(numt) {
 				this.num++
+					console.log(numt)
 				if(this.num > numt) {
 					this.num = numt
 				}
@@ -230,25 +250,28 @@
 			},
 			orderData() {
 				var that = this
-				let td;
+				let td
+				let coin = that.all_money + that.deposit - that.value
 				let addr = that.morendata.area + '-' + that.morendata.addr;
-				let coin = Number(that.messgein.now_price * that.num) + Number(that.messgein.deposit) - Number(that.value);
-				let danj = that.messgein.now_price;
-				console.log(danj)
-				let pdt = [{
-					cid: that.$route.query.id,
-					coin: danj,
-					num: that.num,
-					total_coin: coin,
-					deposit: that.messgein.deposit
-				}]
-				let pdtf = JSON.stringify(pdt)
+
 				if(that.chosd == 0) {
 					td = 2
 				} else {
 					td = 1
 				}
-				console.log(td, addr, pdt)
+				let pdt = []
+				for(let i in that.xuanzh) {
+					var produ = {
+						cid: that.xuanzh[i].id,
+						coin: that.xuanzh[i].now_price,
+						num: that.xuanzh[i].num,
+						total_coin: that.xuanzh[i].num * that.xuanzh[i].now_price,
+						deposit: that.xuanzh[i].deposit
+					}
+					pdt.push(produ)
+				}
+				let pdtf = JSON.stringify(pdt)
+
 				let data = {
 					token: that.TokenId,
 					coin: coin,
@@ -259,10 +282,10 @@
 					t: td,
 					product: pdtf,
 					coupons_id: that.youhui,
-					type: that.$route.query.type,
+					type: 1,
 					remark: that.remark
 				}
-				console.log(data)
+
 
 				singopayinfo(data).then(res => {
 					console.log(res)
@@ -446,7 +469,7 @@
 						font-size: 28px;
 						font-family: PingFang SC;
 						font-weight: 500;
-						color: rgba(51, 51, 51, 1);
+						color: #f53e3a;
 						padding-right: 20px;
 					}
 					div {
@@ -522,6 +545,13 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				.chakan {
+					padding: 20px;
+					img {
+						width: 40px;
+						height: 40px;
+					}
+				}
 				ul {
 					display: flex;
 					li {
@@ -587,8 +617,9 @@
 						height: 100%;
 						padding: 0 20px;
 						i {
-							font-size: 32px;
-							color: #333;
+							font-size: 36px;
+							color: #000;
+							font-weight: 600;
 						}
 					}
 				}

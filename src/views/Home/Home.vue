@@ -82,7 +82,7 @@
 					<p @click="messData()">更多</p>
 				</div>
 				<ul class="nav-list">
-					<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index)">
+					<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index,item.id)">
 						<img :src="item.logo" alt="" />
 						<p>{{item.name}}</p>
 					</li>
@@ -266,9 +266,7 @@
 					let obj = null;　　　　　　　　
 					　　　　　　　　
 					if(endTime - newTime > 0) {　　　　　　　　　　
-						let time = (endTime - newTime) / 1000;　　
-						　　　　　　　　　　
-
+						let time = (endTime - newTime) / 1000;　　					　　　　　　　　　　
 						let hou = parseInt(time % (60 * 60 * 24) / 3600);　　　　　　　　　　
 						let min = parseInt(time % (60 * 60 * 24) % 3600 / 60);　　　　　　　　　　
 						let sec = parseInt(time % (60 * 60 * 24) % 3600 % 60);　　　　　　　　　　
@@ -342,9 +340,9 @@
 				that.$router.push('/overall/detail/' + idt)
 			},
 
-			tiaozhuan(idt) {
+			tiaozhuan(idt,idd) {
 				console.log(idt)
-				this.chooseilt(idt)
+				this.chooseilt(idd)
 				if(idt == 9) {
 					this.$router.push('/vip/Vipmeber')
 

@@ -48,7 +48,6 @@
 		},
 		mounted() {
 			this.thatnum = this.tabName
-			console.log(this.thatnum)
 		},
 		computed: {
 			
@@ -70,7 +69,7 @@
 				if(index == 0) {
 					this.$router.push('/home')
 				} else if(index == 1) {
-					this.chooseilt(0)
+					this.chooseilt(1)
 					this.$router.push('/overall')
 				} else if(index == 2) {
 					if(this.TokenId == '') {

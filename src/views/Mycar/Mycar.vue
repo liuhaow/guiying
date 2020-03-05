@@ -1,15 +1,18 @@
 <template>
 	<div class='car'>
 		<div class="gouwu">购物车</div>
-		<div class="" v-if="!carList">
-			<div class="">
-				购物车什么都没有  去买点吧
+		<!--<div class="" v-if="carList==''">
+			<div class="tianjia">
+				购物车什么都没有 去买点吧
 			</div>
 			<baokuand v-on:click="myclick"></baokuand>
 
-		</div>
-		<div class='car-box' v-else>
-			<div class='car-top' v-for='(item,index) in carList' :key='index'>
+		</div>-->
+		<div class='car-box'>
+			<div class="j-g-w" v-if="carList==''">
+				购物车什么都没有 去买点吧
+			</div>
+			<div class='car-top' v-else v-for='(item,index) in carList' :key='index'>
 				<van-swipe-cell>
 					<van-cell :border="false">
 						<div class="car-list">
@@ -40,9 +43,7 @@
 					</template>
 				</van-swipe-cell>
 			</div>
-			<!--<div class="shixiao">
-				<shixiao></shixiao>
-			</div>-->
+		
 			<baokuand v-on:click="myclick"></baokuand>
 		</div>
 
@@ -54,10 +55,10 @@
 			</div>
 			<div class='all-money'>合计：<span>&yen;{{allMoney}}</span></div>
 			<!--<div class='del' v-if='del_show' @click="del()">删除</div>-->
-			<div class='pay'>去结算</div>
+			<div class='pay' @click="jiesuandata()">去结算</div>
 		</div>
 		<tabbar tabName='3'></tabbar>
-		
+
 	</div>
 </template>
 
@@ -69,7 +70,7 @@
 	//	import shixiao from './shixiao'
 	import baokuand from '@/components/baokuand'
 	import tabbar from "@/components/abbar"
-	
+
 	export default {
 
 		data() {
@@ -83,18 +84,27 @@
 			//			shixiao,
 			baokuand,
 			tabbar,
-			
 
 		},
 		computed: {
 			...mapGetters(['carList', 'allMoney', 'allSelsect', 'TokenId'])
 		},
 		watch: {
-			
+
 		},
 
 		methods: {
 			...mapActions(['headTitle', 'addNum', 'jianNum', 'select', 'selectAll', 'del', 'showBtm', 'carsnum']),
+			jiesuandata() {
+				if(this.allMoney == 0) {
+					Notify({
+						type: 'warning',
+						message: '您还没选择'
+					});
+					return
+				}
+				this.$router.push('/mycar/payinfo')
+			},
 			delData(idt) {
 				console.log(idt)
 				let data = {
@@ -189,6 +199,13 @@
 	.car-box {
 		flex: 1;
 		overflow: auto;
+		.j-g-w{
+			text-align: center;
+			font-size: 26px;
+			color: #ff6501;
+			font-weight: 600;
+			padding: 20px 0;
+		}
 		.car-top {
 			border-bottom: 2px solid #E1E1E1;
 			>>>.van-swipe-cell {

@@ -1,14 +1,12 @@
 <template>
 	<div class="wuliu">
-		<headt message='支付结果'></headt>
-
 		<div class="wu-l">
 			<div class="zhisuss" v-if='idtcg==1'>
 				<img src="../../../../../static/img/zhipay.png" alt="" />
 				<h2>支付成功</h2>
 				<p>恭喜您支付成功，我们将在24小时内安排发货！</p>
 				<div class="btnd">
-					<button>查看订单</button><button>继续购买</button>
+					<button @click="jixuhhou">继续购买</button>
 				</div>
 			</div>
 			<div class="zhisuss" v-else>
@@ -31,7 +29,7 @@
 	export default {
 		data() {
 			return {
-				idtcg: ''
+				idtcg: 1
 			}
 		},
 		components: {
@@ -39,13 +37,23 @@
 
 		},
 		mounted() {
-			this.idtcg = this.$route.params.id;
-
+			//			this.idtcg = this.$route.params.id;
+//			let form = this.$route.query.htmlData
+//			this.$router.push({
+//				path: '/mine/chongzhifu',
+//				query: {
+//					htmlData: form
+//				}
+//			})
 		},
 
 		methods: {
 			pingjiaData(idt) {
 				this.$router.push('/myorder/pingjia/2')
+			},
+			jixuhhou(){
+				this.$router.push('/mine')
+				
 			}
 		}
 	}
@@ -85,7 +93,6 @@
 					font-weight: bold;
 					color: rgba(51, 51, 51, 1);
 					margin: 40px 0 20px;
-					
 				}
 				p {
 					font-size: 30px;
@@ -93,7 +100,6 @@
 					font-weight: 500;
 					color: rgba(153, 153, 153, 1);
 					margin-bottom: 200px;
-
 				}
 				div {
 					display: flex;
@@ -108,11 +114,11 @@
 						font-family: PingFang SC;
 						font-weight: 500;
 					}
-					button:nth-child(1){
+					button:nth-child(1) {
 						color: #999999;
 						background: none;
 					}
-					button:nth-child(2){
+					button:nth-child(2) {
 						color: #999999;
 						background: #3FB94D;
 						color: #fff;

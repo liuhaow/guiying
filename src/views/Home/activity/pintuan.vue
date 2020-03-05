@@ -41,7 +41,7 @@
 				<div class="sh-t">
 					<p>火爆团购中，仅剩49件</p>
 					<h2>
-						<img v-for="item in 5" src="../../../assets/cat.jpg"/>
+						<img v-for="item in 2" src="../../../assets/cat.jpg"/>
 					</h2>
 				</div>
 				<div class="share-r">

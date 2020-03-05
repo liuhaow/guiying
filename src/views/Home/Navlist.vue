@@ -2,7 +2,7 @@
 	<div class="navlist">
 		<div class="nav-ul">
 			<ul>
-				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'chost':selected===index}">
+				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index,item.id)" :class="{'chost':selected==index+1}">
 					{{item.name}}
 				</li>
 			</ul>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-	import { shangpingData } from '@/api/api'
+	import { shangpingData,indexList } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	import { Dialog } from 'vant';
@@ -40,44 +40,9 @@
 		data() {
 			return {
 				active: true,
-				selected: 0,
+				selected: 1,
 				tlist: [],
-				list: [{
-						name: '全部'
-					},
-					{
-						name: '新鲜蔬菜'
-
-					},
-					{
-						name: '肉禽蛋品'
-
-					}, {
-						name: '粮油米面'
-
-					}, {
-						name: '酒水饮料'
-
-					}, {
-						name: '调味干货'
-
-					}, {
-						name: '水产海鲜'
-
-					}, {
-						name: '餐厨用品'
-
-					}, {
-						name: '火锅专用'
-
-					}, {
-						name: '烧烤专用'
-					},
-					{
-						name: '会员专享'
-					}
-
-				]
+				list: []
 			}
 		},
 		watch: {
@@ -110,10 +75,15 @@
 					this.tlist = res.data.data
 				}
 			})
+			indexList().then(res => {
+					if(res.data.code == 200) {
+						this.list = res.data.data
+					}
+				})
 		},
 		methods: {
-			changestyle(idt) {
-				this.selected = idt
+			changestyle(idt,idtd) {
+				this.selected = idtd
 			},
 			checkdetail(idt) {
 				var that = this

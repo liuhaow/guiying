@@ -64,10 +64,10 @@
 
 		</div>
 		<van-goods-action>
-			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd(messgein.goods_id)' />
-			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd(messgein.goods_id)' text="加入购物车" />
-			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping(messgein.goods_id)' text="立即购买" />
+			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata()' />
+			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd()' />
+			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd()' text="加入购物车" />
+			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping()' text="立即购买" />
 		</van-goods-action>
 		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '40%' }">
 			<div class="can-s-x-q">
@@ -86,7 +86,7 @@
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { putongspInfo } from '@/api/api'
+	import { putongspInfo,zhifubastaosuss } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
 	import { Dialog } from 'vant';
 	import baokuan from '@/components/baokuan'
@@ -101,7 +101,8 @@
 				current: 0,
 				canshu: false,
 				messgein: '',
-				pinglun: []
+				pinglun: [],
+				ift: ''
 
 			}
 		},
@@ -117,6 +118,7 @@
 		},
 		mounted() {
 			let idt = this.$route.params.id
+			this.ift = idt
 			console.log(idt)
 			let data = {
 				cid: idt,
@@ -146,13 +148,15 @@
 					}).catch(() => {});
 					return
 				}
+				console.log(idt)
+
+				
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: this.ift,
 					num: 1,
 					type: 1,
 					classify: 2
-
 				}
 				addshopcar(data).then(res => {
 					console.log(res)
@@ -169,7 +173,8 @@
 					}
 				})
 			},
-			addShopdata(idt) {
+			addShopdata() {
+
 				if(this.TokenId == '') {
 					Dialog.confirm({
 						title: '提示',
@@ -181,12 +186,13 @@
 				}
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: this.ift,
 					num: 1,
 					type: 2,
 					classify: 2
 
 				}
+
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
@@ -203,8 +209,22 @@
 				})
 
 			},
-			goShoping() {
-				console.log('立即购买')
+			goShoping(idt) {
+				let data = {
+					token:this.TokenId
+				}
+				zhifubastaosuss(data).then(res=>{
+					console.log(res)
+				})
+
+				this.$router.push({
+					path: '/myorder/payinfo',
+					query: {
+						id: this.ift,
+						type:1
+					}
+				})
+
 			},
 			checkout(idt) {
 				this.$router.push({

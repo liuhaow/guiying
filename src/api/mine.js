@@ -300,3 +300,9 @@ export const chonzhidata= data =>Axios({
 	method:'post',
 	data
 })
+//单个商品支付
+export const singopayinfo = data=>Axios({
+	url:'/api/pay/alipay_pay',
+	method:'post',
+	data
+})

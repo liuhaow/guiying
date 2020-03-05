@@ -20,7 +20,7 @@
 								</h2>
 							</div>
 							<div class="ad-f-r">
-								<h3>切换为此地址</h3>
+								<h3  v-if="item.is_default !=1 " @click="qiehuandizhi(item)">切换为此地址</h3>
 								<h4 @click="bianjiData(item.id)">编辑</h4>
 							</div>
 						</div>
@@ -82,6 +82,10 @@
 			bianjiData(idt) {
 				var that = this
 				that.$router.push('/mine/bianji/' + idt)
+			},
+			qiehuandizhi(ite){
+				var that = this
+				that.getaDta(ite)									
 			},
 			shezhimoData(ite) {
 				var that = this

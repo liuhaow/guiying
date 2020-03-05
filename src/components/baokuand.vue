@@ -82,7 +82,7 @@
 
 <style lang="stylus" scoped>
 	.guess-i {
-		margin-top: 60px;
+		margin-top: 30px;
 		width: 100%;
 		.guess-list {
 			justify-content: space-around;

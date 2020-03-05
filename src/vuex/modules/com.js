@@ -9,17 +9,11 @@ const state = {
 	taber:JSON.parse(localStorage.getItem('taber')) || 0,
 	phonenum:JSON.parse(localStorage.getItem('phone')) || '',//电话输入保存
 	userData:JSON.parse(localStorage.getItem('userData')) || '',
-	morendata:JSON.parse(localStorage.getItem('adress')) || '',
-	lit:JSON.parse(localStorage.getItem('chodd')) || 0,
+	lit:JSON.parse(localStorage.getItem('chodd')) || 1,
 	getadrss:JSON.parse(localStorage.getItem('getadrss')) ||'',
 	orderl:JSON.parse(localStorage.getItem('order')) || 0,
 	peisong:JSON.parse(localStorage.getItem('peisong')) || 0,
-	
-	
-
-	
-	
-	
+	qingdand:JSON.parse(localStorage.getItem('qingdn')) || [],
 }
 const actions = {
 	//手机号码输入
@@ -64,6 +58,10 @@ const actions = {
     peidata({commit},res){
     	localStorage.setItem('peisong',JSON.stringify(res))
     	commit('PEISONG',res)  
+    },
+    qingang({commit},res){
+    	localStorage.setItem('qingdn',JSON.stringify(res))
+    	commit('QINGD',res)  
     }
     
 }
@@ -73,7 +71,7 @@ const getters = {
     taber:state => state.taber,
     phonenum:state => state.phonenum,
     userData:state=> state.userData,
-    morendata:state=>state.morendata,
+	qingdand:state=> state.qingdand,
     lit:state=>state.lit,
     getadrss:state=>state.getadrss,
     orderl:state=>state.orderl,
@@ -107,7 +105,10 @@ const mutations = {
     PEISONG(state,res){
     	state.peisong=res
     	
-    }
+    },
+    QINGD(state,res){
+    	state.qingdand=res  	
+    },
 }
 
 

@@ -164,10 +164,20 @@ export default new Router({
       }
     
     },
+   
     {
       path: '/mycar',
       name: 'Mycar',
       component: resolve => require(['@/views/Mycar/Mycar'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    
+    },
+    {
+      path: '/mycar/payinfo',
+      name: 'Mycarinfo',
+      component: resolve => require(['@/views/Mycar/payinfo'], resolve),
        meta: {
         keepAlive: false 
       }
@@ -192,7 +202,7 @@ export default new Router({
     },
     //付款
     {
-    	path:'/myorder/payinfo/:id',
+    	path:'/myorder/payinfo',
     	name: 'payinfo',
       component: resolve => require(['@/views/Mine/order/pay/payinfo'], resolve),
        meta: {
@@ -201,7 +211,7 @@ export default new Router({
     },
      //付款状态
     {
-    	path:'/myorder/paystatu/:id',
+    	path:'/myorder/paystatu',
     	name: 'paystatu',
       component: resolve => require(['@/views/Mine/order/pay/paystatu'], resolve),
        meta: {
@@ -585,6 +595,14 @@ export default new Router({
     	path:'/mine/chongzhifu',
     	name: 'chongzhifu',
       component: resolve => require(['@/views/Mine/qianbox/zhifub'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
+    {
+    	path:'/mycar/qingdan',
+    	name: 'qingdan',
+      component: resolve => require(['@/views/Mycar/qindan'], resolve),
        meta: {
         keepAlive: false 
       }
