@@ -2,7 +2,7 @@
 	<div class="totles">
 		<div class="all-t">
 			<div class="mai-t-c" @click="seachData">
-				<i slot="icon" class="icon iconfont ">&#xe615;</i>养生花茶
+				<i slot="icon" class="icon iconfont ">&#xe615;</i>输入您要的物品
 			</div>
 		</div>
 		<div class="nav-ul">

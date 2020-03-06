@@ -13,15 +13,15 @@
 				<div class="x-q-l-t">
 					<div class="x-q-l-t-l">
 						<p>抢购价</p>
-						<h2>&yen;68 <span>60件已售</span></h2>
+						<h2>&yen;{{messgein.show_price}} <span>{{messgein.buyed_num}}件已售</span></h2>
 					</div>
 					<div class="x-q-l-t-r">
 						<p>秒杀进行中</p>
-						<h2>距离结束 <span>00:00:00</span></h2>
+						<h2>距离结束 <span>{{countDownList}}</span></h2>
 					</div>
 				</div>
 				<div class="x-q-l-f">
-					<p>大宅蟹礼品券石庄煮大闸蟹6只（389） 阳澄湖大宅蟹</p>
+					<p>{{messgein.goods_name}}</p>
 				</div>
 			</div>
 
@@ -93,9 +93,9 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	import { Dialog } from 'vant';
-	
+
 	import { Mkilldetail } from '@/api/api'
-	import {addshopcar} from '@/api/mine'
+	import { addshopcar } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -103,10 +103,12 @@
 					'https://img.yzcdn.cn/vant/apple-1.jpg',
 					'https://img.yzcdn.cn/vant/apple-2.jpg'
 				],
-				messgein:'',
+				messgein: '',
 				current: 0,
 				canshu: false,
-				pinglun: []
+				pinglun: [],
+				countDownList: '00:00:00',
+				actEndTime: '2020-01-13 18:50:00'
 
 			}
 		},
@@ -120,7 +122,8 @@
 			})
 		},
 		mounted() {
-			let idt = this.$route.params.id
+			var that = this
+			let idt = that.$route.params.id
 			console.log(idt)
 			let data = {
 				spike_id: idt
@@ -128,11 +131,14 @@
 			Mkilldetail(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
-					this.messgein = res.data.data;
-					this.pinglun = res.data.data.evl;
-					this.images = res.data.data.zhutu;
-					this.time = res.data.data.countdown;
-					this.current =res.data.data.evl_count
+					that.messgein = res.data.data;
+					that.actEndTime=res.data.data.endtime;
+					console.log(that.actEndTime)
+					that.pinglun = res.data.data.evl;
+					that.images = res.data.data.zhutu;
+					that.time = res.data.data.countdown;
+					that.current = res.data.data.evl_count
+					that.countDown()
 				}
 			})
 		},
@@ -214,10 +220,49 @@
 					path: '/home/pingjia',
 					query: {
 						cid: idt,
-						type:3					
+						type: 3
 					}
 				})
 
+			},
+			timeFormat(param) {　　　　　　
+				return param < 10 ? '0' + param : param;　　　　
+			},
+			countDown() {　　
+				var  that =this　
+				var interval = setInterval(() => {　　　　　　　　 // 获取当前时间，同时得到活动结束时间数组
+					　　　　　　　　
+					let newTime = new Date().getTime();　　　　　　　　 // 对结束时间进行处理渲染到页面
+					　　　　　　　　
+					let endTime = new Date(this.actEndTime).getTime();　　
+
+					let obj = null;　　　　　　　　 // 如果活动未结束，对时间进行处理
+					　　　　　　　　
+					if(endTime - newTime > 0) {　　　　　　　　　　
+						let time = (endTime - newTime) / 1000;　　　　　　　　　　 // 获取天、时、分、秒
+						　　　　　　　　　　
+						let day = parseInt(time / (60 * 60 * 24));　　　　　　　　　　
+						let hou = parseInt(time % (60 * 60 * 24) / 3600);　　　　　　　　　　
+						let min = parseInt(time % (60 * 60 * 24) % 3600 / 60);　　　　　　　　　　
+						let sec = parseInt(time % (60 * 60 * 24) % 3600 % 60);　　　　　　　　　　
+						obj = {　　　　　　　　　　　　
+							day: that.timeFormat(day),
+	　　　　　　　　　　　　 hou: that.timeFormat(hou),
+	　　　　　　　　　　　　 min: that.timeFormat(min),
+	　　　　　　　　　　　　 sec: that.timeFormat(sec)　　　　　　　　　　
+						};　　　　　　　　
+					} else { // 活动已结束，全部设置为'00'
+						　　　　　　　　　　
+						obj = {　　　　　　　　　　　　
+							hou: '00',
+	　　　　　　　　　　　　 min: '00',
+	　　　　　　　　　　　　 sec: '00'　　　　　　　　　　
+						};　　　　　　　　　　
+						clearInterval(interval);　　　　　　　　
+					}　　　　　　　　
+					that.countDownList = obj.hou + ':' + obj.min + ':' + obj.sec;　　　　
+
+				}, 1000);　　　　
 			}
 		}
 	}
@@ -233,14 +278,14 @@
 		bottom: 0;
 		top: 0;
 		display: flex;
-		flex-direction:column ;
+		flex-direction: column;
 		box-sizing: border-box;
-		>>>.van-popup{
-			.can-s-x-q{
+		>>>.van-popup {
+			.can-s-x-q {
 				height: 100%;
-				padding:70px 20px 0 ;
+				padding: 70px 20px 0;
 				box-sizing: border-box;
-				p{
+				p {
 					font-size: 34px;
 					line-height: 40px;
 					margin: 14px 0;
@@ -422,8 +467,8 @@
 			}
 		}
 	}
+	
 	.pinglu {
-
 		width: 100%;
 		background: #fff;
 		h1 {

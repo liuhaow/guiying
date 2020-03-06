@@ -131,7 +131,7 @@
 			font-size: 22px;
 			display: flex;
 			flex-direction: column;
-			color: #cdcdcd;
+			color: #999;
 			justify-content: center;
 			align-items: center;
 			.icon {
@@ -140,7 +140,7 @@
 			}
 		}
 		.actt {
-			color: #4673EC;
+			color: #3FB94D;
 		}
 	}
 </style>

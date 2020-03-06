@@ -31,9 +31,7 @@ export default {
 		return {
 			time: '',
 			mlist: [],
-			h: '',
-			m: '',
-			s: '',
+			
 			timed: '',
 			countDownList: '00:00:00',
 			actEndTime: '2020-01-13 18:50:00'
@@ -55,7 +53,7 @@ export default {
 		timeFormat(param) {　　　　　　
 			return param < 10 ? '0' + param : param;　　　　
 		},
-		countDown(it) {
+		countDown() {
 　　　　　　var interval = setInterval(() => {
 　　　　　　　　// 获取当前时间，同时得到活动结束时间数组
 　　　　　　　　let newTime = new Date().getTime();

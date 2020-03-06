@@ -2,7 +2,7 @@
 	<div class="totles">
 		<div class="all-t">
 			<div class="mai-t-c" @click="seachData">
-				<i slot="icon" class="icon iconfont ">&#xe615;</i>养生花茶
+				<i slot="icon" class="icon iconfont ">&#xe615;</i>输入您要的物品
 			</div>
 		</div>
 		<div class="all-list">
@@ -34,7 +34,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { shangpingData } from '@/api/api'
+	import { shangpingData,indexList } from '@/api/api'
 	import { Notify } from 'vant';
 	import { addshopcar } from '@/api/mine'
 	import tabbar from "@/components/abbar"
@@ -43,38 +43,7 @@
 		data() {
 			return {
 				chose: 0,
-				leftl: [{
-						name: '新鲜蔬菜'
-					},
-
-					{
-						name: '肉禽蛋品'
-					},
-					{
-						name: '粮油米面'
-					},
-					{
-						name: '酒水饮料'
-					},
-					{
-						name: '调味干货'
-					},
-					{
-						name: '水产海鲜'
-					},
-					{
-						name: '餐厨用品'
-					},
-					{
-						name: '火锅专用'
-					},
-					{
-						name: '烧烤专用'
-					},
-					{
-						name: '会员专享'
-					}
-				],
+				leftl: [],
 				mlist: []
 			}
 		},
@@ -91,6 +60,11 @@
 				console.log(res)
 				if(res.data.code == 200) {
 					this.mlist = res.data.data
+				}
+			})
+			indexList().then(res => {
+				if(res.data.code == 200) {
+					this.leftl = res.data.data
 				}
 			})
 		},

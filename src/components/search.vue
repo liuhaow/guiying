@@ -14,14 +14,14 @@
 		</div>
 
 		<div class="seach-w" v-if="seahinfo">
-			<van-dropdown-menu>
+			<!--<van-dropdown-menu>
 				<van-dropdown-item v-model="value1" :options="option1" />
 				<van-dropdown-item v-model="value2" :options="option2" />
 				<van-dropdown-item v-model="value3" :options="option3" />
-			</van-dropdown-menu>
+			</van-dropdown-menu>-->
 			<ul>
 				<li v-for='item in mlist'>
-					<div class="t-g-imh">
+					<div class="t-g-imh" @click="checkdetail(item.id)">
 						<img :src="item.cover" alt="" />
 					</div>
 					<p class="mingc">{{item.title}} </p>
@@ -38,7 +38,8 @@
 			</ul>
 		</div>
 		<div class="seach-s" v-if="!seahinfo">
-			<div class="history">
+			<img src="../../static/imges/kong.png"/>
+			<!--<div class="history">
 				<h1>历史搜索</h1>
 				<h2><i slot="icon" class="icon iconfont ">&#xe614;</i>清楚记录</h2>
 			</div>
@@ -46,7 +47,7 @@
 				<li v-for="(item,index) in list" @click="seachDataindfo()">
 					{{item.name}}
 				</li>
-			</ul>
+			</ul>-->
 		</div>
 	</div>
 
@@ -89,25 +90,7 @@
 						value: 'e'
 					}
 				],
-				list: [{
-						name: '换帝国'
-					}, {
-						name: '换帝国换帝国'
-
-					},
-					{
-						name: '句子'
-					},
-					{
-						name: '换帝国'
-					}, {
-						name: '换帝国换帝国'
-
-					},
-					{
-						name: '句子'
-					}
-				]
+				list: []
 			}
 		},
 		computed: {
@@ -119,6 +102,10 @@
 			back() {
 				this.$router.go(-1)
 
+			},
+			checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
 			},
 			quxiaoData() {
 				let data = {
@@ -133,7 +120,7 @@
 						if(res.data.data.length == 0) {
 							Notify({
 								type: 'success',
-								message: '没有您要早的商品，个人中心可以提需求'
+								message: '没有您要找的商品，个人中心可以提需求'
 							});
 							this.seahinfo = false
 						} else {
@@ -265,10 +252,17 @@
 		}
 		.seach-s {
 			flex: 1;
-			padding: 20px 20px 0;
+
 			background: #fff;
-			box-sizing: border-box;
-			.seach-lst {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			img{
+				width: 600px;
+				height: 600px;
+			}
+			/*.seach-lst {
 				display: flex;
 				flex-wrap: wrap;
 				padding-top: 20px;
@@ -301,7 +295,7 @@
 						margin-right: 6px;
 					}
 				}
-			}
+			}*/
 		}
 		.s-e {
 			height: 90px;

@@ -36,7 +36,7 @@
 
 							<div class="mjia">
 								<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
-								<h3 class="zhenz" @click="mshaData(item.id)" v-if='statvd==1'>马上抢</h3>
+								<h3 class="zhenz"  @click="mshaData(item.id)" v-if='statvd==1'>马上抢</h3>
 								<h3 class="yijin" v-if='statvd==2'>已结束</h3>
 								<h3 class="yijin" v-if='statvd==0'>敬请期待</h3>
 
@@ -101,8 +101,9 @@
 					}
 				})
 			},
-			mshaData(idt) {
-				this.$router.push('/home/msdetail/' + idt)
+			mshaData(idt){
+				
+				this.$router.push('/home/msdetail/'+ idt)
 
 			}
 

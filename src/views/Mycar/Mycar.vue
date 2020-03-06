@@ -10,7 +10,7 @@
 		</div>-->
 		<div class='car-box'>
 			<div class="j-g-w" v-if="carList==''">
-				购物车什么都没有 去买点吧
+				<img src="../../../static/img/ktuq.png"/>
 			</div>
 			<div class='car-top' v-else v-for='(item,index) in carList' :key='index'>
 				<van-swipe-cell>
@@ -213,6 +213,10 @@
 			color: #ff6501;
 			font-weight: 600;
 			padding: 20px 0;
+			img{
+				height: 280px;
+				width: 280px;
+			}
 		}
 		.car-top {
 			border-bottom: 2px solid #E1E1E1;
