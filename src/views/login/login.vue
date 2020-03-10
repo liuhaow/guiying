@@ -1,7 +1,9 @@
 <template>
 	<div class="login">
 		<div class="back">
-			<img @click="back" src="../../assets/back.jpg" alt="" />
+
+			<!--<img @click="back" src="../../../static/img/fanhui.png" alt="" />-->
+			
 		</div>
 		<div class="shur">
 			<h4>输入手机号</h4>
@@ -89,7 +91,7 @@
 	.back {
 		img {
 			height: 36px;
-			width: 20px;
+			width: 36px;
 			padding: 40px
 		}
 	}

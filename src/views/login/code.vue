@@ -1,7 +1,7 @@
 <template>
 	<div class="login">
 		<div class="back">
-			<img @click="back" src="../../assets/back.jpg" alt="" />
+			<img @click="back" src="../../../static/img/fanhui.png" alt="" />
 		</div>
 		<div class="shur">
 			<h4>输入验证码</h4>
@@ -10,7 +10,7 @@
 					{{phone}}
 				</p>
 				<h3 class="shouj"><input type="number" v-model="code" placeholder="输入验证码" /><button :disabled="disabled" @click="checkout">{{btnxt}}</button></h3>
-				<h5>注意：(操作需要  先点击获取验证码 然后输入 1234  做测试用  正式版会获取真的验证码)</h5>
+				<!--<h5>注意：(操作需要  先点击获取验证码 然后输入 1234  做测试用  正式版会获取真的验证码)</h5>-->
 			</div>
 			<div class="nextbu">
 
@@ -63,12 +63,12 @@
 				}
 				getSmsCode(data).then(res => {
 					console.log(res)
-					if(res.data.code == 200){
+					if(res.data.code == 200) {
 						Notify({
 							type: 'success',
 							message: res.data.msg
 						});
-					}else {
+					} else {
 						Notify({
 							type: 'warning',
 							message: res.data.msg
@@ -89,7 +89,8 @@
 				}
 			},
 			nextbuData() {
-				if(!this.code){
+				var that = this
+				if(!that.code) {
 					Toast({
 						message: '输入验证码',
 						iconClass: 'icon icon-error',
@@ -104,15 +105,22 @@
 				}
 				loginInfo(data).then(res => {
 					if(res.data.code == 200) {
-						this.setToken(res.data.data.token)
-						this.setUserData(res.data.data);
-						if(res.data.data.is_delivery == 0) {
-							this.$router.push('/home')
+						that.setToken(res.data.data.token)
+						that.setUserData(res.data.data);
+						Notify({
+							type: 'success',
+							message: '登录成功'
+						});
+						setTimeout(function(){
+							if(res.data.data.is_delivery == 0) {
+							that.$router.push('/home')
 						} else if(res.data.data.is_delivery == 1) {
-							this.$router.push('/peisong/transfer')
+							that.$router.push('/peisong/transfer')
 						}
+						},3000)
+						
 
-					}else {
+					} else {
 						Notify({
 							type: 'warning',
 							message: res.data.msg
@@ -137,7 +145,7 @@
 	.back {
 		img {
 			height: 36px;
-			width: 20px;
+			width: 36px;
 			padding: 40px
 		}
 	}
@@ -151,19 +159,19 @@
 			color: rgba(51, 51, 51, 1);
 		}
 		.checkbt {
-			h5{
+			h5 {
 				margin-top: 20px;
 				font-size: 32px;
 				line-height: 40px;
 				color: #FF0000;
 			}
-			p{
+			p {
 				font-size: 38px;
 				color: #333;
 				padding-bottom: 20px;
 			}
 			.shouj {
-				height:100px;
+				height: 100px;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;

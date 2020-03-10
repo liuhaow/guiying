@@ -41,7 +41,7 @@
 				if(res.data.code ==200){
 					let frid= res.data.data[0].user_id;
 					console.log(frid)
-					this.url1= 'http://gysm.pfkweb.com/index/chat/index?fromid='+this.userData.id+'&toid='+frid;
+					this.url1= 'http://cainiuwang8898.cn/index.php/index/chat/index?fromid='+this.userData.id+'&toid='+frid;
 					console.log(this.url1)
 				}
 			})

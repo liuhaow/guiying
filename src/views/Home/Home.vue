@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper">
+	<div class="wrapper" >
 		<div class="nreprp" v-if="newpro">
 			<div class="nreprp-m">
 				<div class="nr-m-p">
@@ -147,7 +147,10 @@
 				list: [],
 				announcementArr: [],
 				animate: false,
-				lunb: [],
+				lunb: [
+				{
+					image:'./static/lunb.png'
+				}],
 				hud: '',
 				hud1: '',
 				liebiao: [],

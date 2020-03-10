@@ -9,13 +9,13 @@
 
 				</div>
 			</div>
-			<div class="p-t-f">
+			<!--<div class="p-t-f">
 				<div>
 					<h2>清除缓存</h2>
 					<i slot="icon" class="icon iconfont " @click="qingchuDtat">&#xe644;</i>
 
 				</div>
-			</div>
+			</div>-->
 			<div class="p-t-f">
 				<div>
 					<h2>关于贵迎</h2>
@@ -51,7 +51,17 @@
 				var that = this;
 				that.$router.push('/mine/aboutgy')
 			},
-			nextData() {}
+			nextData() {
+				var that= this
+				localStorage.removeItem("tokenId");
+				localStorage.removeItem("userData");
+				localStorage.removeItem("phone");
+				localStorage.removeItem("search");
+				localStorage.removeItem("chodd");
+				that.$router.push('/need/login')
+				
+				
+			}
 		}
 	}
 </script>
