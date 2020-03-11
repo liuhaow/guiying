@@ -33,6 +33,8 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	
 	export default {
 		data() {
 			return {}
@@ -41,6 +43,11 @@
 			headt
 		},
 		methods: {
+			...mapActions(
+				[
+					'setSignOut'
+				]
+			),
 			yijianDtat() {
 				var that = this;
 				that.$router.push('/mine/yijian')
@@ -52,14 +59,9 @@
 				that.$router.push('/mine/aboutgy')
 			},
 			nextData() {
-				var that= this
-				localStorage.removeItem("tokenId");
-				localStorage.removeItem("userData");
-				localStorage.removeItem("phone");
-				localStorage.removeItem("search");
-				localStorage.removeItem("chodd");
-				that.$router.push('/need/login')
-				
+				var that= this				
+				that.setSignOut()	
+				that.$router.push('/home')
 				
 			}
 		}

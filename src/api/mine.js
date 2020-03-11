@@ -306,3 +306,35 @@ export const singopayinfo = data=>Axios({
 	method:'post',
 	data
 })
+//赖账的 取消付款
+
+export const Outpayinfo = data=>Axios({
+	url:'/api/pay/cancel_order',
+	method:'post',
+	data
+})
+//确认收货
+export const shouhuoData = data=>Axios({
+	url:'/api/pay/queren',
+	method:'post',
+	data
+})
+
+//发布评论
+export const pinlundata = data=>Axios({
+	url:'/api/order/release_comment',
+	method:'post',
+	data
+})
+//评论详情信息
+export const orderpinlunde = data=>Axios({
+	url:'/api/pay/pin_detail',
+	method:'post',
+	data
+})
+//收获地址删除
+export const delAddressdata = data=>Axios({
+	url:'/api/address/del_addr',
+	method:'post',
+	data
+})

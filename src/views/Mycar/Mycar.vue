@@ -19,18 +19,19 @@
 
 							<img src="../../../static/img/chos.png" alt="" class='choose-icon' v-if='item.selected' @click='select(item.id)'>
 							<img src="../../../static/img/choss.png" alt="" class='choose-icon' v-else @click='select(item.id)'>
-							<img :src="item.cover" alt="" class='car-img'>
+							<img :src="item.cover" alt="" class='car-img' @click="checkdetail(item.commodity_id)">
 							<div class='car-fr'>
-								<div class='car-name'>{{item.title}}</div>
+								<div class='car-name' @click="checkdetail(item.commodity_id)">{{item.title}}</div>
 								<div class='fr-btm'>
-									<div class='car-money'>
+									<div class='car-money' @click="checkdetail(item.commodity_id)">
 										<!--<p class='money-old'>￥{{item.marketPrice}}</p>-->
 										<p class='money-now'>￥{{item.now_price}}</p>
 									</div>
 									<div class='car-num'>
 
 										<span class='num-icon' @click='jianNum(item.id)'> - </span>
-										<span class='car-nums'>{{item.num}}</span>
+
+										<input class='car-nums' type="number" v-model="item.num" />
 										<span class='num-icon' @click='addNum(item.id)'> + </span>
 									</div>
 								</div>
@@ -112,6 +113,10 @@
 			})
 				this.qingang(that.xuanzh)
 				this.$router.push('/mycar/payinfo')
+			},
+			checkdetail(idt) {
+				var that = this
+				that.$router.push('/overall/detail/' + idt)
 			},
 			delData(idt) {
 				console.log(idt)

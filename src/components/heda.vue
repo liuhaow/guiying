@@ -5,14 +5,20 @@
 </template>
 
 <script>
+	import { mapGetters, mapActions } from 'vuex'
+	
 	export default {
 		props: ['message'],
 		data() {
 			return {}
 		},
 		methods: {
+			...mapActions(['qiehuanchangy']),
+			
 			back() {
 				this.$router.go(-1)
+				this.qiehuanchangy()
+
 			}
 		}
 	}

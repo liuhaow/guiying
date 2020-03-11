@@ -3,9 +3,9 @@
 		<headt message='确认订单'></headt>
 		<div class="pay-inf">
 			<div class="p-i-t">
-				<h2 class="p-t-h2"><span>{{morendata.name}}</span> <span>{{morendata.mobile}}</span></h2>
+				<h2 class="p-t-h2"><span>{{adressd.name}}</span> <span>{{adressd.mobile}}</span></h2>
 				<div class="pt-adrss">
-					<p>{{morendata.area}}-{{morendata.addr}}</p>
+					<p>{{adressd.area}}-{{adressd.addr}}</p>
 					<h3 @click="choseAdress"> 
 						<i slot="icon" class="icon iconfont " >&#xe644;</i>
 					</h3>
@@ -114,8 +114,9 @@
 					{
 						img: './static/img/wxin.png',
 						name: '微信'
-					},
-				]
+					}
+				],
+				adressd:''
 			}
 		},
 		components: {
@@ -125,7 +126,8 @@
 			...mapGetters({
 				morendata: 'getadrss',
 				TokenId: 'TokenId',
-				qingdand: 'qingdand'
+				qingdand: 'qingdand',
+				qiehuande:'qiehuande'
 			})
 		},
 		created() {
@@ -135,6 +137,12 @@
 		},
 		mounted() {
 			var  that = this
+			if(that.qiehuande){
+				console.log(1)
+				that.adressd =that.qiehuande
+			}else{
+				that.adressd =that.morendata			
+			}
 			let allney = 0
 			let deposit = 0
 			that.qingdand.forEach((item) => {
@@ -256,26 +264,33 @@
 				var that = this
 				let td
 				let coin = that.all_money + that.deposit - that.value
-				let addr = that.morendata.area + '-' + that.morendata.addr;
+				if(!that.morendata){
+					Toast.fail('请选择地址');
+					return
+				}
+				let addr = that.adressd.area + '-' + that.adressd.addr;
 
 				if(that.chosd == 0) {
 					td = 2
 				} else {
 					td = 1
 				}
-				let pdt = []
+				let pdt = [];
+				let qidn=[]
 				for(let i in that.xuanzh) {
 					var produ = {
-						cid: that.xuanzh[i].id,
+						cid: that.xuanzh[i].commodity_id,
 						coin: that.xuanzh[i].now_price,
 						num: that.xuanzh[i].num,
 						total_coin: that.xuanzh[i].num * that.xuanzh[i].now_price,
 						deposit: that.xuanzh[i].deposit
 					}
 					pdt.push(produ)
+					qidn.push(that.xuanzh[i].id)
 				}
 				let pdtf = JSON.stringify(pdt)
-
+					qidn=qidn.toString()
+					
 				let data = {
 					token: that.TokenId,
 					coin: coin,
@@ -287,14 +302,18 @@
 					product: pdtf,
 					coupons_id: that.youhui,
 					type: 1,
-					remark: that.remark
+					remark: that.remark,
+					carid:qidn,
+					carbuy:1
 				}
-
+			
+				
 				singopayinfo(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
 						let htmlf = res.data.data
 						if(that.chosd == 1) {
+							
 							that.$router.push({
 								path: '/mine/chongzhifu',
 								query: {

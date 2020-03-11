@@ -3,9 +3,9 @@
 		<headt message='确认订单'></headt>
 		<div class="pay-inf">
 			<div class="p-i-t">
-				<h2 class="p-t-h2"><span>{{morendata.name}}</span> <span>{{morendata.mobile}}</span></h2>
+				<h2 class="p-t-h2"><span>{{adressd.name}}</span> <span>{{adressd.mobile}}</span></h2>
 				<div class="pt-adrss">
-					<p>{{morendata.area}}-{{morendata.addr}}</p>
+					<p>{{adressd.area}}-{{adressd.addr}}</p>
 					<h3 @click="choseAdress"> 
 						<i slot="icon" class="icon iconfont " >&#xe644;</i>
 					</h3>
@@ -19,7 +19,7 @@
 				</ul>
 				<div class="shulinag">
 					<button @click="jianshao"> - </button>
-					<span>{{num}}</span>
+					<input type="number" name="" id="" v-model="num"/></span>
 					<button @click="zenhjia(messgein.num)"> + </button>
 				</div>
 			</div>
@@ -103,6 +103,7 @@
 				num: 1,
 				youhui: 0,
 				remark: '',
+				adressd:'',
 				listd: [],
 				zhifu: [{
 						name: '余额'
@@ -125,6 +126,7 @@
 		computed: {
 			...mapGetters({
 				morendata: 'getadrss',
+				qiehuande:'qiehuande',
 				TokenId: 'TokenId'
 			})
 		},
@@ -134,7 +136,12 @@
 		},
 		mounted() {
 			let idt = this.$route.query.id
-
+			if(this.qiehuande){
+				this.adressd =this.qiehuande
+			}else{
+				this.adressd =this.morendata
+				
+			}
 			let data = {
 				cid: idt,
 				page: 1
@@ -200,7 +207,6 @@
 			},
 			choseAdress() {
 				this.$router.push('/mine/adress')
-
 			},
 			jianshao() {
 				this.num--
@@ -231,7 +237,7 @@
 			orderData() {
 				var that = this
 				let td;
-				let addr = that.morendata.area + '-' + that.morendata.addr;
+				let addr = that.adressd.area + '-' + that.adressd.addr;
 				let coin = Number(that.messgein.now_price * that.num) + Number(that.messgein.deposit) - Number(that.value);
 				let danj = that.messgein.now_price;
 				console.log(danj)
@@ -534,7 +540,7 @@
 				}
 				.shulinag {
 					display: flex;
-					span {
+					input {
 						display: block;
 						width: 90px;
 						height: 60px;

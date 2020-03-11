@@ -7,23 +7,30 @@
 			<div style="height: 100%;overflow: auto;">
 				<ul>
 					<li v-for="(item,index) in fileList" :key='index'>
-						<div class="ad-t">
-							<h2><span class="spn-a">{{item.name}}</span><span>{{item.mobile}}</span></h2>
-							<h3>{{item.area}}{{item.addr}}</h3>
-						</div>
-						<div class="ad-f">
-							<div class="ad-f-l">
-								<h2 :class="{'morende':item.moren ==1 }">
+						<van-swipe-cell>
+							<van-cell :border="false">
+								<div class="ad-t">
+									<h2><span class="spn-a">{{item.name}}</span><span>{{item.mobile}}</span></h2>
+									<h3>{{item.area}}{{item.addr}}</h3>
+								</div>
+								<div class="ad-f">
+									<div class="ad-f-l">
+										<h2 :class="{'morende':item.moren ==1 }">
 									<img src="../../../../static/img/chos.png"  v-if="item.is_default ==1 " alt="" />
 									<img src="../../../../static/img/choss.png" @click="shezhimoData(item)" v-else="" alt="" />								
 									设为默认
 								</h2>
-							</div>
-							<div class="ad-f-r">
-								<h3  v-if="item.is_default !=1 " @click="qiehuandizhi(item)">切换为此地址</h3>
-								<h4 @click="bianjiData(item.id)">编辑</h4>
-							</div>
-						</div>
+									</div>
+									<div class="ad-f-r">
+										<h3 @click="qiehuandizhi(item)">切换为此地址</h3>
+										<h4 @click="bianjiData(item.id)">编辑</h4>
+									</div>
+								</div>
+							</van-cell>
+							<template slot="right">
+								<van-button square type="danger" @click='delData(item.id,item.is_default)' text="删除" />
+							</template>
+						</van-swipe-cell>
 					</li>
 				</ul>
 			</div>
@@ -35,7 +42,7 @@
 </template>
 
 <script>
-	import { AddrlistInfo, ShezhiAddr } from '@/api/mine'
+	import { AddrlistInfo, ShezhiAddr, delAddressdata } from '@/api/mine'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	export default {
@@ -50,13 +57,19 @@
 			})
 		},
 		mounted() {
+			var that = this
 			let data = {
 				token: this.TokenId
 			}
 			AddrlistInfo(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
-					this.fileList = res.data.data
+					that.fileList = res.data.data
+					that.fileList.forEach((item)=>{
+						if(item.is_default ==1){
+							that.getaDta(item)						
+						}
+					})
 				} else {
 					Notify({
 						type: 'danger',
@@ -69,11 +82,41 @@
 		methods: {
 			...mapActions(
 				[
-					'getaDta'
+					'getaDta',
+					'qiehuandata'
 				]
 			),
 			back() {
 				this.$router.go(-1)
+			},
+			delData(idt, modt) {
+				var that = this;
+				let data = {
+					aid: idt,
+					token: that.TokenId
+				}
+				let pary={
+					token: that.TokenId
+					
+				}
+				delAddressdata(data).then(res => {
+					if(res.data.code == 200) {
+						if(modt == 1) {
+							localStorage.removeItem('getadrss')
+						}
+						AddrlistInfo(pary).then(res => {
+
+							if(res.data.code == 200) {
+								that.fileList = res.data.data
+							} else {
+								Notify({
+									type: 'danger',
+									message: res.data.msg
+								});
+							}
+						})
+					}
+				})
 			},
 			tianAddate() {
 				var that = this
@@ -83,9 +126,12 @@
 				var that = this
 				that.$router.push('/mine/bianji/' + idt)
 			},
-			qiehuandizhi(ite){
+			qiehuandizhi(ite) {
 				var that = this
-				that.getaDta(ite)									
+				that.qiehuandata(ite)
+
+				that.$router.go(-1)
+
 			},
 			shezhimoData(ite) {
 				var that = this
@@ -96,7 +142,7 @@
 				}
 				ShezhiAddr(data).then(res => {
 					if(res.data.code == 200) {
-						that.getaDta(ite)						
+						that.getaDta(ite)
 						let index = that.fileList.findIndex(item => {
 							return item.id == ite.id
 						})
@@ -124,6 +170,16 @@
 </script>
 
 <style lang="stylus" scoped>
+	>>>.van-swipe-cell__right {
+		display: flex;
+		align-items: center;
+	}
+	
+	>>>.van-cell {
+		padding: 0!important;
+		background: none!important;
+	}
+	
 	.adress {
 		position: absolute;
 		left: 0;

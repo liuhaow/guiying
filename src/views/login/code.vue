@@ -117,7 +117,7 @@
 						} else if(res.data.data.is_delivery == 1) {
 							that.$router.push('/peisong/transfer')
 						}
-						},3000)
+						},2000)
 						
 
 					} else {

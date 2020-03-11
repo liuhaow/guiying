@@ -83,7 +83,7 @@
 							{{item.create_time}}
 						</div>
 						<div class="list-t-r">
-							<span>等待卖家发货</span>
+							<span>卖家已发货</span>
 						</div>
 					</div>
 					<div class="list-n">
@@ -104,7 +104,7 @@
 							<div class="dinzh">
 								<button @click="checkenwul(item.id)">查看物流</button>
 								<button @click="tuihuoData(item)">退货申请</button>
-								
+
 								<button class="btde" @click="querenData(item.id)">确认收货</button>
 							</div>
 
@@ -145,7 +145,7 @@
 						<div class="lis-f-f">
 							<div class="dinzh">
 								<button @click="shanchuoder(item.id)">删除订单</button>
-								<button class="btde">去评价</button>
+								<button class="btde" @click="pingjiadata(item.id)">去评价</button>
 							</div>
 
 						</div>
@@ -164,7 +164,7 @@
 
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { orderallData, Shancsorderall } from '@/api/mine'
+	import { orderallData, Shancsorderall, Outpayinfo, shouhuoData } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -205,8 +205,8 @@
 			let std = ''
 			if(this.orderl == 3) {
 				std = 4
-			} else if(this.orderl ==2 ) {
-				std = 3			
+			} else if(this.orderl == 2) {
+				std = 3
 			} else {
 				std = this.orderl
 			}
@@ -233,10 +233,10 @@
 				let std = ''
 				if(index == 3) {
 					std = 4
-				} else if (index==2){
+				} else if(index == 2) {
 					std = 3
-				
-				}else {
+
+				} else {
 					std = index
 				}
 
@@ -261,8 +261,17 @@
 				this.$router.push('/myorder/alldan/' + id)
 			},
 			querenData(idt) {
+				var that = this
+				let data = {
+					id: idt
+				}
+				shouhuoData(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						that.$router.push('/myorder/bourse/' + idt)
+					}
+				})
 
-				this.$router.push('/myorder/bourse/' + idt)
 			},
 			payData(idt) {
 				this.$router.push('/myorder/payinfo/' + idt)
@@ -270,7 +279,27 @@
 			quxiaoData(idt) {
 				this.$router.push('/myorder/quxiao/' + idt)
 			},
-			quxiaoOrder(idt) {},
+			quxiaoOrder(idt) {
+				var that = this
+				let data = {
+					id: idt
+				}
+				let pary = {
+					token: that.TokenId,
+					page: 1,
+					status: 1
+				}
+
+				Outpayinfo(data).then(res => {
+					if(res.data.code == 200) {
+						orderallData(pary).then(res => {
+							if(res.data.code == 200) {
+								that.lstdata = res.data.data
+							}
+						})
+					}
+				})
+			},
 			//退货
 			tuihuoData(item) {
 				console.log(item)
@@ -311,6 +340,10 @@
 
 					}
 				})
+			},
+			//评论
+			pingjiadata(idt){
+				this.$router.push('/myorder/pingjia/'+idt)			
 			}
 
 		}
@@ -319,7 +352,6 @@
 
 <style lang="stylus" scoped>
 	.morder {
-		padding-bottom: 98px;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;

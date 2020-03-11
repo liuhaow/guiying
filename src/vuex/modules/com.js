@@ -11,6 +11,7 @@ const state = {
 	userData:JSON.parse(localStorage.getItem('userData')) || '',
 	lit:JSON.parse(localStorage.getItem('chodd')) || 1,
 	getadrss:JSON.parse(localStorage.getItem('getadrss')) ||'',
+	qiehuande:JSON.parse(localStorage.getItem('qiehuan')) ||'',
 	orderl:JSON.parse(localStorage.getItem('order')) || 0,
 	peisong:JSON.parse(localStorage.getItem('peisong')) || 0,
 	qingdand:JSON.parse(localStorage.getItem('qingdn')) || [],
@@ -50,6 +51,10 @@ const actions = {
     	localStorage.setItem('getadrss',JSON.stringify(res))
     	commit('GETADRESS',res)  	   	
     },
+    qiehuandata({commit},res){
+    	localStorage.setItem('qiehuan',JSON.stringify(res))
+    	commit('QIEHUANAD',res)  	   	
+    },
     //选择订单选项
     orderchoose({commit},res){
     	localStorage.setItem('order',JSON.stringify(res))
@@ -62,7 +67,21 @@ const actions = {
     qingang({commit},res){
     	localStorage.setItem('qingdn',JSON.stringify(res))
     	commit('QINGD',res)  
-    }
+    },
+    setSignOut({
+		commit
+	}) {
+		localStorage.removeItem('userData')
+		localStorage.removeItem('tokenId')
+		commit(types.SET_USER_DATA, '')
+		commit(types.ADD_TOKEN, '')
+	},
+	qiehuanchangy({
+		commit
+	}) {
+		localStorage.removeItem('qiehuan')
+		commit('QIEHUANAD', '')
+	}
     
 }
 const getters = {
@@ -75,7 +94,8 @@ const getters = {
     lit:state=>state.lit,
     getadrss:state=>state.getadrss,
     orderl:state=>state.orderl,
-    peisong:state=>state.peisong
+    peisong:state=>state.peisong,
+    qiehuande:state=>state.qiehuande
 }
 const mutations = {
 	[types.PHONE_NUM](state,res){
@@ -109,6 +129,9 @@ const mutations = {
     QINGD(state,res){
     	state.qingdand=res  	
     },
+    QIEHUANAD(state,res){
+    	state.qiehuande=res  	
+    }
 }
 
 

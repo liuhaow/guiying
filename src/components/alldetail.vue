@@ -156,7 +156,7 @@
 					cid: this.ift,
 					num: 1,
 					type: 1,
-					classify: 2
+					classify: 1
 				}
 				addshopcar(data).then(res => {
 					console.log(res)

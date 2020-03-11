@@ -9,17 +9,17 @@
 		</div>
 		<div class="p-lst">
 			<ul>
-				<li v-for="(item ,index) in 3">
+				<li v-for="(item ,index) in list">
 					<div class="l-st-t">
-						<img src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
-						<p>童装男童加厚外套冬季新款大童儿童</p>
+						<img :src="item.cover" alt="" />
+						<p class="tit_y">{{item.commodity_name}}</p>
 					</div>
 					<div class="l-st-n">
 						<span>整体评价</span>
-						<van-rate v-model="value[index].num" />
+						<van-rate v-model="item.level" />
 					</div>
 					<div class="l-st-f">
-						<textarea name="" rows="" cols="" placeholder="说说它的优点和美中不足的地方吧!"></textarea>
+						<textarea name="" rows="" v-model="item.content" cols="" placeholder="说说它的优点和美中不足的地方吧!"></textarea>
 					</div>
 				</li>
 			</ul>
@@ -28,11 +28,11 @@
 			<h2>店铺评价</h2>
 			<div class="p-l-f-p">
 				<span>送货服务</span>
-				<van-rate v-model="fu" />
+				<van-rate v-model="song" />
 			</div>
 			<div class="p-l-f-p">
 				<span>服务态度</span>
-				<van-rate v-model="song" />
+				<van-rate v-model="fu" />
 			</div>
 		</div>
 
@@ -41,32 +41,69 @@
 
 <script>
 	import headt from '@/components/heda'
+	import { mapGetters, mapActions } from 'vuex'
+	import { Notify } from 'vant';
+	import { pinlundata, orderpinlunde } from '@/api/mine'
 
 	export default {
 		data() {
 			return {
 				fu: 5,
 				song: 5,
-				value: [{
-						num: 2
-					},
-					{
-						num: 1
-					},
-					{
-						num: 3
-					}
-				]
+				list: [],
+
 			}
+		},
+		computed: {
+			...mapGetters({
+				TokenId: 'TokenId'
+			})
+		},
+		mounted() {
+			let data = {
+				order_id: this.$route.params.id
+			}
+			orderpinlunde(data).then(res => {
+				if(res.data.code == 200) {
+					this.list = res.data.data;
+				}
+			})
 		},
 		methods: {
 			back() {
 				this.$router.go(-1)
 			},
 			tijaioData() {
-				console.log(1)
-					this.$router.push('/myorder/pingsuess')
-				
+				var that = this
+				let zhungd = [];
+				that.list.forEach((item) => {
+					let pd = {
+						commodity_id: item.commodity_id,
+						content: item.content,
+						level: item.level
+					}
+					zhungd.push(pd)
+				})
+
+				let pdtf = JSON.stringify(zhungd)
+
+				let data = {
+					token: that.TokenId,
+					order_id: that.$route.params.id,
+					delivery_evaluation: that.song,
+					platform_evaluation: that.fu,
+					product_all: pdtf
+
+				}
+				pinlundata(data).then(res => {
+					if(res.data.code == 200) {
+						that.$router.push('/myorder/pingsuess')
+					}
+				})
+
+				console.log(data)
+
+
 			}
 		}
 	}
@@ -103,6 +140,10 @@
 					flex-direction: column;
 					.l-st-t {
 						display: flex;
+						.tit_y {
+							font-size: 28px;
+							line-height: 32px;
+						}
 						img {
 							height: 140px;
 							width: 140px;
@@ -132,9 +173,8 @@
 							height: 90%;
 							border: none;
 							font-size: 30px;
-							font-family: PingFang SC;
 							font-weight: 500;
-							color: rgba(204, 204, 204, 1);
+							color: #000;
 						}
 					}
 				}

@@ -14,9 +14,9 @@
 						<img :src="item.cover" alt="" />
 					</div>
 					<div class="nav-r">
-						<p class="nav-title">{{item.title}}</p>
+						<p class="nav-title" @click="checkdetail(item.id)">{{item.title}}</p>
 						<div class="nav-z-k">
-							<p><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
+							<p @click="checkdetail(item.id)"><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
 							<h2 @click="addhouwuAdd(item.id)">
 								<img src="../../../static/img/jgwc.png"/>
 							</h2>

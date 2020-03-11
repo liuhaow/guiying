@@ -36,7 +36,6 @@
 	import areaList from './area.js'
 	import { mapGetters, mapActions } from 'vuex'
 	import { TianAddrlist } from '@/api/mine'
-	
 
 	export default {
 		data() {
@@ -60,17 +59,25 @@
 			},
 			tianjiaData() {
 				var that = this
-				let data={
-					nickname:that.nickname,
-					mobile:that.mobile,
-					area:that.carmodel,
-					addr:that.addr,
-					token:that.TokenId
+				let data = {
+					nickname: that.nickname,
+					mobile: that.mobile,
+					area: that.carmodel,
+					addr: that.addr,
+					token: that.TokenId
 				}
-				TianAddrlist(data).then(res=>{
-					console.log(res)
+				TianAddrlist(data).then(res => {
+					if(res.data.code == 200) {
+						this.$router.go(-1)
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
+
+					}
 				})
-				
+
 			},
 			showPopup() {
 				this.show = true;

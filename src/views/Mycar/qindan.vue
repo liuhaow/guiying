@@ -49,7 +49,7 @@
 			var that = this
 			let allnum = 0
 			that.qingdand.forEach((item) => {
-					allnum += item.num 
+				allnum += Number(item.num)
 			})
 			that.numb = allnum
 			that.list=that.qingdand

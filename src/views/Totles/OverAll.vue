@@ -20,9 +20,9 @@
 				<li v-for="item in mlist">
 					<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)" />
 					<div class="a-l-t-d">
-						<p>{{item.title}}</p>
+						<p @click="checkdetail(item.id)">{{item.title}}</p>
 						<div class="listxi">
-							<h2>
+							<h2 @click="checkdetail(item.id)">
 								<span class="newp">&yen;{{item.now_price}}</span><br />
 								<span class="oldp">&yen;{{item.old_price}}</span>
 							</h2>
