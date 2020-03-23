@@ -40,8 +40,9 @@
 
 <script>
 	import headt from '@/components/heda'
-	import { Newtryinfo, Newtryinfotype, Newlotype } from '@/api/api'
+	import { Newtryinfo, Newtryinfotype, Newlotype,indexList } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
+
 	
 	export default {
 		data() {
@@ -99,6 +100,7 @@
 				ty: this.$route.query.ty,
 				page: 1
 			}
+			this.listdat()
 			Newtryinfo(data).then(res => {
 				if(res.data.code == 200) {
 					this.listd = res.data.data
@@ -120,6 +122,13 @@
 			})
 		},
 		methods: {
+			listdat(){
+				indexList().then(res => {
+					if(res.data.code == 200) {
+						this.list = res.data.data
+					}
+				})
+			},
 			changestyle(itd) {
 				this.selected = itd;
 				let data = {

@@ -116,18 +116,36 @@
 					rid: this.coin,
 					pid: this.chos
 				}
-				console.log(data)
-				paywzhidata(data).then(res => {
-					console.log(res)
-					if(res.data.code = 200) {
-						this.$router.push({
-							path: '/mine/chongzhifu',
-							query: {
-								htmlData:res.data.data
-							}
-						})
-					}
-				})
+				var aliChannel = null; 
+
+				mui.plusReady(function () { // 获取支付通道  
+
+					
+                plus.payment.getChannels(function (channels) {
+                    for (var i in channels) {
+                    	cons
+                        if (channels[i].id == "wxpay") {
+                            wxChannel = channels[i];
+                        } else {
+                            aliChannel = channels[i];
+                        }
+                    }
+                }, function (e) {
+                    alert("获取支付通道失败：" + e.message);
+                });
+            })
+
+//				paywzhidata(data).then(res => {
+//					console.log(res)
+//					if(res.data.code = 200) {
+//						this.$router.push({
+//							path: '/mine/chongzhifu',
+//							query: {
+//								htmlData:res.data.data
+//							}
+//						})
+//					}
+//				})
 			}
 		}
 	}

@@ -544,7 +544,7 @@
 	.te-s {
 		background: #fff;
 		padding: 0px 20px 0;
-		margin-top: 20px;
+
 		box-sizing: border-box;
 		height: 366px;
 		width: 100%;

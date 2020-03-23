@@ -7,10 +7,13 @@
 		</div>
 		<div class="all-list">
 			<ul class="a-l-s-t">
-				<li v-for="(item,index) in leftl" @click="changestyle(index)" :class="{'xuan':chose===index}">{{item.name}}</li>
+				<li v-for="(item,index) in leftl" @click="changestyle(index,item.id)" :class="{'xuan':chose===index}">{{item.name}}</li>
 			</ul>
-			<ul class="a-l-r">
-				<li v-for="(item,index) in mlist" :key='index'>
+			<div class="scroller" ref='scroller'>
+				<scroller :on-infinite="infinite" :on-refresh="refresh" ref="myscroller">
+
+			<ul class="a-l-r" ref="myscrollerul">
+				<li v-for="(item,index) in tlist" :key='index'>
 					<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)" />
 					<div class="a-l-t-d">
 						<p @click="checkdetail(item.id)">{{item.title}}</p>
@@ -26,6 +29,9 @@
 					</div>
 				</li>
 			</ul>
+			</scroller>
+
+			</div>
 		</div>
 		<tabbar tabName='2'></tabbar>
 
@@ -44,27 +50,20 @@
 			return {
 				chose: 0,
 				leftl: [],
-				mlist: []
+				tlist: [],
+				page:0
 			}
 		},
 		components: {
 			tabbar
 		},
 		mounted() {
-			let litd = this.chose + 1
-			let data = {
-				type: litd,
-				page: 1
-			}
-			shangpingData(data).then(res => {
-				console.log(res)
-				if(res.data.code == 200) {
-					this.mlist = res.data.data
-				}
-			})
 			indexList().then(res => {
 				if(res.data.code == 200) {
 					this.leftl = res.data.data
+
+				}else{
+					
 				}
 			})
 		},
@@ -84,17 +83,69 @@
 				var that = this
 				that.$router.push('/overall/detail/' + idt)
 			},
-			changestyle(index) {
-				this.chose = index
-				let litd = index + 1
+			changestyle(index,idt) {
+				var  that = this
+				that.chose = index
+				that.page=1
+				
 				let data = {
-					type: litd,
+					type: idt,
 					page: 1
+				}		
+
+				shangpingData(data).then(res => {
+
+					if(res.data.code == 200) {
+						that.tlist = res.data.data
+					}
+				})
+
+			},
+			//上拉加载
+			infinite: function() {
+				console.log('infinite')
+				var that = this
+				that.page = that.page + 1
+				console.log(that.page)
+				let data = {
+					type: that.chose+1,
+					page: that.page
 				}
 				shangpingData(data).then(res => {
-					console.log(res)
 					if(res.data.code == 200) {
-						this.mlist = res.data.data
+						if(res.data.data.length > 0) {
+							if(that.tlist.length > 0) {
+								that.tlist.concat(res.data.data)
+								let dtw = res.data.data
+								that.tlist = that.tlist.concat(dtw)
+							} else {
+								that.tlist = res.data.data
+							}
+							that.$refs.myscroller.finishInfinite(true);
+						} else {
+							that.$refs.myscroller.finishInfinite(true);
+							
+						}
+					}else{
+						that.$refs.myscroller.finishInfinite(true);						
+					}
+				})
+			},
+			//下拉刷新 
+			refresh: function() {
+				console.log('refresh')
+				var that = this
+				let data = {
+					type: that.chose+1,
+					page: 1
+				}
+				that.page = 1
+				shangpingData(data).then(res => {
+					if(res.data.code == 200) {
+						this.tlist = res.data.data
+						this.$refs.myscroller.finishPullToRefresh()
+					} else {
+
 					}
 				})
 
@@ -185,8 +236,13 @@
 					background: #E1E1E1;
 				}
 			}
+			.scroller {
+				position: relative;
+				width: 74%;
+				height: 100%;
+			}
 			.a-l-r {
-				width: 72%;
+				width: 100%;
 				height: 100%;
 				overflow: auto;
 				li {

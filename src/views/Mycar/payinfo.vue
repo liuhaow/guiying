@@ -312,8 +312,7 @@
 					console.log(res)
 					if(res.data.code == 200) {
 						let htmlf = res.data.data
-						if(that.chosd == 1) {
-							
+						if(that.chosd == 1) {							
 							that.$router.push({
 								path: '/mine/chongzhifu',
 								query: {
@@ -336,6 +335,9 @@
 								}
 							);
 
+						}else{
+						Toast.success(res.data.msg);
+							that.$router.go(-1)
 						}
 
 					} else {

@@ -8,7 +8,7 @@
 			</ul>
 		</div>
 		<div class="nav-list">
-			<ul class="nav-mian">
+			<!--<ul class="nav-mian">
 				<li v-for="(item,index) in tlist">
 					<div class="nav-l" @click="checkdetail(item.id)">
 						<img :src="item.cover" alt="" />
@@ -23,18 +23,40 @@
 						</div>
 					</div>
 				</li>
-			</ul>
+			</ul>-->
+		</div>
+		<div class="scroller" ref='scroller'>
+
+			<scroller :on-infinite="infinite" :on-refresh="refresh" ref="myscroller">
+				<ul class="nav-mian">
+					<li v-for="(item,index) in tlist">
+						<div class="nav-l" @click="checkdetail(item.id)">
+							<img :src="item.cover" alt="" />
+						</div>
+						<div class="nav-r">
+							<p class="nav-title" @click="checkdetail(item.id)">{{item.title}}</p>
+							<div class="nav-z-k">
+								<p @click="checkdetail(item.id)"><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
+								<h2 @click="addhouwuAdd(item.id)">
+								<img src="../../../static/img/jgwc.png"/>
+							</h2>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</scroller>
+
 		</div>
 
 	</div>
 </template>
 
 <script>
-	import { shangpingData,indexList } from '@/api/api'
+	import { shangpingData, indexList } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	import { Dialog } from 'vant';
-	
+
 	import { addshopcar } from '@/api/mine'
 	export default {
 		data() {
@@ -42,23 +64,12 @@
 				active: true,
 				selected: 1,
 				tlist: [],
-				list: []
+				list: [],
+				isLoading: true,
+				page: 0
 			}
 		},
-		watch: {
-			selected(newId) {
-				let data = {
-					type: newId,
-					page: 1
-				}
-				shangpingData(data).then(res => {
-					console.log(res)
-					if(res.data.code == 200) {
-						this.tlist = res.data.data
-					}
-				})
-			}
-		},
+
 		computed: {
 			...mapGetters({
 				TokenId: 'TokenId'
@@ -69,21 +80,78 @@
 				type: 0,
 				page: 1
 			}
-			shangpingData(data).then(res => {
-				console.log(res)
+
+			indexList().then(res => {
 				if(res.data.code == 200) {
-					this.tlist = res.data.data
+					this.list = res.data.data
 				}
 			})
-			indexList().then(res => {
-					if(res.data.code == 200) {
-						this.list = res.data.data
-					}
-				})
 		},
 		methods: {
-			changestyle(idt,idtd) {
-				this.selected = idtd
+
+			//上拉加载
+			infinite: function() {
+				console.log('infinite')
+				var that = this
+				that.page = that.page + 1
+
+				let data = {
+					type: that.selected,
+					page: that.page
+				}
+				shangpingData(data).then(res => {
+					if(res.data.code == 200) {
+						if(res.data.data.length > 0) {
+							if(that.tlist.length > 0) {
+								that.tlist.concat(res.data.data)
+								let dtw = res.data.data
+								that.tlist = that.tlist.concat(dtw)
+							} else {
+								that.tlist = res.data.data
+							}
+							that.$refs.myscroller.finishInfinite(true);
+						} else {
+							that.$refs.myscroller.finishInfinite(true);
+
+						}
+					} else {
+						that.$refs.myscroller.finishInfinite(true);
+					}
+				})
+			},
+			//下拉刷新 
+			refresh: function() {
+				console.log('refresh')
+				var that = this
+				let data = {
+					type: that.selected,
+					page: 1
+				}
+				that.page = 1
+				shangpingData(data).then(res => {
+					if(res.data.code == 200) {
+						this.tlist = res.data.data
+						this.$refs.myscroller.finishPullToRefresh()
+					} else {
+
+					}
+				})
+
+			},
+
+			changestyle(index, idt) {
+				this.selected = idt;
+				let data = {
+					type: idt,
+					page: 1
+				}
+				shangpingData(data).then(res => {
+
+					if(res.data.code == 200) {
+						this.tlist = res.data.data
+					}
+				})
+
 			},
 			checkdetail(idt) {
 				var that = this
@@ -91,7 +159,7 @@
 			},
 			addhouwuAdd(idt) {
 				if(this.TokenId == '') {
-					console.log(123)
+
 					Dialog.confirm({
 						title: '提示',
 						message: '需要登录'
@@ -114,6 +182,14 @@
 							type: 'success',
 							message: res.data.msg
 						});
+					} else if(res.data.code == 100001) {
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
 					} else {
 						Notify({
 							type: 'warning',
@@ -129,7 +205,6 @@
 <style lang="stylus" scoped>
 	.navlist {
 		width: 100%;
-
 		background: #fff;
 		.nav-ul {
 			height: 100px;
@@ -165,8 +240,11 @@
 				}
 			}
 		}
+		.scroller {
+			position: relative;
+			height: 1000px;
+		}
 		.nav-mian {
-
 			li {
 				display: flex;
 				height: 173px;

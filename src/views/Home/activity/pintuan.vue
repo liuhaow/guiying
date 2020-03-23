@@ -81,9 +81,9 @@
 			</div>
 		</div>
 		<van-goods-action>
-			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd(messgein.goods_id)' />
-			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd(messgein.goods_id)' text="加入购物车" />
+
+
+
 			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping(messgein.goods_id)' text="立即购买" />
 		</van-goods-action>
 		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '40%' }">
@@ -217,8 +217,23 @@
 				})
 
 			},
-			goShoping() {
-				console.log('立即购买')
+			goShoping(idt) {
+				var that = this
+				let data = {
+					token:that.TokenId
+				}
+//				zhifubastaosuss(data).then(res=>{
+//					console.log(res)
+//				})
+
+				this.$router.push({
+					path: '/myorder/payinfo',
+					query: {
+						id: idt,
+						type:2
+					}
+				})
+
 			},
 			checkout(idt) {
 				this.$router.push({

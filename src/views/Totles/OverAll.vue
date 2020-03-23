@@ -16,23 +16,29 @@
 			<ul class="a-l-s-t">
 				<li v-for="(item,index) in list" @click="changefd(index,item.id)" :class="{'chost':selected===index+1}">{{item.name}}</li>
 			</ul>
-			<ul class="a-l-r">
-				<li v-for="item in mlist">
-					<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)" />
-					<div class="a-l-t-d">
-						<p @click="checkdetail(item.id)">{{item.title}}</p>
-						<div class="listxi">
-							<h2 @click="checkdetail(item.id)">
+			<div class="scroller" ref='scroller'>
+				<scroller :on-infinite="infinite" :on-refresh="refresh" ref="myscroller">
+
+					<ul class="a-l-r">
+						<li v-for="item in mlist">
+							<img :src="item.cover" class="mlistimg" @click="checkdetail(item.id)" />
+							<div class="a-l-t-d">
+								<p @click="checkdetail(item.id)">{{item.title}}</p>
+								<div class="listxi">
+									<h2 @click="checkdetail(item.id)">
 								<span class="newp">&yen;{{item.now_price}}</span><br />
 								<span class="oldp">&yen;{{item.old_price}}</span>
 							</h2>
-							<h3 @click="addhouwuAdd(item.id)">
+									<h3 @click="addhouwuAdd(item.id)">
 								<img src="../../../static/img/jgwc.png"/>
 							</h3>
-						</div>
-					</div>
-				</li>
-			</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</scroller>
+
+			</div>
 		</div>
 		<tabbar tabName='1'></tabbar>
 
@@ -54,7 +60,9 @@
 				selected: 0,
 				list: [],
 				leftl: [],
-				mlist: []
+				mlist: [],
+				page: 0,
+				listid: ''
 			}
 		},
 		computed: {
@@ -72,16 +80,6 @@
 		},
 		mounted() {
 			let litd = this.lit
-			let data = {
-				type: litd,
-				page: 1
-			}
-			shangpingData(data).then(res => {
-				console.log(res)
-				if(res.data.code == 200) {
-					this.mlist = res.data.data
-				}
-			})
 			let pary = {
 				type: litd
 			}
@@ -104,36 +102,41 @@
 			),
 			changefd(ind, idt) {
 				console.log(idt)
-				this.selected = ind + 1
+				var that = this;
+				that.selected = ind + 1;
+				that.listid = idt;
+
 				let data = {
-					type: this.chose,
+					type: that.chose,
 					type_son: idt,
 					page: 1
 				}
 				dierleibei(data).then(res => {
 					if(res.data.code == 200) {
-						this.mlist = res.data.data
+						that.mlist = res.data.data
+					} else {
+
 					}
 				})
 
 			},
 			seachData() {
 				this.$router.push('/home/seach')
-				
+
 			},
 			changestyle(index, idt) {
-				console.log(idt)
-				this.chose = idt;
-				this.selected = 0
-				this.chooseilt(idt)
+				var that = this
+				that.chose = idt;
+				that.selected = 0
+				that.listid = '';
+				that.chooseilt(idt)
 				let data = {
 					type: idt,
 					page: 1
 				}
 				shangpingData(data).then(res => {
-					console.log(res)
 					if(res.data.code == 200) {
-						this.mlist = res.data.data
+						that.mlist = res.data.data
 					}
 				})
 				let pary = {
@@ -183,6 +186,94 @@
 						});
 					}
 				})
+			},
+			//上拉加载
+			infinite: function() {
+				console.log('infinite')
+				var that = this
+				that.page = that.page + 1
+				if(that.selected > 0) {
+					let data = {
+						type: that.chose,
+						type_son: that.listid,
+						page: that.page
+					}
+					dierleibei(data).then(res => {
+						if(res.data.code == 200) {
+							if(res.data.data.length > 0) {
+								let dtw = res.data.data
+								that.mlist = that.mlist.concat(dtw)
+								that.$refs.myscroller.finishInfinite(true);
+							} else {
+								that.$refs.myscroller.finishInfinite(true);
+							}
+						} else {
+							that.$refs.myscroller.finishInfinite(true);
+						}
+					})
+				} else {
+					let data = {
+						type: that.chose,
+						page: that.page
+					}
+					shangpingData(data).then(res => {
+						if(res.data.code == 200) {
+							if(res.data.data.length > 0) {
+								if(that.mlist.length > 0) {
+									that.mlist.concat(res.data.data)
+									let dtw = res.data.data
+									that.mlist = that.mlist.concat(dtw)
+
+								} else {
+									that.mlist = res.data.data
+								}
+
+								that.$refs.myscroller.finishInfinite(true);
+							} else {
+								that.$refs.myscroller.finishInfinite(true);
+							}
+						} else {
+							that.$refs.myscroller.finishInfinite(true);
+						}
+					})
+				}
+
+			},
+
+			//下拉刷新 
+			refresh: function() {
+				console.log('refresh')
+				var that = this
+				that.page = 1
+				if(that.selected > 0) {
+					let data = {
+						type: that.chose,
+						type_son: that.listid,
+						page: 1
+					}
+					dierleibei(data).then(res => {
+						if(res.data.code == 200) {
+							that.mlist = res.data.data
+							that.$refs.myscroller.finishPullToRefresh()
+						} else {
+							that.$refs.myscroller.finishPullToRefresh()
+						}
+					})
+				} else {
+					let data = {
+						type: that.chose,
+						page: 1
+					}
+					shangpingData(data).then(res => {
+						if(res.data.code == 200) {
+							that.mlist = res.data.data
+							that.$refs.myscroller.finishPullToRefresh()
+						} else {
+							that.$refs.myscroller.finishPullToRefresh()
+						}
+					})
+				}
+
 			}
 
 		}
@@ -266,8 +357,8 @@
 			flex: 1;
 			overflow: auto;
 			display: flex;
-			justify-content: space-between;
 			background: #fff;
+			justify-content: space-between;
 			.a-l-s-t {
 				width: 180px;
 				height: 100%;
@@ -286,8 +377,13 @@
 					background: #E1E1E1;
 				}
 			}
+			.scroller {
+				position: relative;
+				width: 74%;
+				height: 100%;
+			}
 			.a-l-r {
-				width: 72%;
+				width: 100%;
 				height: 100%;
 				overflow: auto;
 				li {

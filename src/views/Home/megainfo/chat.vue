@@ -8,7 +8,8 @@
 	import headt from '@/components/heda'
 	import { kefuId } from  "@/api/api"
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
+
+	import { Notify ,Dialog} from 'vant';
 	export default {
 
 		data() {
@@ -43,6 +44,19 @@
 					console.log(frid)
 					this.url1= 'http://cainiuwang8898.cn/public/index.php/index/chat/index?fromid='+this.userData.id+'&toid='+frid;
 					console.log(this.url1)
+				}else if(res.data.code ==100002){
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}else{
+					Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 				}
 			})
 		},

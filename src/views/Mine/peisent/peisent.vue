@@ -84,8 +84,14 @@
 			})
 		},
 		methods: {
+			...mapActions([
+				'setSignOut'
+			]),
 			quedingData() {
-
+				var that =this
+				that.setSignOut()
+				that.$router.push('/need/login')
+				
 			},
 			nextData() {
 				if(!this.name||!this.mobile){

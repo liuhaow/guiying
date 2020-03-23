@@ -97,7 +97,7 @@ export default new Router({
       }
     
     },
-    //秒杀详情
+    //团购详情页
      {
       path: '/pintu/pintuan/:id',
       name: 'pintuan',

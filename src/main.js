@@ -13,12 +13,15 @@ import 'vant/lib/index.css'
 import '@/assets/Iconfont/css/reset.css'
 import '@/assets/Iconfont/css/iconfont.css'
 import '@/assets/Iconfont/font/iconfont.js'
+import VueScroller from 'vue-scroller'
+
 import Mui from 'vue-awesome-mui';
 import FastClick from 'fastclick'
 FastClick.attach(document.body);
 Vue.use(Mui);
 Vue.use(MintUI)
 Vue.use(Vant)
+Vue.use(VueScroller)
 Vue.prototype.$ajax = axios
 Vue.config.productionTip = false
 
