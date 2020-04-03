@@ -11,7 +11,7 @@
 				<p>{{item.title}}</p>
 				<div class="goumai">
 					<h2>&yen;{{item.now_price}}</h2>
-					<h3 @click="addhouwuAdd(item.id)">
+					<h3 @click="addhouwuAdd(item)">
 						<img src="../../static/img/jgwc.png" />
 					</h3>
 				</div>
@@ -22,7 +22,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
+	import { Notify,Toast } from 'vant';
 	import { addshopcar, guessylove } from '@/api/mine'
 	export default {
 		data() {
@@ -48,24 +48,31 @@
 		methods: {
 			checkdetail(idt) {
 				var that = this
-				that.$router.push('/overall/detail/' + idt)
+				
 			},
 			addhouwuAdd(idt) {
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: idt.id,
+					commodity_cover:idt.cover,
+					commodity_old_price:idt.old_price,
+					commodity_now_price:idt.now_price,
+					commodity_title:idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
+					classify: 1,
+					sku_id:idt.sku_id
 
 				}
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
+						console.log(2121)
+						Toast.success(res.data.msg);
+//						Notify({
+//							type: 'success',
+//							message: res.data.msg
+//						});
 					} else {
 						Notify({
 							type: 'warning',

@@ -79,12 +79,15 @@
 	</div>
 </template>
 
-<script>
-</script>
+
+	
+
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { mineInfo } from '@/api/mine'
+	import { Dialog } from 'vant';
+	
 	export default {
 		data() {
 			return {
@@ -144,6 +147,22 @@
 				if(res.data.code == 200) {
 					this.userinfo = res.data.data.user_info;
 					this.coupons_num = res.data.data.coupons_num
+				}else if(res.data.code== 100002){
+					Dialog.confirm({
+							title: '提示',
+							message: '账号重新登录'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {
+							this.$router.push('/home')
+							
+							
+						});
+				}else{
+					Notify({
+						type: 'warning',
+						message: res.data.msg
+					});
 				}
 			})
 		},
@@ -185,7 +204,16 @@
 			tiaozhuanData(idt) {
 				console.log(idt)
 				var that = this
-				this.orderchoose(idt+1)
+				if(idt==1){
+				this.orderchoose(3)
+					
+				}else if(idt==2){
+				this.orderchoose(4)
+					
+				}else{
+				this.orderchoose(idt+1)					
+				}
+
 				if(idt == 3) {
 					that.$router.push('/myorder/tuihuo')
 				} else {

@@ -13,9 +13,9 @@
 						<div class="t-g-f-j">
 							<p>秒杀价：&yen;{{item.show_price}} <span class="yuanjia">&yen;{{item.old_price}}</span></p>
 						</div>
-						<div class="t-g-f-b" @click="addhouwuAdd(item.goods_id)">
-							<img src="../../../../static/img/jgwc.png" />
-						</div>
+						<!--<div class="t-g-f-b" @click="addhouwuAdd(item.goods_id)">
+							<!--<img src="../../../../static/img/jgwc.png" />
+						</div>-->
 					</div>
 				</li>
 			</ul>
@@ -120,7 +120,7 @@
 				box-sizing: border-box;
 				li {
 					width: 345px;
-					height: 496px;
+
 					background: #fff;
 					margin-top: 20px;
 					padding: 20px;

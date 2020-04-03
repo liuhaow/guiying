@@ -105,12 +105,13 @@
 			color: rgba(51, 51, 51, 1);
 		}
 		.shouj {
-			height: 78px;
+			height: 120px;
 			display: flex;
 			align-items: center;
 			border-bottom: 4px solid #DAD6D6;
 			input {
 				width: 100%;
+				height:100%;
 				border: none;
 				font-size: 34px;
 				color: #999;

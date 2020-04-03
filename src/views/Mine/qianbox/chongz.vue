@@ -51,12 +51,15 @@
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
 	import { Toast } from 'vant';
-	import { zichanyue, RechargeInfo, paywzhidata, chonzhidata } from '@/api/mine'
+	import { zichanyue, RechargeInfo, paywzhidata, chonzhidata, defukuandaya } from '@/api/mine'
+	import wx from 'weixin-js-sdk'
+	import dsbridge from 'dsbridge'
+
 	export default {
 		data() {
 			return {
 				select: '',
-				chos: 0,
+				chos: 1,
 				money: '',
 				coin: '',
 				list: [],
@@ -70,6 +73,7 @@
 			})
 		},
 		mounted() {
+			console.log(wx)
 			let data = {
 				token: this.TokenId
 			}
@@ -84,11 +88,12 @@
 				}
 			})
 			chonzhidata(data).then(res => {
-				console.log(res)
+
 				if(res.data.code == 200) {
 					this.paylist = res.data.data
 				}
 			})
+
 		},
 		methods: {
 			changestyle(index, idt) {
@@ -106,47 +111,98 @@
 				var that = this
 				that.$router.push('/mine/mingxi')
 			},
+			paydatachongxin() {
+				var that = this
+
+				let data = {
+					type: that.chos,
+					token: that.TokenId
+
+				}
+				defukuandaya(data).then(res => {
+					window.location.replace('https://www.baidu.com/s?word=vue%20APP%E6%94%AF%E4%BB%98&tn=site888_3_pg&lm=-1&ssl_s=1&ssl_c=ssl1_1712a67ed6d&prec=1s')
+				})
+			},
+			//充值滞留
 			paydatachong() {
-				if(!this.chos || !this.chos) {
+				var that = this
+
+				if(!that.coin) {
+					Toast.fail('选择充值金额');
+					return
+				}
+				if(!that.chos) {
 					Toast.fail('选择充值金额和充值方式');
 					return
 				}
+
 				let data = {
-					token: this.TokenId,
-					rid: this.coin,
-					pid: this.chos
+					token: that.TokenId,
+					rid: that.coin,
+					pid: that.chos
 				}
-				var aliChannel = null; 
 
-				mui.plusReady(function () { // 获取支付通道  
-
-					
-                plus.payment.getChannels(function (channels) {
-                    for (var i in channels) {
-                    	cons
-                        if (channels[i].id == "wxpay") {
-                            wxChannel = channels[i];
-                        } else {
-                            aliChannel = channels[i];
-                        }
-                    }
-                }, function (e) {
-                    alert("获取支付通道失败：" + e.message);
-                });
-            })
-
-//				paywzhidata(data).then(res => {
-//					console.log(res)
-//					if(res.data.code = 200) {
-//						this.$router.push({
-//							path: '/mine/chongzhifu',
-//							query: {
-//								htmlData:res.data.data
+				paywzhidata(data).then(res => {
+					//					console.log(res)
+					if(res.data.code = 200 && res.data.data) {
+						if(that.chos == 1) {
+							let form = res.data.data
+							const div = document.createElement('div') // 创建div
+							div.innerHTML = form // 将返回的form 放入div
+							document.body.appendChild(div)
+							document.forms[0].submit()
+						} else if(that.chos == 3){
+							console.log(1)
+//							let options = {
+//								"appId": res.data.data.pay_info.appid, //公众号名称，由商户传入     
+//								"timeStamp": res.data.data.pay_info.timestamp, //时间戳，自1970年以来的秒数     
+//								"nonceStr": res.data.data.pay_info.noncestr, //随机串     
+//								"package": res.data.data.pay_info.package,
+//								"signType": 'MD5', //微信签名方式：     
+//								"paySign": res.data.data.pay_info.sign, //微信签名 
+//								partnerid
 //							}
-//						})
-//					}
-//				})
+							that.weixinPay(res.data.data.pay_info)
+
+						}
+
+					}
+				})
+			},
+			weixinPay(data) {
+				//获取支付通道
+				console.log(data)
+				let payChanel = '';
+				plus.payment.getChannels(function(channels) {
+					for(var i in channels) {
+						if(channels[i].id == "wxpay") {
+							payChanel = channels[i]
+						}
+					}
+					let payParam = { //后台返回的支付参数最好全部都是小写（论坛看到的提醒）
+						"appid": data.appid,
+						"noncestr": data.noncestr,
+						"package": data.package,
+						"partnerid": data.partnerid,
+						"prepayid": data.prepayid,
+						"timestamp": data.timestamp,
+						"sign": data.sign
+					};
+					// 请求支付操作
+					plus.payment.request(payChanel, payParam,
+						function(result) {
+							// 支付成功处理
+							alert('支付成功:' + JSON.stringify(result))
+						},
+						function(error) {
+							// 支付失败处理              
+							alert('支付失败:' + JSON.stringify(error))
+						})
+				}, function(e) {
+					alert('获取支付通道失败：' + e.message);
+				})
 			}
+
 		}
 	}
 </script>

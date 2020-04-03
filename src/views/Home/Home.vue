@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<div class="h-t-o-u">
+		<div class="h-t-o-u"  :style="{backgroundImage: 'url(' + coverImgUrl + ')', backgroundSize:'cover'}">
 
 			<div class="mai-t">
 				<div class="mai-head">
@@ -152,6 +152,7 @@
 					image:'./static/lunb.png'
 				}],
 				hud: '',
+				coverImgUrl:'./static/bjin.png',
 				hud1: '',
 				liebiao: [],
 				nuewx: '',
@@ -222,7 +223,12 @@
 						let lunbDhd1 = lunbt.filter(function(item) {
 							return item.type == 3
 						})
-						console.log(lunbDt, lunbDhd, lunbDhd1)
+						let banjin = lunbt.filter(function(item) {
+							return item.type == 6
+						})
+						console.log(that.coverImgUrl)
+						console.log(lunbDt, lunbDhd, lunbDhd1,banjin)
+						that.coverImgUrl =banjin[0].image
 						that.lunb = lunbDt
 						that.hud = lunbDhd[0]
 						that.hud1 = lunbDhd1[0]

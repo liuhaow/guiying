@@ -9,6 +9,7 @@ import MintUI from 'mint-ui'
 import axios from 'axios'
 import 'mint-ui/lib/style.css'
 import Vant from 'vant'
+import wx from 'weixin-js-sdk'
 import 'vant/lib/index.css'
 import '@/assets/Iconfont/css/reset.css'
 import '@/assets/Iconfont/css/iconfont.css'
@@ -21,6 +22,7 @@ FastClick.attach(document.body);
 Vue.use(Mui);
 Vue.use(MintUI)
 Vue.use(Vant)
+Vue.use(wx)
 Vue.use(VueScroller)
 Vue.prototype.$ajax = axios
 Vue.config.productionTip = false

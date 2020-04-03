@@ -78,7 +78,10 @@
 					'chooseilt'
 				]
 			),
-			seachData() {},
+			seachData() {
+				this.$router.push('/home/seach')
+
+			},
 			checkdetail(idt) {
 				var that = this
 				that.$router.push('/overall/detail/' + idt)

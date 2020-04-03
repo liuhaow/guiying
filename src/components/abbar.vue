@@ -78,7 +78,10 @@
 							message: '需要登录后才可以查看呦'
 						}).then(() => {
 							this.$router.push('/need/login')
-						}).catch(() => {});
+						}).catch(() => {
+							this.$router.push('/home')
+							
+						});
 						return
 					}
 
@@ -91,7 +94,10 @@
 							message: '需要登录后才可以查看呦'
 						}).then(() => {
 							this.$router.push('/need/login')
-						}).catch(() => {});
+						}).catch(() => {
+							this.$router.push('/home')
+							
+						});
 						return
 					}
 					this.$router.push('/mycar')
@@ -102,7 +108,10 @@
 							message: '需要登录后才可以查看呦'
 						}).then(() => {
 							this.$router.push('/need/login')
-						}).catch(() => {});
+						}).catch(() => {
+							this.$router.push('/home')
+							
+						});
 						return
 					}
 					this.$router.push('/mine')

@@ -65,7 +65,7 @@
 						<div class="lis-f-f">
 							<div class="dinzh">
 								<button @click="quxiaoOrder(item.id)">取消订单</button>
-								<button class="btde" @click="payData(item.id)">立即付款</button>
+								<button class="btde" @click="payData(item)">立即付款</button>
 							</div>
 						</div>
 					</div>
@@ -75,6 +75,44 @@
 
 		</div>
 		<div class="quanbu" v-if="select == 2">
+			<ul>
+				<li v-for='(item,index) in lstdata' :key='index'>
+
+					<div class="list-t">
+						<div class="list-t-l">
+							{{item.create_time}}
+						</div>
+						<div class="list-t-r">
+							<span>待卖家发货</span>
+						</div>
+					</div>
+					<div class="list-n">
+						<ul>
+							<li>
+								<img v-for='(idt,index) in item.cover' :src="idt" alt="" />
+							</li>
+						</ul>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
+
+					</div>
+					<div class="list-f">
+						<div class="lst-t-d">
+							{{item.num}}件，实付&yen;{{item.total}}
+
+						</div>
+						<div class="lis-f-f">
+							<div class="dinzh">
+								<button @click="tuihuoData(item)">退货申请</button>
+							</div>
+
+						</div>
+					</div>
+
+				</li>
+			</ul>
+
+		</div>
+		<div class="quanbu" v-if="select == 3">
 			<ul>
 				<li v-for='(item,index) in lstdata' :key='index'>
 
@@ -104,7 +142,6 @@
 							<div class="dinzh">
 								<button @click="checkenwul(item.id)">查看物流</button>
 								<button @click="tuihuoData(item)">退货申请</button>
-
 								<button class="btde" @click="querenData(item.id)">确认收货</button>
 							</div>
 
@@ -115,7 +152,7 @@
 			</ul>
 
 		</div>
-		<div class="quanbu" v-if="select == 3">
+		<div class="quanbu" v-if="select == 4">
 			<ul>
 				<li v-for='(item,index) in lstdata' :key='index'>
 
@@ -156,6 +193,26 @@
 
 		</div>
 
+		<van-popup v-model="showPicker" position="bottom" :style="{ height: '38%' }">
+			<div class="z-y-y">
+				<h2>支付方式</h2>
+
+				<div class="fanghi bord" v-for='(item,index) in zhifu' :key='index' @click="chosezhifu(index)">
+					<h3>
+						<img :src="item.img" alt="" v-if='index>0' /> 
+						{{item.name}}
+						<span v-if='index==0' class="jinqian">{{money}}</span>
+					</h3>
+					<img src="../../../../static/img/choss.png" v-if="chosd !=index" alt="" />
+					<img src="../../../../static/img/chos.png" v-if="chosd ==index" alt="" />
+				</div>
+				<div class="zhifquer">
+					<h1 @click="fangqile">放弃</h1>
+					<h3 @click="qudinging">确定</h3>
+				</div>
+			</div>
+		</van-popup>
+
 	</div>
 </template>
 
@@ -163,18 +220,26 @@
 	import headt from '@/components/heda'
 
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
-	import { orderallData, Shancsorderall, Outpayinfo, shouhuoData } from '@/api/mine'
+	import { Notify, Toast, popup } from 'vant';
+	import { orderallData, Shancsorderall, Outpayinfo, shouhuoData, zichanyue, weizhikuandaya } from '@/api/mine'
 	export default {
 		data() {
 			return {
+				totlete: '',
+				cifd: '',
 				select: '',
-
+				chosd: 4,
+				showPicker: false,
+				xuanzf: '',
+				money: '',
 				list: [{
 						name: '全部'
 					},
 					{
 						name: '待付款'
+					},
+					{
+						name: '待发货'
 					},
 					{
 						name: '待收货'
@@ -183,6 +248,19 @@
 						name: '待评价'
 					}
 
+				],
+				zhifu: [{
+						name: '余额'
+					},
+
+					{
+						img: './static/img/zfb.png',
+						name: '支付宝'
+					},
+					{
+						img: './static/img/wxin.png',
+						name: '微信'
+					}
 				],
 				lstdata: ''
 			}
@@ -203,24 +281,20 @@
 		mounted() {
 
 			let std = ''
-			if(this.orderl == 3) {
-				std = 4
-			} else if(this.orderl == 2) {
-				std = 3
-			} else {
-				std = this.orderl
-			}
+
 			let data = {
 				token: this.TokenId,
 				page: 1,
-				status: std
+				status: this.orderl
 			}
+
 			orderallData(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
 					this.lstdata = res.data.data
 				}
 			})
+
 		},
 		methods: {
 			...mapActions(['orderchoose']),
@@ -228,22 +302,125 @@
 				this.$router.go(-1)
 
 			},
-			changestyle(index) {
-				this.select = index;
-				let std = ''
-				if(index == 3) {
-					std = 4
-				} else if(index == 2) {
-					std = 3
+			fangqile() {
+				var that = this
+				that.showPicker = false;
+				that.xuanzf = '';
+				that.totlete = ''
+				that.cifd = ''
 
-				} else {
-					std = index
+			},
+			payData(idt) {
+				var that = this
+				that.totlete = idt.total
+				that.cifd = idt.id
+				that.showPicker = true
+				that.chosd = 4
+				let qury = {
+					token: that.TokenId
+				}
+				zichanyue(qury).then(res => {
+
+					if(res.data.code == 200) {
+						that.money = res.data.data.money
+					}
+				})
+
+			},
+			qudinging() {
+				var that = this
+				if(!that.xuanzf) {
+					Toast.fail('选择支付方式')
+					return
+				}
+				let data = {
+					token: that.TokenId,
+					pid: that.xuanzf,
+					pay_id: that.cifd,
+					total_coin: that.totlete
+				}
+				console.log(data)
+
+				weizhikuandaya(data).then(res => {
+					console.log(res)
+					if(res.data.code = 200) {
+						that.showPicker = false;
+
+						if(that.xuanzf == 2) {
+							Toast.success('支付成功')
+						} else if(that.xuanzf == 1) {
+							let form = res.data.data
+							const div = document.createElement('div') // 创建div
+							div.innerHTML = form // 将返回的form 放入div
+							document.body.appendChild(div)
+							document.forms[0].submit()
+						} else if(that.xuanzf == 3) {
+							that.weixinPay(res.data.data.pay_info)
+						}
+					} else {
+						that.showPicker = false;
+
+					}
+				})
+
+			},
+			weixinPay(data) {
+				//获取支付通道
+				console.log(data)
+				let payChanel = '';
+				plus.payment.getChannels(function(channels) {
+					for(var i in channels) {
+						if(channels[i].id == "wxpay") {
+							payChanel = channels[i]
+						}
+					}
+					let payParam = { //后台返回的支付参数最好全部都是小写（论坛看到的提醒）
+						"appid": data.appid,
+						"noncestr": data.noncestr,
+						"package": data.package,
+						"partnerid": data.partnerid,
+						"prepayid": data.prepayid,
+						"timestamp": data.timestamp,
+						"sign": data.sign
+					};
+					// 请求支付操作
+					plus.payment.request(payChanel, payParam,
+						function(result) {
+							// 支付成功处理
+							Toast.success('支付成功')
+						},
+						function(error) {
+							// 支付失败处理              
+							that.showPicker = false;
+
+							Toast.fail('支付失败')
+						})
+				}, function(e) {
+							Toast.fail('支付失败')
+					
+
+				})
+			},
+			chosezhifu(ide) {
+				var that = this
+				that.chosd = ide;
+				if(ide == 0) {
+					that.xuanzf = 2
+				} else if(ide == 1) {
+					that.xuanzf = 1
+
+				} else if(ide == 2) {
+					that.xuanzf = 3
+
 				}
 
+			},
+			changestyle(index) {
+				this.select = index;
 				let data = {
 					token: this.TokenId,
 					page: 1,
-					status: std
+					status: index
 				}
 				this.orderchoose(index)
 				orderallData(data).then(res => {
@@ -263,7 +440,8 @@
 			querenData(idt) {
 				var that = this
 				let data = {
-					id: idt
+					id: idt,
+					token: this.TokenId
 				}
 				shouhuoData(data).then(res => {
 					console.log(res)
@@ -273,16 +451,16 @@
 				})
 
 			},
-			payData(idt) {
-				this.$router.push('/myorder/payinfo/' + idt)
-			},
+
 			quxiaoData(idt) {
 				this.$router.push('/myorder/quxiao/' + idt)
 			},
 			quxiaoOrder(idt) {
 				var that = this
 				let data = {
-					id: idt
+					id: idt,
+					token: that.TokenId
+
 				}
 				let pary = {
 					token: that.TokenId,
@@ -292,6 +470,10 @@
 
 				Outpayinfo(data).then(res => {
 					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
 						orderallData(pary).then(res => {
 							if(res.data.code == 200) {
 								that.lstdata = res.data.data
@@ -318,20 +500,7 @@
 				}
 				Shancsorderall(data).then(res => {
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
-						//						let data = {
-						//							token: this.TokenId,
-						//							page: 1,
-						//							status: 4
-						//						}
-						//						orderallData(data).then(res => {
-						//							if(res.data.code == 200) {
-						//								this.lstdata = res.data.data
-						//							}
-						//						})
+						Toast.success(res.data.msg);
 					} else {
 						Notify({
 							type: 'warning',
@@ -342,8 +511,8 @@
 				})
 			},
 			//评论
-			pingjiadata(idt){
-				this.$router.push('/myorder/pingjia/'+idt)			
+			pingjiadata(idt) {
+				this.$router.push('/myorder/pingjia/' + idt)
 			}
 
 		}
@@ -464,9 +633,8 @@
 						}
 					}
 					.list-f {
-						height: 160px;
 						background: #fff;
-						padding: 26px 47px 0 0;
+						padding: 26px 47px 30px 0;
 						box-sizing: border-box;
 						.lst-t-d {
 							text-align: right;
@@ -563,6 +731,77 @@
 				left: 20px;
 				padding-left: 20px;
 				top: 28px;
+			}
+		}
+	}
+	
+	.z-y-y {
+		padding: 30px 10px 20px;
+		box-sizing: border-box;
+		background: rgba(255, 255, 255, 1);
+		border-radius: 8px;
+		h2 {
+			height: 80px;
+			line-height: 80px;
+			font-size: 28px;
+			font-family: PingFang SC;
+			font-weight: 500;
+			color: rgba(153, 153, 153, 1);
+		}
+		.bord {
+			border-bottom: 2px solid #E1E1E1;
+		}
+		.fanghi {
+			display: flex;
+			height: 80px;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 10px;
+			box-sizing: border-box;
+			img {
+				height: 42px;
+				width: 42px;
+			}
+			h3 {
+				font-size: 26px;
+				font-family: PingFang SC;
+				font-weight: 500;
+				color:rgba(51, 51, 51, 1) img {
+					height: 42px!important;
+					width: 42px!important;
+				}
+				.jinqian {
+					color: #FF0000!important;
+					margin-left: 10px;
+				}
+			}
+		}
+		.zhifquer {
+			display: flex;
+			height: 150px;
+			justify-content: center;
+			align-items: center;
+			h1 {
+				width: 40%;
+				height: 80px;
+				line-height: 80px;
+				font-size: 30px;
+				font-weight: 600;
+				text-align: center;
+				border-radius: 10px;
+				background: #ccc;
+				margin-right: 20px;
+			}
+			h3 {
+				width: 40%;
+				height: 80px;
+				font-size: 30px;
+				font-weight: 600;
+				line-height: 80px;
+				text-align: center;
+				border-radius: 10px;
+				background: #3fb94d;
+				color: #FFF
 			}
 		}
 	}

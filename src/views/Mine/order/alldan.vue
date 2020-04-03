@@ -17,6 +17,7 @@
 						<h4>
 							<span>单价：¥{{item.commodity_price}}</span>
 							<span>数量：{{item.commodity_num}}</span>
+							<span>押金：{{item.deposit}}</span>
 						</h4>
 						<p>&yen;{{item.total_price}}</p>
 					</div>
@@ -90,7 +91,7 @@
 					display: flex;
 					align-items: center;
 					box-sizing: border-box;
-					height: 200px;
+					height: 240px;
 					background: rgba(255, 255, 255, 1);
 					border-radius: 8px;
 					padding: 0 20px;
@@ -102,7 +103,7 @@
 						margin-right: 20px;
 					}
 					.x-qing {
-						height: 168px;
+						height: 210px;
 						width: 474px;
 						h3 {
 							font-size: 28px;

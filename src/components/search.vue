@@ -24,13 +24,13 @@
 					<div class="t-g-imh" @click="checkdetail(item.id)">
 						<img :src="item.cover" alt="" />
 					</div>
-					<p class="mingc">{{item.title}} </p>
+					<p class="mingc" @click="checkdetail(item.id)">{{item.title}} </p>
 
 					<div class="t-g-f-t">
-						<div class="t-g-f-j">
+						<div class="t-g-f-j" @click="checkdetail(item.id)">
 							<p>&yen;{{item.now_price}} </p>
 						</div>
-						<div class="t-g-f-b" @click="addhouwuAdd(item.id)">
+						<div class="t-g-f-b" @click="addhouwuAdd(item)">
 							<img src="../../static/img/gwuc.jpg" />
 						</div>
 					</div>
@@ -55,7 +55,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
+	import { Notify,Toast } from 'vant';
 	import { seachData } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
 	
@@ -141,20 +141,46 @@
 //				this.seahinfo = true
 			},
 			addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let kind
+				if(idt.is_sku == 0) {
+					kind = 0
+				} else if(idt.is_sku == 1) {
+					kind = idt.sku_id
+				}
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: idt.id,
+					commodity_cover: idt.cover,
+					commodity_old_price: idt.old_price,
+					commodity_now_price: idt.now_price,
+					commodity_title: idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
+					classify: 1,
+					sku_id: kind
 				}
+
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
+						Toast.success(res.data.msg);
+					} else if(res.data.code == 100002) {
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
 					} else {
 						Notify({
 							type: 'warning',
@@ -189,7 +215,7 @@
 				box-sizing: border-box;
 				li {
 					width: 345px;
-					height: 496px;
+
 					background: #fff;
 					margin-top: 20px;
 					padding: 20px;
@@ -209,7 +235,7 @@
 						font-weight: 500;
 						line-height: 32px;
 						color: rgba(51, 51, 51, 1);
-						margin: 30px 0 20px;
+						padding: 30px 0 20px;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -227,8 +253,10 @@
 						}
 					}
 					.t-g-f-j {
+								height: 80px!important;
+						line-height: 80px;
 						p {
-							font-size: 26px;
+							font-size: 32px;
 							font-weight: 500;
 							/*text-decoration: line-through;*/
 							color: rgba(255, 101, 1, 1);

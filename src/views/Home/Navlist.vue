@@ -7,24 +7,6 @@
 				</li>
 			</ul>
 		</div>
-		<div class="nav-list">
-			<!--<ul class="nav-mian">
-				<li v-for="(item,index) in tlist">
-					<div class="nav-l" @click="checkdetail(item.id)">
-						<img :src="item.cover" alt="" />
-					</div>
-					<div class="nav-r">
-						<p class="nav-title" @click="checkdetail(item.id)">{{item.title}}</p>
-						<div class="nav-z-k">
-							<p @click="checkdetail(item.id)"><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-							<h2 @click="addhouwuAdd(item.id)">
-								<img src="../../../static/img/jgwc.png"/>
-							</h2>
-						</div>
-					</div>
-				</li>
-			</ul>-->
-		</div>
 		<div class="scroller" ref='scroller'>
 
 			<scroller :on-infinite="infinite" :on-refresh="refresh" ref="myscroller">
@@ -37,9 +19,9 @@
 							<p class="nav-title" @click="checkdetail(item.id)">{{item.title}}</p>
 							<div class="nav-z-k">
 								<p @click="checkdetail(item.id)"><span class="zh-j">&yen;{{item.now_price}}</span><span class="yu-j">&yen;{{item.old_price}}</span></p>
-								<h2 @click="addhouwuAdd(item.id)">
-								<img src="../../../static/img/jgwc.png"/>
-							</h2>
+								<h2 @click="addhouwuAdd(item)">
+									<img src="../../../static/img/jgwc.png"/>
+								</h2>
 							</div>
 						</div>
 					</li>
@@ -54,8 +36,7 @@
 <script>
 	import { shangpingData, indexList } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
-	import { Dialog } from 'vant';
+	import { Notify, Toast, Dialog } from 'vant';
 
 	import { addshopcar } from '@/api/mine'
 	export default {
@@ -159,7 +140,6 @@
 			},
 			addhouwuAdd(idt) {
 				if(this.TokenId == '') {
-
 					Dialog.confirm({
 						title: '提示',
 						message: '需要登录'
@@ -168,21 +148,30 @@
 					}).catch(() => {});
 					return
 				}
+				let kind
+				if(idt.is_sku == 0) {
+					kind = 0
+				} else if(idt.is_sku == 1) {
+					kind = idt.sku_id
+				}
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: idt.id,
+					commodity_cover: idt.cover,
+					commodity_old_price: idt.old_price,
+					commodity_now_price: idt.now_price,
+					commodity_title: idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
+					classify: 1,
+					sku_id: kind
 				}
+
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
-					} else if(res.data.code == 100001) {
+						Toast.success(res.data.msg);
+					} else if(res.data.code == 100002) {
 						Dialog.confirm({
 							title: '提示',
 							message: '需要登录'
@@ -268,18 +257,27 @@
 					flex-direction: column;
 					justify-content: space-around;
 					.nav-title {
-						font-size: 24px;
+						font-size: 28px;
+						line-height: 34px;
 						font-family: PingFang SC;
 						font-weight: 500;
+						height: 80px;
+						padding-top: 15px;
+						box-sizing: border-box;
 						color: rgba(51, 51, 51, 1);
-						margin-bottom: 32px;
 					}
 					.nav-z-k {
 						display: flex;
+						position: relative;
 						justify-content: space-between;
 						padding-right: 28px;
+						height: 70px;
+						align-items: center;
 						box-sizing: border-box;
 						p {
+							width: 80%;
+							height: 70px;
+							line-height: 70px;
 							.zh-j {
 								color: #ff6501;
 								font-size: 36px;

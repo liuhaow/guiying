@@ -15,7 +15,7 @@
 	import tool from '@/views/Mine/shouye/tool'
 	import help from '@/views/Mine/shouye/help'
 	import guess from '@/views/Mine/shouye/guess'
-	import baokuan from '@/components/baokuan'
+	import baokuan from '@/components/baokuand'
 	import tabbar from "@/components/abbar"
 	
 	

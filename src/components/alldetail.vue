@@ -1,5 +1,5 @@
 <template>
-	<div class="addxuqu">
+	<div class="addxuqu" ref="scollElement">
 		<headt message='商品详情'></headt>
 		<div class="a-d-d">
 			<div class="top-p-t">
@@ -10,10 +10,16 @@
 				</van-swipe>
 			</div>
 			<div class="x-q-l">
-
 				<div class="x-q-l-f">
 					<p>{{messgein.title}}</p>
+					<div class="jiage">
+						<h1>&yen;{{dtdaf.now_price}} </h1>
+						<h2>原价：{{dtdaf.old_price}}</h2>
+					</div>
 				</div>
+				<ul class="fenshu" v-if='messgein.is_sku ==1'>
+					<li v-for='(item,index) in guige' @click="changestyle(index+1,item.id,item)" :class="{'ckode':choseid==index+1}" :key='index'>{{item.specification}}</li>
+				</ul>
 			</div>
 
 			<div class="c-s-x-q">
@@ -60,12 +66,31 @@
 				<img class="imgdy" v-for="(itd,index) in messgein.detailspic" :src="itd.image" alt="" />
 			</div>
 			<!--<pinglun :message='messgein.evl' :numb='messgein.group_num'></pinglun>-->
-			<baokuan></baokuan>
+
+			<div class="guess-i">
+				<van-divider :style="{ color: '#9999', borderColor: '#999', padding: '0 40px' }">
+					猜你喜欢
+				</van-divider>
+				<ul class="guess-list">
+					<li v-for="(item,index) in mlist">
+						<div class="list-t" @click="checkdetail(item.id)">
+							<img :src="item.cover" />
+						</div>
+						<p @click="checkdetail(item.id)">{{item.title}}</p>
+						<div class="goumai">
+							<h2 @click="checkdetail(item.id)">&yen;{{item.now_price}}</h2>
+							<h3 @click="addhouwuAddt(item)">
+						<img src="../../static/img/jgwc.png" />
+					</h3>
+						</div>
+					</li>
+				</ul>
+			</div>
 
 		</div>
 		<van-goods-action>
 			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata()' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd()' />
+			<van-goods-action-icon icon="shop-o" text="购物车" @click='addgocar()' />
 			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd()' text="加入购物车" />
 			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping()' text="立即购买" />
 		</van-goods-action>
@@ -85,11 +110,11 @@
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
-	import { putongspInfo,zhifubastaosuss } from '@/api/api'
-	import { addshopcar } from '@/api/mine'
-	import { Dialog } from 'vant';
-	import baokuan from '@/components/baokuan'
+
+	import { putongspInfo, zhifubastaosuss } from '@/api/api'
+	import { addshopcar, guessylove } from '@/api/mine'
+	import { Dialog, Toast, Notify } from 'vant';
+	//	import baokuan from '@/components/baokuan'
 
 	export default {
 		data() {
@@ -100,15 +125,29 @@
 				],
 				current: 0,
 				canshu: false,
+				choseid: 0,
+				guigeid: '',
 				messgein: '',
 				pinglun: [],
-				ift: ''
+				ift: '',
+				mlist: [],
+				dtdaf: '',
+				guige: [{
+						gui: '3斤'
+					},
+					{
+						gui: '5斤'
+					}, {
+						gui: '8斤'
+					}
+				]
 
 			}
 		},
 		components: {
-			headt,
-			baokuan
+			headt
+			//,
+			//			baokuan
 
 		},
 		computed: {
@@ -119,15 +158,25 @@
 		mounted() {
 			let idt = this.$route.params.id
 			this.ift = idt
-			console.log(idt)
+
 			let data = {
 				cid: idt,
 				page: 1
 			}
+
 			putongspInfo(data).then(res => {
-				console.log(res)
+
 				if(res.data.code == 200) {
 					this.messgein = res.data.data;
+
+					let dtd = {
+						old_price: res.data.data.old_price,
+						now_price: res.data.data.now_price
+					}
+					this.dtdaf = dtd
+					if(res.data.data.is_sku == 1) {
+						this.guige = res.data.data.sku
+					}
 					this.pinglun = res.data.data.evl;
 					this.images = res.data.data.mainpic;
 					this.time = res.data.data.countdown;
@@ -135,9 +184,76 @@
 
 				}
 			})
+			let pary = {
+				token: this.TokenId
+
+			}
+			guessylove(pary).then(res => {
+				if(res.data.code == 200) {
+					this.mlist = res.data.data
+				}
+			})
 		},
 		methods: {
-			addhouwuAdd(idt) {
+			
+			changestyle(iden, idt, item) {
+
+				var that = this;
+				let dtd = {
+					old_price: item.old_price,
+					now_price: item.now_price
+				}
+				that.dtdaf = dtd
+				that.guigeid = idt;
+				that.choseid = iden;
+
+			},
+			addgocar() {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录后才可以查看呦'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {
+						this.$router.push('/need/home')
+
+					});
+					return
+				}
+				this.$router.push('/mycar')
+			},
+			checkdetail(idt) {
+				var that = this
+				that.ift = idt
+
+				that.$refs.scollElement.scrollTop = 0;
+				console.log(idt)
+				let data = {
+					cid: idt,
+					page: 1
+				}
+				putongspInfo(data).then(res => {
+					if(res.data.code == 200) {
+						let dtd = {
+							old_price: res.data.data.old_price,
+							now_price: res.data.data.now_price
+						}
+						if(res.data.data.is_sku == 1) {
+							this.guige = res.data.data.sku
+						}
+						this.dtdaf = dtd
+						this.messgein = res.data.data;
+						this.pinglun = res.data.data.evl;
+						this.images = res.data.data.mainpic;
+						this.time = res.data.data.countdown;
+						this.current = res.data.data.count_evl
+
+					}
+				})
+			},
+			//猜你喜欢加入购物车
+			addhouwuAddt(idt) {
 				if(this.TokenId == '') {
 
 					Dialog.confirm({
@@ -148,23 +264,78 @@
 					}).catch(() => {});
 					return
 				}
-				console.log(idt)
-
-				
+				let kind
+				if(idt.is_sku == 0) {
+					kind = 0
+				} else if(idt.is_sku == 1) {
+					kind = idt.sku_id
+				}
 				let data = {
 					token: this.TokenId,
-					cid: this.ift,
+					cid: idt.id,
+					commodity_cover: idt.cover,
+					commodity_old_price: idt.old_price,
+					commodity_now_price: idt.now_price,
+					commodity_title: idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
+					classify: 1,
+					sku_id: kind
+
 				}
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
+						Toast.success(res.data.msg);
+					} else {
 						Notify({
-							type: 'success',
+							type: 'warning',
 							message: res.data.msg
 						});
+					}
+				})
+			},
+			//加购物车
+			addhouwuAdd() {
+				var that = this
+				if(that.TokenId == '') {
+
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						that.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let kind
+				if(that.messgein.is_sku == 0) {
+					kind = 0
+				} else if(that.messgein.is_sku == 1 && !that.guigeid) {
+					Toast.fail('没有选择规格');
+					return
+				} else if(that.messgein.is_sku == 1 && that.guigeid) {
+					kind = that.guigeid
+				}
+				let data = {
+					token: that.TokenId,
+					cid: that.messgein.id,
+					num: 1,
+					type: 1,
+					classify: 1,
+					commodity_cover: that.messgein.cover,
+					commodity_old_price: that.messgein.old_price,
+					commodity_now_price: that.messgein.now_price,
+					commodity_title: that.messgein.title,
+					sku_id: kind
+				}
+				console.log(data)
+
+				addshopcar(data).then(res => {
+
+					if(res.data.code == 200) {
+						Toast.success(res.data.msg);
+
 					} else {
 						Notify({
 							type: 'warning',
@@ -186,20 +357,22 @@
 				}
 				let data = {
 					token: this.TokenId,
-					cid: this.ift,
+					cid: this.messgein.id,
 					num: 1,
 					type: 2,
-					classify: 2
-
+					classify: 1,
+					sku_id: this.messgein.is_sku,
+					commodity_cover: this.messgein.cover,
+					commodity_old_price: this.messgein.old_price,
+					commodity_now_price: this.messgein.now_price,
+					commodity_title: this.messgein.title
 				}
 
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
+						Toast.success(res.data.msg);
+
 					} else {
 						Notify({
 							type: 'warning',
@@ -210,20 +383,29 @@
 
 			},
 			goShoping(idt) {
-				let data = {
-					token:this.TokenId
+				var that = this
+				if(that.messgein.is_sku == 1 && !that.guigeid) {
+					Toast.fail('没有选择规格');
+					return
+				} else if(that.messgein.is_sku == 1 && that.guigeid) {
+					that.$router.push({
+						path: '/myorder/payinfo',
+						query: {
+							id: that.messgein.id,
+							type: 1,
+							skid: that.guigeid
+						}
+					})
+				} else {
+					that.$router.push({
+						path: '/myorder/payinfo',
+						query: {
+							id: that.messgein.id,
+							type: 1,
+							skid: 0
+						}
+					})
 				}
-				zhifubastaosuss(data).then(res=>{
-					console.log(res)
-				})
-
-				this.$router.push({
-					path: '/myorder/payinfo',
-					query: {
-						id: this.ift,
-						type:1
-					}
-				})
 
 			},
 			checkout(idt) {
@@ -241,6 +423,66 @@
 </script>
 
 <style lang="stylus" scoped>
+	.guess-i {
+		margin-top: 60px;
+		width: 100%;
+		.guess-list {
+			justify-content: space-around;
+			flex-wrap: wrap;
+			display: flex;
+			li {
+				width: 360px;
+				background: #fff;
+				margin-bottom: 10px;
+				border-radius: 10px;
+				padding: 0 20px 20px;
+				box-sizing: border-box;
+				.list-t {
+					width: 100%;
+					height: 300px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					img {
+						width: 260px;
+						height: 260px;
+					}
+				}
+				p {
+					font-size: 26px;
+					line-height: 50px;
+					font-weight: 500;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					height: 50px;
+					color: rgba(51, 51, 51, 1);
+				}
+				.goumai {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					h2 {
+						font-size: 34px;
+						width: 70%;
+						height: 50px;
+						line-height: 50px;
+						font-family: PingFang SC;
+						font-weight: bold;
+						color: #FF6501;
+					}
+					h3 {
+						img {
+							width: 50px;
+							height: 50px;
+							border-radius: 50%;
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	.addxuqu {
 		padding-bottom: 100px;
 		height: 100%;
@@ -269,67 +511,34 @@
 			flex: 1;
 			overflow: auto;
 			.x-q-l {
-				height: 140px;
-				.x-q-l-t {
-					height: 140px;
+				.fenshu {
+					width: 100%;
+					background: #fff;
 					display: flex;
-					justify-content: space-between;
-					align-items: center;
-					.x-q-l-t-l {
-						width: 60%;
-						height: 140px;
-						padding-left: 20px;
-						box-sizing: border-box;
-						background: linear-gradient(90deg, rgba(252, 61, 33, 1), rgba(254, 134, 56, 1));
-						display: flex;
-						flex-direction: column;
-						justify-content: center;
-						p {
-							font-size: 24px;
-							font-family: PingFang SC;
-							font-weight: 500;
-							color: rgba(255, 255, 255, 1);
-							opacity: 0.8;
-							margin-bottom: 30px;
-						}
-						h2 {
-							font-size: 32px;
-							font-family: PingFang SC;
-							font-weight: 500;
-							display: flex;
-							color: #fff;
-							span {
-								width: 121px;
-								margin-left: 6px;
-								display: block;
-								height: 33px;
-								line-height: 33px;
-								text-align: center;
-								font-size: 24px!important;
-								background: rgba(0, 0, 0, .1);
-								border-radius: 17px;
-							}
-						}
+					flex-wrap: wrap;
+					padding: 0 30px;
+					box-sizing: border-box;
+					li {
+						min-width: 120px;
+						height: 60px;
+						margin: 0 20px 20px 0;
+						line-height: 60px;
+						text-align: center;
+						border: 1px solid #e1e1e1;
+						font-size: 20px;
+						color: #000;
+						border-radius: 5px;
 					}
-					.x-q-l-t-r {
-						width: 40%;
-						height: 140px;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						background: linear-gradient(90deg, rgba(249, 224, 170, 1), rgba(255, 237, 198, 1));
-						h2 {
-							font-size: 36px;
-							font-family: PingFang SC;
-							font-weight: bold;
-							color: rgba(254, 65, 74, 1);
-						}
+					.ckode {
+						background: #3fb94d !important;
+						color: #fff!important;
 					}
 				}
 				.x-q-l-f {
 					height: 140px;
 					display: flex;
 					align-items: center;
+					flex-direction: column;
 					justify-content: center;
 					background: #fff;
 					p {
@@ -339,6 +548,27 @@
 						font-weight: bold;
 						line-height: 42px;
 						color: rgba(51, 51, 51, 1);
+					}
+					.jiage {
+						display: flex;
+						margin-top: 20px;
+						width: 100%;
+						height: 50px;
+						padding: 0 20px;
+						box-sizing: border-box;
+						align-items: center;
+						h1 {
+							font-size: 42px;
+							color: #FF6501;
+							margin-right: 20px;
+						}
+						h2 {
+							font-size: 26px;
+							font-family: PingFang SC;
+							font-weight: 500;
+							text-decoration: line-through;
+							color: rgba(204, 204, 204, 1);
+						}
 					}
 				}
 			}
@@ -426,7 +656,7 @@
 	}
 	
 	.pinglu {
-		min-height: 200px;
+		min-height: 100px;
 		width: 100%;
 		padding-bottom: 40px;
 		background: #fff;

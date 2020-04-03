@@ -107,6 +107,26 @@ export default new Router({
       }
     
     },
+    //秒杀pay
+    {
+      path: '/miaospay',
+      name: 'miaospay',
+      component: resolve => require(['@/views/Home/activity/huaqin/mspay'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    
+    },
+    //团购pay
+    
+    {
+      path: '/tgoupay',
+      name: 'tgoupay',
+      component: resolve => require(['@/views/Home/activity/huaqin/tgoupay'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    },
     //商品评价
     {
       path: '/home/pingjia',

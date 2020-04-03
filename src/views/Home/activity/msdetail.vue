@@ -22,6 +22,9 @@
 				</div>
 				<div class="x-q-l-f">
 					<p>{{messgein.goods_name}}</p>
+					<ul class="fenshu" v-if='messgein.is_sku ==1'>
+						<li v-for='(item,index) in guige' @click="changestyle(index+1,item.sku_id,item)" :class="{'ckode':choseid==index+1}" :key='index'>{{item.specification}}</li>
+					</ul>
 				</div>
 			</div>
 
@@ -67,11 +70,10 @@
 				</van-divider>
 				<img v-for='(item,index) in messgein.detailpic' :key='index' :src="item.image" alt="" />
 			</div>
+			<baokuand></baokuand>
+
 		</div>
 		<van-goods-action>
-			<van-goods-action-icon icon="chat-o" text="加常用" @click='addShopdata(messgein.goods_id)' />
-			<van-goods-action-icon icon="shop-o" text="购物车" @click='addhouwuAdd(messgein.goods_id)' />
-			<van-goods-action-button color="#262C41" type="warning" @click='addhouwuAdd(messgein.goods_id)' text="加入购物车" />
 			<van-goods-action-button color="#3FB94D" type="danger" @click='goShoping(messgein.goods_id)' text="立即购买" />
 		</van-goods-action>
 		<van-popup v-model="canshu" closeable position="bottom" :style="{ height: '40%' }">
@@ -92,18 +94,22 @@
 	import pinglun from './pinglun'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import { Dialog } from 'vant';
+	import { Dialog ,Toast} from 'vant';
 
 	import { Mkilldetail } from '@/api/api'
 	import { addshopcar } from '@/api/mine'
+	import baokuand from '@/components/baokuand'
+
 	export default {
 		data() {
 			return {
+				guige: [],
 				images: [
 					'https://img.yzcdn.cn/vant/apple-1.jpg',
 					'https://img.yzcdn.cn/vant/apple-2.jpg'
 				],
 				messgein: '',
+				choseid:0,
 				current: 0,
 				canshu: false,
 				pinglun: [],
@@ -114,7 +120,8 @@
 		},
 		components: {
 			headt,
-			pinglun
+			pinglun,
+			baokuand
 		},
 		computed: {
 			...mapGetters({
@@ -131,8 +138,11 @@
 			Mkilldetail(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
+					if(res.data.data.is_sku == 1) {
+						that.guige = res.data.data.sku
+					}
 					that.messgein = res.data.data;
-					that.actEndTime=res.data.data.endtime;
+					that.actEndTime = res.data.data.endtime;
 					console.log(that.actEndTime)
 					that.pinglun = res.data.data.evl;
 					that.images = res.data.data.zhutu;
@@ -143,6 +153,13 @@
 			})
 		},
 		methods: {
+			changestyle(iden, idt, item) {
+
+				var that = this;
+				that.guigeid = idt;
+				that.choseid = iden;
+
+			},
 			addhouwuAdd(idt) {
 				if(this.TokenId == '') {
 
@@ -212,8 +229,32 @@
 				})
 
 			},
-			goShoping() {
-				console.log('立即购买')
+			goShoping(idt) {
+				var that = this
+				if(that.messgein.is_sku == 1 && !that.guigeid) {
+					Toast.fail('没有选择规格');
+					return
+				} else if(that.messgein.is_sku == 1 && that.guigeid) {
+					that.$router.push({
+						path: '/miaospay',
+						query: {
+							id: idt,
+							type: 3,
+							skid: that.guigeid
+						}
+					})
+				} else {
+					that.$router.push({
+						path: '/miaospay',
+						query: {
+							id: idt,
+							type: 3,
+							skid: 0
+						}
+					})
+				}
+				
+				
 			},
 			checkout(idt) {
 				this.$router.push({
@@ -229,7 +270,7 @@
 				return param < 10 ? '0' + param : param;　　　　
 			},
 			countDown() {　　
-				var  that =this　
+				var that = this　
 				var interval = setInterval(() => {　　　　　　　　 // 获取当前时间，同时得到活动结束时间数组
 					　　　　　　　　
 					let newTime = new Date().getTime();　　　　　　　　 // 对结束时间进行处理渲染到页面
@@ -247,16 +288,16 @@
 						let sec = parseInt(time % (60 * 60 * 24) % 3600 % 60);　　　　　　　　　　
 						obj = {　　　　　　　　　　　　
 							day: that.timeFormat(day),
-	　　　　　　　　　　　　 hou: that.timeFormat(hou),
-	　　　　　　　　　　　　 min: that.timeFormat(min),
-	　　　　　　　　　　　　 sec: that.timeFormat(sec)　　　　　　　　　　
+							　　　　　　　　　　　　hou: that.timeFormat(hou),
+							　　　　　　　　　　　　min: that.timeFormat(min),
+							　　　　　　　　　　　　sec: that.timeFormat(sec)　　　　　　　　　　
 						};　　　　　　　　
 					} else { // 活动已结束，全部设置为'00'
 						　　　　　　　　　　
 						obj = {　　　　　　　　　　　　
 							hou: '00',
-	　　　　　　　　　　　　 min: '00',
-	　　　　　　　　　　　　 sec: '00'　　　　　　　　　　
+							　　　　　　　　　　　　min: '00',
+							　　　　　　　　　　　　sec: '00'　　　　　　　　　　
 						};　　　　　　　　　　
 						clearInterval(interval);　　　　　　　　
 					}　　　　　　　　
@@ -378,18 +419,43 @@
 					}
 				}
 				.x-q-l-f {
-					height: 140px;
+
 					display: flex;
+					flex-direction: column;
 					align-items: center;
 					justify-content: center;
 					background: #fff;
 					p {
 						font-size: 32px;
+						padding: 20px 0;
 						font-family: PingFang SC;
 						width: 96%;
 						font-weight: bold;
 						line-height: 42px;
 						color: rgba(51, 51, 51, 1);
+					}
+					.fenshu {
+						width: 100%;
+						background: #fff;
+						display: flex;
+						flex-wrap: wrap;
+						padding: 0 30px;
+						box-sizing: border-box;
+						li {
+							min-width: 120px;
+							height: 60px;
+							margin: 0 20px 20px 0;
+							line-height: 60px;
+							text-align: center;
+							border: 1px solid #e1e1e1;
+							font-size: 20px;
+							color: #000;
+							border-radius: 5px;
+						}
+						.ckode {
+							background: #3fb94d !important;
+							color: #fff!important;
+						}
 					}
 				}
 			}

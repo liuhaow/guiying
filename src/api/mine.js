@@ -338,3 +338,25 @@ export const delAddressdata = data=>Axios({
 	method:'post',
 	data
 })
+//付款新方式
+export const defukuandaya= data=>Axios({
+	url:'/api/payqrcode/pay_qrcode',
+	method:'post',
+	data
+})
+
+//未付款支付
+
+
+
+export const weizhikuandaya= data=>Axios({
+	url:'/api/pay/shopping_pay',
+	method:'post',
+	data
+})
+//还款
+export const huankuandaya= data=>Axios({
+	url:'/api/pay/repayment',
+	method:'post',
+	data
+})

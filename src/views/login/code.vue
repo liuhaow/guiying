@@ -107,18 +107,17 @@
 					if(res.data.code == 200) {
 						that.setToken(res.data.data.token)
 						that.setUserData(res.data.data);
-						Notify({
-							type: 'success',
-							message: '登录成功'
+						Toast({
+							message: res.data.msg,
+							iconClass: 'icon icon-success'
 						});
-						setTimeout(function(){
+						setTimeout(function() {
 							if(res.data.data.is_delivery == 0) {
-							that.$router.push('/home')
-						} else if(res.data.data.is_delivery == 1) {
-							that.$router.push('/peisong/transfer')
-						}
-						},2000)
-						
+								that.$router.push('/home')
+							} else if(res.data.data.is_delivery == 1) {
+								that.$router.push('/peisong/transfer')
+							}
+						}, 2000)
 
 					} else {
 						Notify({

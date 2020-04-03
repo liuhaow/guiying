@@ -64,7 +64,7 @@
 
 		<div class="pay-ft">
 			<h2>
-				实付 <span>&yen;{{Number(messgein.now_price*num).toFixed(1) + Number(messgein.deposit)-Number(value)}}</span>
+				实付 <span>&yen;{{Number(messgein.now_price*num) + Number(messgein.deposit)-value }}</span>
 			</h2>
 			<button @click="orderData">提交订单</button>
 		</div>
@@ -88,14 +88,14 @@
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
-	import { putongspInfo, keusequandata,zhifubaosuss } from '@/api/api'
+	import { putongspInfo, keusequandata,zhifubaosuss,qisongdata ,xiangqintydata} from '@/api/api'
 	import { zichanyue, singopayinfo } from '@/api/mine'
 	import { Toast } from 'vant';
 	export default {
 		data() {
 			return {
 				showPicker: false,
-				columns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
+				columns: [],
 				value: '',
 				chosd: 0,
 				money: '',
@@ -105,6 +105,7 @@
 				remark: '',
 				adressd:'',
 				listd: [],
+				qisongjia:'',
 				zhifu: [{
 						name: '余额'
 					},
@@ -112,11 +113,12 @@
 					{
 						img: './static/img/zfb.png',
 						name: '支付宝'
-					},
+					}
+					,
 					{
 						img: './static/img/wxin.png',
 						name: '微信'
-					},
+					}
 				]
 			}
 		},
@@ -131,11 +133,13 @@
 			})
 		},
 		created(){
-			this.zhifuwancheng()
+//			this.zhifuwancheng()
 			
 		},
 		mounted() {
 			let idt = this.$route.query.id
+			let  isku = this.$route.query.skid
+			let  typt = this.$route.query.type
 			if(this.qiehuande){
 				this.adressd =this.qiehuande
 			}else{
@@ -144,9 +148,12 @@
 			}
 			let data = {
 				cid: idt,
-				page: 1
+				token:this.TokenId,
+				sku_id:isku,
+				type:typt
+
 			}
-			putongspInfo(data).then(res => {
+			xiangqintydata(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
 					this.messgein = res.data.data;
@@ -160,32 +167,23 @@
 					this.money = res.data.data.money
 				}
 			})
+			qisongdata(qury).then(res=>{
+				if(res.data.code == 200) {
+					this.qisongjia= res.data.data
+				}
+			})
 
 		},
 		methods: {
-			zhifuwancheng(){
-				var that = this
-				let data = {
-				token: that.TokenId
-			}
-				zhifubaosuss(data).then(res => {
-				console.log(res)
-				if(res.data.code == 200) {
-					 if(res.data.data.status == 2) {
-						that.$router.push('/myorder/paystatu')
-					}
-
-				}
-			})
-			},
 			youhuodataquan() {
 				var that = this
-				let coin = Number(that.messgein.now_price * that.num).toFixed(1) + Number(that.messgein.deposit);
+				let coin = Number(that.messgein.now_price * that.num)+Number(that.messgein.deposit)
 				that.value = ''
 				let data = {
 					token: that.TokenId,
 					coin: coin
 				}
+
 				keusequandata(data).then(res => {
 					console.log(res)
 					if(res.data.code = 200) {
@@ -226,6 +224,7 @@
 			lingqudata(mony, grouid) {
 				console.log(grouid)
 				this.value = mony;
+				console.log(this.value)
 				this.youhui = grouid;
 				this.showPicker = false
 
@@ -237,32 +236,45 @@
 			orderData() {
 				var that = this
 				let td;
+				let tpdt
 				let addr = that.adressd.area + '-' + that.adressd.addr;
 				let coin = Number(that.messgein.now_price * that.num) + Number(that.messgein.deposit) - Number(that.value);
+				let toloe = Number(that.messgein.now_price * that.num) + Number(that.messgein.deposit)
 				let danj = that.messgein.now_price;
-				console.log(danj)
+				console.log(coin)
 				let pdt = [{
 					cid: that.$route.query.id,
 					coin: danj,
 					num: that.num,
-					total_coin: coin,
+					total_coin: toloe,
+					sku_id:that.$route.query.skid,
 					deposit: that.messgein.deposit
 				}]
 				let pdtf = JSON.stringify(pdt)
 				if(that.chosd == 0) {
-					td = 2
-				} else {
-					td = 1
+					td = 2;
+					tpdt = 2
+				} else if(that.chosd==1) {
+					td = 1;
+					tpdt = 1
+					
+				}else if(that.chosd==2){
+					td=3;
+					tpdt = 1
+					
 				}
-				console.log(td, addr, pdt)
+				if(that.qisongjia>coin){
+						Toast.fail('满'+that.qisongjia+'元起送');
+						return
+				}
 				let data = {
 					token: that.TokenId,
 					coin: coin,
 					address: addr,
 					mobile: that.morendata.mobile,
 					name: that.morendata.name,
-					pid: that.chosd,
-					t: td,
+					pid: td,
+					t: tpdt,
 					product: pdtf,
 					coupons_id: that.youhui,
 					type: that.$route.query.type,
@@ -271,18 +283,20 @@
 				console.log(data)
 
 				singopayinfo(data).then(res => {
-					console.log(res)
+
 					if(res.data.code == 200) {
 						let htmlf = res.data.data
 						if(that.chosd == 1) {
-							this.$router.push({
-								path: '/mine/chongzhifu',
-								query: {
-									htmlData: htmlf
-								}
-							})
+							let form = res.data.data
+							const div = document.createElement('div') // 创建div
+							div.innerHTML = form // 将返回的form 放入div
+							document.body.appendChild(div)
+							document.forms[0].submit()
+						}else if(that.chosd == 2){							
+							that.weixinPay(res.data.data.pay_info)
+						}else{
+							Toast.success(res.data.msg);							
 						}
-
 					} else {
 						Toast.fail(res.data.msg);
 
@@ -290,6 +304,39 @@
 				})
 
 				//				this.$router.push('/myorder/paystatu/2')
+			},
+			weixinPay(data) {
+				//获取支付通道
+				console.log(data)
+				let payChanel = '';
+				plus.payment.getChannels(function(channels) {
+					for(var i in channels) {
+						if(channels[i].id == "wxpay") {
+							payChanel = channels[i]
+						}
+					}
+					let payParam = { //后台返回的支付参数最好全部都是小写（论坛看到的提醒）
+						"appid": data.appid,
+						"noncestr": data.noncestr,
+						"package": data.package,
+						"partnerid": data.partnerid,
+						"prepayid": data.prepayid,
+						"timestamp": data.timestamp,
+						"sign": data.sign
+					};
+					// 请求支付操作
+					plus.payment.request(payChanel, payParam,
+						function(result) {
+							// 支付成功处理
+							Toast.success('支付成功');							
+						},
+						function(error) {
+							// 支付失败处理              
+						Toast.fail('支付失败');
+						})
+				}, function(e) {
+						Toast.fail('获取支付通道失败');				
+				})
 			}
 		}
 	}

@@ -1,6 +1,6 @@
-<template>
+ <template>
 	<div class="pay">
-		<headt message='确认订单'></headt>
+		<headt message='待付款'></headt>
 		<div class="pay-inf">
 			<div class="p-i-t">
 				<h2 class="p-t-h2"><span>{{adressd.name}}</span> <span>{{adressd.mobile}}</span></h2>
@@ -13,20 +13,24 @@
 			</div>
 			<div class="p-i-nav">
 				<ul>
-					<li v-for="(item,index) in xuanzh">
-						<img :src="item.cover" alt="" />
+					<li>
+						<img :src="messgein.cover" alt="" />
 					</li>
 				</ul>
-				<p class="chakan" @click="qindandata"> <img src="../../assets/img/zhank.png" /> </p>
+				<div class="shulinag">
+					<button @click="jianshao"> - </button>
+					<input type="number" name="" id="" v-model="num"/></span>
+					<button @click="zenhjia(messgein.num)"> + </button>
+				</div>
 			</div>
 			<div class="zj-yj">
 				<div class="csc-s">
-					<h2>总价</h2>
-					<h3>&yen;{{all_money}}</h3>
+					<h2>单价</h2>
+					<h3>&yen;{{messgein.now_price}}</h3>
 				</div>
 				<div class="csc-s">
 					<h2>押金</h2>
-					<h3>&yen;{{deposit}}</h3>
+					<h3>&yen;{{messgein.deposit}}</h3>
 				</div>
 				<div class="csc-s">
 					<h2>优惠券</h2>
@@ -45,8 +49,8 @@
 						{{item.name}}
 						<span v-if='index==0' class="jinqian">{{money}}</span>
 					</h3>
-					<img src="../../../static/img/choss.png" v-if="chosd !=index" alt="" />
-					<img src="../../../static/img/chos.png" v-if="chosd ==index" alt="" />
+					<img src="../../../../../static/img/choss.png" v-if="chosd !=index" alt="" />
+					<img src="../../../../../static/img/chos.png" v-if="chosd ==index" alt="" />
 				</div>
 
 			</div>
@@ -60,7 +64,7 @@
 
 		<div class="pay-ft">
 			<h2>
-				实付 <span>&yen;{{(all_money*100+deposit*100-Number(value)*100)/100}}</span>
+				实付 <span>&yen;{{Number(messgein.now_price*num) + Number(messgein.deposit)-Number(value)}}</span>
 			</h2>
 			<button @click="orderData">提交订单</button>
 		</div>
@@ -78,22 +82,20 @@
 				</li>
 			</ul>
 		</van-popup>
-		
 	</div>
 </template>
 
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters, mapActions } from 'vuex'
-	import { putongspInfo, keusequandata, zhifubaosuss, qisongdata } from '@/api/api'
+	import { putongspInfo, keusequandata,zhifubaosuss,qisongdata } from '@/api/api'
 	import { zichanyue, singopayinfo } from '@/api/mine'
 	import { Toast } from 'vant';
-	import wx from "weixin-js-sdk";
 	export default {
 		data() {
 			return {
 				showPicker: false,
-				columns: [],
+				columns: ['杭州', '宁波', '温州', '嘉兴', '湖州'],
 				value: '',
 				chosd: 0,
 				money: '',
@@ -101,10 +103,9 @@
 				num: 1,
 				youhui: 0,
 				remark: '',
-				all_money: '',
-				deposit: '',
-				xuanzh: [],
-				qisongjia: '',
+				adressd:'',
+				listd: [],
+				qisongjia:'',
 				zhifu: [{
 						name: '余额'
 					},
@@ -112,13 +113,13 @@
 					{
 						img: './static/img/zfb.png',
 						name: '支付宝'
-					},
+					}
+					,
 					{
 						img: './static/img/wxin.png',
 						name: '微信'
 					}
-				],
-				adressd: ''
+				]
 			}
 		},
 		components: {
@@ -127,36 +128,22 @@
 		computed: {
 			...mapGetters({
 				morendata: 'getadrss',
-				TokenId: 'TokenId',
-				qingdand: 'qingdand',
-				qiehuande: 'qiehuande'
+				qiehuande:'qiehuande',
+				TokenId: 'TokenId'
 			})
 		},
-		created() {
-			var that = this
-			that.zhifuwancheng()
-
+		created(){
+//			this.zhifuwancheng()
+			
 		},
 		mounted() {
-			var that = this
-			if(that.qiehuande) {
-				console.log(1)
-				that.adressd = that.qiehuande
-			} else {
-				that.adressd = that.morendata
+			let idt = this.$route.query.id
+			if(this.qiehuande){
+				this.adressd =this.qiehuande
+			}else{
+				this.adressd =this.morendata
+				
 			}
-			let allney = 0
-			let deposit = 0
-			that.qingdand.forEach((item) => {
-				if(item.selected) {
-					allney += item.num * item.now_price
-					deposit += (item.deposit*100)/100;
-				}
-			})
-			that.xuanzh = that.qingdand
-			that.all_money = allney
-			that.deposit = deposit
-			let idt = that.$route.query.id
 			let data = {
 				cid: idt,
 				page: 1
@@ -164,53 +151,28 @@
 			putongspInfo(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
-					that.messgein = res.data.data;
+					this.messgein = res.data.data;
 				}
 			})
 			let qury = {
-				token: that.TokenId
+				token: this.TokenId
 			}
 			zichanyue(qury).then(res => {
 				if(res.data.code == 200) {
-					that.money = res.data.data.money
+					this.money = res.data.data.money
 				}
 			})
-			qisongdata(qury).then(res => {
+			qisongdata(qury).then(res=>{
 				if(res.data.code == 200) {
-					that.qisongjia = res.data.data
+					this.qisongjia= res.data.data
 				}
 			})
 
 		},
 		methods: {
-			...mapActions(
-				[
-					'qingang'
-				]
-			),
-
-			qindandata() {
-				var that = this
-
-				that.$router.push('/mycar/qingdan')
-			},
-			zhifuwancheng() {
-				var that = this
-				let data = {
-					token: that.TokenId
-				}
-				zhifubaosuss(data).then(res => {
-					console.log(res)
-					if(res.data.code == 200) {
-						if(res.data.data.status == 2) {
-							that.$router.push('/myorder/paystatu')
-						}
-					}
-				})
-			},
 			youhuodataquan() {
 				var that = this
-				let coin = that.all_money + that.deposit;
+				let coin = Number(that.messgein.now_price * that.num)+Number(that.messgein.deposit)
 				that.value = ''
 				let data = {
 					token: that.TokenId,
@@ -220,15 +182,15 @@
 				keusequandata(data).then(res => {
 					console.log(res)
 					if(res.data.code = 200) {
-						if(res.data.data.length == 0) {
+						if(res.data.data.length == 0){
+							Toast.fail('没有优惠券可以使用');						
+						}else if(res.data.data == null){
 							Toast.fail('没有优惠券可以使用');
-						} else if(res.data.data == null) {
-							Toast.fail('没有优惠券可以使用');
-
-						} else {
+							
+						}else{
 							that.columns = res.data.data
 							that.showPicker = true;
-						}
+						}					
 					}
 
 				})
@@ -238,7 +200,6 @@
 			},
 			choseAdress() {
 				this.$router.push('/mine/adress')
-
 			},
 			jianshao() {
 				this.num--
@@ -250,15 +211,14 @@
 			},
 			zenhjia(numt) {
 				this.num++
-					console.log(numt)
 				if(this.num > numt) {
 					this.num = numt
 				}
 
 			},
 			lingqudata(mony, grouid) {
-				console.log(mony)
-				this.value = Number(mony);
+				console.log(grouid)
+				this.value = mony;
 				this.youhui = grouid;
 				this.showPicker = false
 
@@ -270,36 +230,20 @@
 			orderData() {
 				var that = this
 				let td;
-				let tpdt;
-				let coin = that.all_money + that.deposit - that.value
-				if(!that.morendata) {
-					Toast.fail('请选择地址');
-					return
-				}
+				let tpdt
 				let addr = that.adressd.area + '-' + that.adressd.addr;
-
-				
-				let pdt = [];
-				let qidn = []
-				for(let i in that.xuanzh) {
-					var produ = {
-						cid: that.xuanzh[i].commodity_id,
-						coin: that.xuanzh[i].now_price,
-						num: that.xuanzh[i].num,
-						total_coin: that.xuanzh[i].num * that.xuanzh[i].now_price,
-						deposit: that.xuanzh[i].deposit,
-						sku_id:that.xuanzh[i].sku_id,
-					}
-					pdt.push(produ)
-					qidn.push(that.xuanzh[i].id)
-				}
+				let coin = Number(that.messgein.now_price * that.num) + Number(that.messgein.deposit) - Number(that.value);
+				let danj = that.messgein.now_price;
+				console.log(danj)
+				let pdt = [{
+					cid: that.$route.query.id,
+					coin: danj,
+					num: that.num,
+					total_coin: coin,
+					sku_id:that.$route.query.skid,
+					deposit: that.messgein.deposit
+				}]
 				let pdtf = JSON.stringify(pdt)
-				qidn = qidn.toString()
-				if(that.qisongjia > coin) {
-					Toast.fail('满' + that.qisongjia + '元起送');
-					return
-				}
-				
 				if(that.chosd == 0) {
 					td = 2;
 					tpdt = 2
@@ -312,6 +256,10 @@
 					tpdt = 1
 					
 				}
+				if(that.qisongjia>coin){
+						Toast.fail('满'+that.qisongjia+'元起送');
+						return
+				}
 				let data = {
 					token: that.TokenId,
 					coin: coin,
@@ -322,26 +270,27 @@
 					t: tpdt,
 					product: pdtf,
 					coupons_id: that.youhui,
-					type: 1,
-					remark: that.remark,
-					carid: qidn,
-					carbuy: 1
+					type: that.$route.query.type,
+					remark: that.remark
 				}
+				console.log(data)
 
 				singopayinfo(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
 						let htmlf = res.data.data
 						if(that.chosd == 1) {
+							return
 							let form = res.data.data
 							const div = document.createElement('div') // 创建div
-							div.innerHTML = htmlf // 将返回的form 放入div
+							div.innerHTML = form // 将返回的form 放入div
 							document.body.appendChild(div)
 							document.forms[0].submit()
-						} else if(that.chosd == 2) {
-							that.weixinPay(res.data.data.pay_info)						
-						} else {
-							Toast.success(res.data.msg);
+						}else if(that.chosd == 2){
+							
+							that.weixinPay(res.data.data.pay_info)
+						}else{
+							Toast.success(res.data.msg);							
 						}
 
 					} else {
@@ -350,7 +299,7 @@
 					}
 				})
 
-
+				//				this.$router.push('/myorder/paystatu/2')
 			},
 			weixinPay(data) {
 				//获取支付通道
@@ -375,17 +324,16 @@
 					plus.payment.request(payChanel, payParam,
 						function(result) {
 							// 支付成功处理
-							Toast.success('支付成功');														
+							alert('支付成功:' + JSON.stringify(result))
 						},
 						function(error) {
 							// 支付失败处理              
-							Toast.fail('支付失败');							
+							alert('支付失败:' + JSON.stringify(error))
 						})
 				}, function(e) {
-						Toast.fail('获取支付通道失败');
+					alert('获取支付通道失败：' + e.message);
 				})
 			}
-
 		}
 	}
 </script>
@@ -547,7 +495,7 @@
 						font-size: 28px;
 						font-family: PingFang SC;
 						font-weight: 500;
-						color: #f53e3a;
+						color: rgba(51, 51, 51, 1);
 						padding-right: 20px;
 					}
 					div {
@@ -623,19 +571,9 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				.chakan {
-					padding: 20px;
-					img {
-						width: 40px;
-						height: 40px;
-					}
-				}
 				ul {
-					overflow-x: auto;
-					white-space: nowrap;
-					width: 600px;
+					display: flex;
 					li {
-						display: inline-block;
 						img {
 							height: 152px;
 							width: 152px;
@@ -645,7 +583,7 @@
 				}
 				.shulinag {
 					display: flex;
-					span {
+					input {
 						display: block;
 						width: 90px;
 						height: 60px;
@@ -698,9 +636,8 @@
 						height: 100%;
 						padding: 0 20px;
 						i {
-							font-size: 36px;
-							color: #000;
-							font-weight: 600;
+							font-size: 32px;
+							color: #333;
 						}
 					}
 				}

@@ -2,25 +2,25 @@
 	<div class="neword">
 		<ul v-if='shif' class="peis-z">
 			<li v-for="(item,index) in songdao" :key='index' class="peis-list">
-				<div class="quhuo">
+				<!--<div class="quhuo">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
 						<span>取货</span>
 					</h2>
 					<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
-				</div>
+				</div>-->
 				<div class="quhuo">
 					<h2>
 						<img src='../../../static/img/doizy.png'/>
 						<span>送达</span>
 					</h2>
 					<div class="gongda">
-						<h3>浙江省嵊州市高新区海智中心3幢409室</h3>
-						<p><span>联系人：姜佳良</span> <span>联系电话：110112114</span></p>
+						<h3>{{item.addr}}</h3>
+						<p><span>联系人：{{item.name}}</span> <span>联系电话：{{item.mobile}}</span></p>
 					</div>
 
 				</div>
-				<h5 class="q-d-xiang">商品清单</h5>
+				<!--<h5 class="q-d-xiang">商品清单</h5>
 				<ul class="q-d-l">
 					<li v-for='item in 3'>
 						<img src="http://img1.imgtn.bdimg.com/it/u=4119692727,446131490&fm=11&gp=0.jpg" alt="" />
@@ -29,7 +29,7 @@
 							<p><span>4</span>件</p>
 						</div>
 					</li>
-				</ul>
+				</ul>-->
 				<h4 class="jiedan">已送达</h4>
 
 			</li>

@@ -171,9 +171,19 @@
 			}
 			gouwcarInfo(data).then(res => {
 				if(res.data.code == 200) {
-
 					this.carsnum(res.data.data)
-				} else {
+				}else if(res.data.code== 100002){
+					Dialog.confirm({
+							title: '提示',
+							message: '账号重新登录'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {
+							this.$router.push('/home')
+							
+							
+						});
+				} else{
 					Notify({
 						type: 'warning',
 						message: res.data.msg

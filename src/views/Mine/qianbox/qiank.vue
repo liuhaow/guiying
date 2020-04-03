@@ -16,13 +16,13 @@
 			<h2>还款方式</h2>
 			<van-radio-group v-model="radio">
 				<van-cell-group>
-					<van-cell :title="money" clickable @click="radio = '1'">
+					<van-cell title="支付宝" clickable @click="radio == 1">
 						<van-radio slot="right-icon" name="1" />
 					</van-cell>
-					<van-cell title="微信" clickable @click="radio = '2'">
+					<van-cell :title="money" clickable @click="radio == 2">
 						<van-radio slot="right-icon" name="2" />
 					</van-cell>
-					<van-cell title="支付宝" clickable @click="radio = '3'">
+					<van-cell title="微信" clickable @click="radio == 3">
 						<van-radio slot="right-icon" name="3" />
 					</van-cell>
 				</van-cell-group>
@@ -30,20 +30,20 @@
 
 		</div>
 		<div class="qian-f-f">
-			<button>立即还款</button>
+			<button @click="huankandata()">立即还款</button>
 		</div>
 	</div>
 </template>
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
-	import { zichanyue } from '@/api/mine'
+	import { Notify, Toast } from 'vant';
+	import { zichanyue, huankuandaya } from '@/api/mine'
 	export default {
 		data() {
 			return {
-				money:'',
-				debt:'',
+				money: '',
+				debt: '',
 				chos: 1,
 				radio: ''
 			}
@@ -54,15 +54,9 @@
 			})
 		},
 		mounted() {
-			let data={
-				token:this.TokenId
-			}
-			zichanyue(data).then(res => {
-				if(res.data.code == 200){
-					this.money = '钱包余额：'+res.data.data.money,
-					this.debt = res.data.data.debt
-				}
-			})
+			var  that = this
+			that.huoquyueq()
+			
 		},
 		methods: {
 			back() {
@@ -71,6 +65,94 @@
 			mingxidata() {
 				var that = this
 				that.$router.push('/mine/hkmingxi')
+			},
+			huankandata() {
+				var that = this
+				if(that.radio == '') {
+					Toast.fail('选择要支付的方式')
+					return
+				}
+				if(that.debt <= 0) {
+					Toast.fail('您没有要还的金额')
+					return
+				}
+				let data = {
+					token: that.TokenId,
+					repay: that.debt,
+					pid: that.radio
+				}
+
+				huankuandaya(data).then(res => {
+					console.log(res)
+					if(res.data.code == 200) {
+						if(that.radio == 1) {
+							let form = res.data.data
+							const div = document.createElement('div') // 创建div
+							div.innerHTML = form // 将返回的form 放入div
+							document.body.appendChild(div)
+							document.forms[0].submit()
+						} else if(that.radio == 3) {
+							that.weixinPay(res.data.data.pay_info)
+						} else if(that.radio==2) {
+							Toast.success(res.data.msg);
+							that.huoquyueq()
+							
+						}
+
+					} else {
+						Toast.fail(res.data.msg);
+					}
+
+				})
+				console.log(that.radio)
+			},
+			weixinPay(data) {
+				//获取支付通道
+				var  that=this
+				console.log(data)
+				let payChanel = '';
+				plus.payment.getChannels(function(channels) {
+					for(var i in channels) {
+						if(channels[i].id == "wxpay") {
+							payChanel = channels[i]
+						}
+					}
+					let payParam = { //后台返回的支付参数最好全部都是小写（论坛看到的提醒）
+						"appid": data.appid,
+						"noncestr": data.noncestr,
+						"package": data.package,
+						"partnerid": data.partnerid,
+						"prepayid": data.prepayid,
+						"timestamp": data.timestamp,
+						"sign": data.sign
+					};
+					// 请求支付操作
+					plus.payment.request(payChanel, payParam,
+						function(result) {
+							// 支付成功处理
+							Toast.success('支付成功');
+							that.huoquyueq()
+
+						},
+						function(error) {
+							// 支付失败处理              
+							Toast.fail('支付失败');
+						})
+				}, function(e) {
+					Toast.fail('获取支付通道失败');
+				})
+			},
+			huoquyueq() {
+				var that = this
+				let data = {
+					token: that.TokenId
+				}
+				zichanyue(data).then(res => {
+					if(res.data.code == 200) {
+						that.money = '余额：' + res.data.data.money,
+							that.debt = res.data.data.debt
+					}
+				})
 			}
 
 		}
@@ -190,7 +272,7 @@
 			background: #ffff;
 			box-sizing: border-box;
 			h1 {
-				height:100%;
+				height: 100%;
 				display: flex;
 				width: 50px;
 				align-items: center;

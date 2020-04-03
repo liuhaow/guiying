@@ -1,22 +1,23 @@
 <template>
-	<div class="tuan">
+	<div class="tuan" v-if='tlist.length>0'>
 		<div class="xmiao">
 			<p>今日团购</p>
 			<h2 @click="moreData">更多</h2>
 		</div>
 		<div class="tlist">
 			<ul class="tlist-u">
-				<li v-for='(item,index) in tlist' >
+				<li v-for='(item,index) in tlist'>
 					<img :src="item.goods_cover" class="mimgs" alt="" @click="mshaData(item.id)" />
 					<p class="tutile">{{item.goods_name}}</p>
 					<div class="tu-f">
 						<p>
 							<span class="tgj">团购价</span>
-							<span>&yen;{{item.show_price}}</span>
+
 						</p>
-						<h2 @click="addhouwuAdd(item.goods_id)">
-							<img src="../../../static/img/jgwc.png"/>
-						</h2>
+
+						<p>
+							<span class="tgj">&yen;{{item.show_price}}</span>
+						</p>
 					</div>
 				</li>
 			</ul>
@@ -28,9 +29,9 @@
 	import { hometugou } from '@/api/api'
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify } from 'vant';
-	import {addshopcar} from '@/api/mine'
+	import { addshopcar } from '@/api/mine'
 	import { Dialog } from 'vant';
-	
+
 	export default {
 		data() {
 			return {
@@ -44,26 +45,26 @@
 			})
 		},
 		mounted() {
-			let data ={
-				page:1
+			let data = {
+				page: 1
 			}
-			hometugou(data).then(res =>{
+			hometugou(data).then(res => {
 				console.log(res)
-				if(res.data.code == 200){
-					this.tlist = res.data.data.splice(0,3)
+				if(res.data.code == 200) {
+					this.tlist = res.data.data.splice(0, 3)
 				}
 			})
 		},
-		methods:{
+		methods: {
 			moreData() {
 				this.$router.push('/group')
 
 			},
-			mshaData(idt){
-				this.$router.push('/pintu/pintuan/'+idt)
-				
+			mshaData(idt) {
+				this.$router.push('/pintu/pintuan/' + idt)
+
 			},
-			addhouwuAdd(idt){
+			addhouwuAdd(idt) {
 				if(this.TokenId == '') {
 
 					Dialog.confirm({
@@ -74,19 +75,25 @@
 					}).catch(() => {});
 					return
 				}
-				let data={
-					token:this.TokenId,
-					cid:idt,
-					num:1,
-					type:1,
-					classify:2
-					
+				let data = {
+					token: this.TokenId,
+					cid: idt,
+					num: 1,
+					type: 1,
+					classify: 2
+
 				}
-				addshopcar(data).then(res=>{
-					if(res.data.code == 200){
-						Notify({ type: 'success', message: res.data.msg });
-					}else{
-						Notify({ type: 'warning', message: res.data.msg });
+				addshopcar(data).then(res => {
+					if(res.data.code == 200) {
+						Notify({
+							type: 'success',
+							message: res.data.msg
+						});
+					} else {
+						Notify({
+							type: 'warning',
+							message: res.data.msg
+						});
 					}
 				})
 			}
@@ -96,18 +103,17 @@
 
 <style lang="stylus" scoped>
 	.tuan {
-		height: 516px;
 		width: 100%;
 		background: #fff;
-		padding: 0 20px;
+		padding: 0 20px 30px;
 		box-sizing: border-box;
 		.tlist {
 			.tlist-u {
 				width: 100%;
 				display: flex;
-				justify-content: space-between;
 				li {
 					width: 222px;
+					margin-right: 10px;
 					.mimgs {
 						width: 222px;
 						height: 222px;
@@ -116,7 +122,9 @@
 						font-size: 24px;
 						font-family: PingFang SC;
 						font-weight: 500;
-
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
 						color: rgba(51, 51, 51, 1);
 						line-height: 30px;
 						margin: 27px 0 18px;
@@ -147,7 +155,7 @@
 							}
 						}
 						h2 {
-							img{
+							img {
 								height: 48px;
 								width: 48px;
 								border-radius: 50%;

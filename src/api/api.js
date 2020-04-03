@@ -230,3 +230,17 @@ export const xiaofenlei = data =>Axios({
 	data
 })
 
+//起送价格
+
+export const qisongdata = data =>Axios({
+	url:'/api/personal/pickup',
+	method:'post',
+	data
+})
+//详情呀
+
+export const xiangqintydata = data =>Axios({
+	url:'/api/pay/gsorder',
+	method:'post',
+	data
+})

@@ -8,10 +8,10 @@
 				<div class="list-t" @click="checkdetail(item.id)">
 					<img :src="item.cover" />
 				</div>
-				<p>{{item.title}}</p>
+				<p @click="checkdetail(item.id)">{{item.title}}</p>
 				<div class="goumai">
-					<h2>&yen;{{item.now_price}}</h2>
-					<h3 @click="addhouwuAdd(item.id)">
+					<h2 @click="checkdetail(item.id)">&yen;{{item.now_price}}</h2>
+					<h3 @click="addhouwuAdd(item)">
 						<img src="../../static/img/jgwc.png" />
 					</h3>
 				</div>
@@ -22,7 +22,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { Notify } from 'vant';
+	import { Notify,Toast } from 'vant';
 	import { addshopcar, hotgoudata } from '@/api/mine'
 	export default {
 		data() {
@@ -45,6 +45,7 @@
 				}
 			})
 		},
+		
 		methods: {
 			checkdetail(idt) {
 				var that = this
@@ -52,22 +53,35 @@
 			},
 			addhouwuAdd(idt) {
 				var that = this
+				let kind
+				if(idt.is_sku == 0) {
+					kind = 0
+				} else if(idt.is_sku == 1) {
+					kind = idt.sku_id
+				}
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: idt.id,
+					commodity_cover:idt.cover,
+					commodity_old_price:idt.old_price,
+					commodity_now_price:idt.now_price,
+					commodity_title:idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
+					classify: 1,
+					sku_id:kind
 
 				}
 				addshopcar(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
 						that.$emit("click");
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
+						Toast.success(res.data.msg);
+						
+//						Notify({
+//							type: 'success',
+//							message: res.data.msg
+//						});
 					} else {
 						Notify({
 							type: 'warning',
@@ -90,11 +104,11 @@
 			display: flex;
 			li {
 				width: 360px;
-				height: 450px;
+
 				background: #fff;
 				margin-bottom: 10px;
 				border-radius: 10px;
-				padding: 0 20px;
+				padding: 0 20px 20px;
 				box-sizing: border-box;
 				.list-t {
 					width: 100%;
@@ -109,22 +123,25 @@
 				}
 				p {
 					font-size: 26px;
-					line-height: 30px;
+					line-height: 50px;
 					font-weight: 500;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
-					height: 30px;
+					height: 50px;
 					color: rgba(51, 51, 51, 1);
 				}
 				.goumai {
 					display: flex;
-					margin-top: 30px;
+
 					justify-content: space-between;
 					align-items: center;
 					h2 {
 						font-size: 34px;
 						font-family: PingFang SC;
+						width: 70%;
+						height: 50px;
+						line-height: 50px;
 						font-weight: bold;
 						color: #FF6501;
 					}
