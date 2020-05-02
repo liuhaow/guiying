@@ -345,6 +345,7 @@
 		.btm-fl {
 			display: flex;
 			justify-content: center;
+			align-items :center;
 			img {
 				height: 44px;
 				height: 44px;

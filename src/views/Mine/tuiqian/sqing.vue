@@ -18,7 +18,7 @@
 		</div>
 		<div class="you-x">
 			<div>
-				<h2>退押金事宜：</h2><input v-model="remark" type="text" placeholder="请填写您需求" />
+				<h2>退押金事宜：</h2><input v-model="remark" type="text" placeholder="请填" />
 			</div>
 
 		</div>
@@ -32,7 +32,7 @@
 <script>
 	import headt from '../../../components/heda'
 	import { mapGetters } from 'vuex'
-	import { Notify } from 'vant';
+	import { Notify,Toast } from 'vant';
 	import { yajintuiData } from '@/api/mine'
 	export default {
 		data() {
@@ -91,11 +91,18 @@
 				yajintuiData(data).then(res => {
 					console.log(res)
 					if(res.data.code ==200){
-						Notify({ type: 'success', message: res.data.msg });
+				
+						Toast.success(res.data.msg)
+						this.$router.go(-1)						
+						this.name ='';
+						this.mobile='';
+						this.remark =''
+						
+						
+						
 						
 					}else{
-				 		Notify({ type: 'warning', message: res.data.msg });
-						
+						Toast.fail(res.data.msg)						
 					}
 				})
 			}

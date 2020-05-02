@@ -21,10 +21,10 @@
 </template>
 
 <script>
-	import { Toast } from 'mint-ui';
+
 	import { mapGetters, mapActions } from 'vuex'
 	import { getSmsCode, loginInfo } from '@/api/api'
-	import { Notify } from 'vant';
+	import { Notify,Toast } from 'vant';
 	export default {
 		data() {
 			return {
@@ -91,11 +91,9 @@
 			nextbuData() {
 				var that = this
 				if(!that.code) {
-					Toast({
-						message: '输入验证码',
-						iconClass: 'icon icon-error',
-						position: 'center',
-					});
+					Toast.fail('输入验证码')
+
+					
 					return
 				}
 
@@ -107,10 +105,8 @@
 					if(res.data.code == 200) {
 						that.setToken(res.data.data.token)
 						that.setUserData(res.data.data);
-						Toast({
-							message: res.data.msg,
-							iconClass: 'icon icon-success'
-						});
+						Toast.success(res.data.msg);
+						
 						setTimeout(function() {
 							if(res.data.data.is_delivery == 0) {
 								that.$router.push('/home')

@@ -244,3 +244,9 @@ export const xiangqintydata = data =>Axios({
 	method:'post',
 	data
 })
+//yansehuoqu
+export const colorhuoqudata = data =>Axios({
+	url:'/api/index/color_value',
+	method:'post',
+	data
+})

@@ -20,6 +20,15 @@ export default new Router({
       }
     
     },
+     {
+      path: '/qidong',
+      name: 'qidong',
+      component: resolve => require(['@/views/Home/qidong'], resolve),
+       meta: {
+        keepAlive: false 
+      }
+    
+    },
     {
       path: '/home/seach',
       name: 'seach',

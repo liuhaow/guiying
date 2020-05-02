@@ -66,13 +66,13 @@
 			ul{
 				li{
 					width:100%;
-					padding-top: 120px;
+					padding-top: 50px;
 					background: #fff;
 					display: flex;
 					justify-content: center;
 					img{
 						width: 700px;
-						height: auto;
+						height: 500px;
 					}
 				}
 			}

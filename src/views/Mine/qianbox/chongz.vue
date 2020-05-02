@@ -313,22 +313,22 @@
 				white-space: nowrap;
 				width: auto;
 				.issueli {
-					width: 178px;
-					height: 206px;
+					width: 210px;
+					height: 236px;
 					background: #fff;
 					border-radius: 12px;
 					margin-left: 28px;
 					border: 2px solid rgba(94, 196, 110, 1);
 					display: inline-block;
 					.c-l-l {
-						width: 178px;
-						height: 206px;
+						width: 210px;
+						height: 236px;
 						display: flex;
 						flex-direction: column;
 						justify-content: center;
 						align-items: center;
 						p {
-							font-size: 42px;
+							font-size: 38px;
 							margin-bottom: 40px;
 							font-family: PingFang SC;
 							font-weight: bold;

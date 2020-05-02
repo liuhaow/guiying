@@ -1,5 +1,5 @@
 <template>
-	<div class="wrapper" >
+	<div class="wrapper">
 		<div class="nreprp" v-if="newpro">
 			<div class="nreprp-m">
 				<div class="nr-m-p">
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 
-		<div class="h-t-o-u"  :style="{backgroundImage: 'url(' + coverImgUrl + ')', backgroundSize:'cover'}">
+		<div class="h-t-o-u" :style="{backgroundImage: 'url(' + coverImgUrl + ')', backgroundSize:'cover'}">
 
 			<div class="mai-t">
 				<div class="mai-head">
@@ -82,13 +82,13 @@
 					<p @click="messData()">更多</p>
 				</div>
 				<ul class="nav-list">
-					<li v-for='(item,index) in list' class="list-n" @click="tiaozhuan(index,item.id)">
+					<li v-for='(item,index) in list' :style="colochos" class="list-n" @click="tiaozhuan(index,item.id)">
 						<img :src="item.logo" alt="" />
 						<p>{{item.name}}</p>
 					</li>
 				</ul>
 			</div>
-			<div class="haol">
+			<div class="haol" @click="tiaozhuadata()">
 				<div class="haob">
 					<img v-if='hud1' :src="hud1.image" />
 				</div>
@@ -121,7 +121,7 @@
 		<timeout></timeout>
 		<tuangou></tuangou>
 		<div class="haol">
-			<div class="haob">
+			<div class="haob" @click="tianzhuanhuyuan">
 				<img v-if='hud' :src="hud.image" />
 			</div>
 		</div>
@@ -138,21 +138,23 @@
 	import { mapGetters, mapActions } from 'vuex'
 
 	import { Dialog } from 'vant';
-	import { lunboData, shangpingData, indexmessage, indexList, newyouhui ,newpeipodata} from '@/api/api'
+	import { lunboData, shangpingData, indexmessage, indexList, newyouhui, newpeipodata, colorhuoqudata } from '@/api/api'
 
 	export default {
 		data() {
 			return {
 				newpro: false,
+				colochos: {
+					color: ''
+				},
 				list: [],
 				announcementArr: [],
 				animate: false,
-				lunb: [
-				{
-					image:'./static/lunb.png'
+				lunb: [{
+					image: ''
 				}],
 				hud: '',
-				coverImgUrl:'./static/bjin.png',
+				coverImgUrl: '',
 				hud1: '',
 				liebiao: [],
 				nuewx: '',
@@ -168,7 +170,7 @@
 			tabbar
 		},
 		create() {
-			this.fundd;
+			this.fundd();
 
 		},
 		computed: {
@@ -191,7 +193,7 @@
 						if(res.data.data.is_coupons == 1) {
 							this.newpro = true
 							this.actEndTime = res.data.data.coupons.valid_end_time;
-							
+
 							this.countDown()
 						} else {
 							this.newpro = false
@@ -227,8 +229,8 @@
 							return item.type == 6
 						})
 						console.log(that.coverImgUrl)
-						console.log(lunbDt, lunbDhd, lunbDhd1,banjin)
-						that.coverImgUrl =banjin[0].image
+						console.log(lunbDt, lunbDhd, lunbDhd1, banjin)
+						that.coverImgUrl = banjin[0].image
 						that.lunb = lunbDt
 						that.hud = lunbDhd[0]
 						that.hud1 = lunbDhd1[0]
@@ -237,7 +239,14 @@
 				})
 				indexList().then(res => {
 					if(res.data.code == 200) {
-						this.list = res.data.data
+						that.list = res.data.data
+					}
+				})
+				colorhuoqudata().then(res => {
+					if(res.data.code == 200) {
+						that.colochos={
+							color: res.data.data +'!important'
+						}
 					}
 				})
 
@@ -254,43 +263,41 @@
 
 				]
 			),
-			newdataclose(){
+			newdataclose() {
 				this.newpro = false
-				let data ={
-					token: this.TokenId					
+				let data = {
+					token: this.TokenId
 				}
-				newpeipodata(data).then(res=>{
-					
+				newpeipodata(data).then(res => {
+
 				})
 			},
 			timeFormat(param) {　　　　　　
 				return param < 10 ? '0' + param : param;　　　　
 			},
 			countDown(it) {　　　　　　
-				var interval = setInterval(() => {　　　　　　　　
-					　　　　　　　　
-					let newTime = new Date().getTime();　　　　　　　　
-					　　　　　　　　
+				var interval = setInterval(() => {　　　　　　　　　　　　　　　　
+					let newTime = new Date().getTime();　　　　　　　　　　　　　　　　
 					let endTime = new Date(this.actEndTime).getTime();　　　　　　　　
-					let obj = null;　　　　　　　　
-					　　　　　　　　
+					let obj = null;　　　　　　　　　　　　　　　　
 					if(endTime - newTime > 0) {　　　　　　　　　　
-						let time = (endTime - newTime) / 1000;　　					　　　　　　　　　　
+						let time = (endTime - newTime) / 1000;　　　　　　　　　　　　
 						let hou = parseInt(time % (60 * 60 * 24) / 3600);　　　　　　　　　　
 						let min = parseInt(time % (60 * 60 * 24) % 3600 / 60);　　　　　　　　　　
 						let sec = parseInt(time % (60 * 60 * 24) % 3600 % 60);　　　　　　　　　　
 						obj = {　　　　　　　　　　　　
 
-	　　　　　　　　　　　　hou: this.timeFormat(hou),
-	　　　　　　　　　　　　min: this.timeFormat(min),
-	　　　　　　　　　　　　sec: this.timeFormat(sec)　　　　　　　　　　
+							　　　　　　　　　　　　
+							hou: this.timeFormat(hou),
+							　　　　　　　　　　　　min: this.timeFormat(min),
+							　　　　　　　　　　　　sec: this.timeFormat(sec)　　　　　　　　　　
 						};　　　　　　　　
 					} else { // 活动已结束，全部设置为'00'
 						　　　　　　　　　　
 						obj = {　　　　　　　　　　　　
 							hou: '00',
-	　　　　　　　　　　　　  min: '00',
-	　　　　　　　　　　　　  sec: '00'　　　　　　　　　　
+							min: '00',
+							sec: '00'　　　　　　　　　　
 						};　　　　　　　　　　
 						clearInterval(interval);　　　　　　　　
 					}　　　　　　　　
@@ -308,6 +315,15 @@
 			messData() {
 				this.$router.push('/home/mecenter')
 
+			},
+			tiaozhuadata(){
+				this.$router.push('/youh')
+				
+			},
+			tianzhuanhuyuan(){
+				this.$router.push('/vip/Vipmeber')
+
+				
 			},
 			kefuData() {
 				console.log(1)
@@ -349,7 +365,7 @@
 				that.$router.push('/overall/detail/' + idt)
 			},
 
-			tiaozhuan(idt,idd) {
+			tiaozhuan(idt, idd) {
 				console.log(idt)
 				this.chooseilt(idd)
 				if(idt == 9) {
@@ -550,7 +566,6 @@
 	.te-s {
 		background: #fff;
 		padding: 0px 20px 0;
-
 		box-sizing: border-box;
 		height: 366px;
 		width: 100%;
@@ -669,6 +684,7 @@
 				flex-direction: column;
 				justify-content: space-between;
 				align-items: center;
+				color: #fff;
 				margin: 30px 0;
 				img {
 					width: 96px;
@@ -677,7 +693,6 @@
 				}
 				p {
 					font-size: 24px;
-					color: #fff
 				}
 			}
 		}

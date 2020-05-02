@@ -27,7 +27,18 @@ Vue.use(VueScroller)
 Vue.prototype.$ajax = axios
 Vue.config.productionTip = false
 
-
+//router.beforeEach((to, from, next)=> {
+//	if(to.name=='Home'){
+//		let dtloig = localStorage.getItem('loding')
+//		if(dtloig == 2){
+//			next()
+//		}else{
+//			next({path:'qidong'})
+//		}
+//	}else{
+//		next()
+//	}
+//})
 
 
 new Vue({

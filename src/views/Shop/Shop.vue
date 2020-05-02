@@ -22,7 +22,7 @@
 								<span class="newp">&yen;{{item.now_price}}</span><br />
 								<span class="oldp">&yen;{{item.old_price}}</span>
 							</h2>
-							<h3 @click="addhouwuAdd(item.id)">
+							<h3 @click="addhouwuAdd(item)">
 								<img src="../../../static/img/jgwc.png"/>
 							</h3>
 						</div>
@@ -41,7 +41,7 @@
 <script>
 	import { mapGetters, mapActions } from 'vuex'
 	import { shangpingData,indexList } from '@/api/api'
-	import { Notify } from 'vant';
+	import { Notify ,Toast} from 'vant';
 	import { addshopcar } from '@/api/mine'
 	import tabbar from "@/components/abbar"
 
@@ -153,21 +153,47 @@
 				})
 
 			},
-			addhouwuAdd(idt) {
+			 addhouwuAdd(idt) {
+				if(this.TokenId == '') {
+					Dialog.confirm({
+						title: '提示',
+						message: '需要登录'
+					}).then(() => {
+						this.$router.push('/need/login')
+					}).catch(() => {});
+					return
+				}
+				let kind
+				if(idt.is_sku == 0) {
+					kind = 0
+				} else if(idt.is_sku == 1) {
+					kind = idt.sku_id
+				}
 				let data = {
 					token: this.TokenId,
-					cid: idt,
+					cid: idt.id,
+					commodity_cover: idt.cover,
+					commodity_old_price: idt.old_price,
+					commodity_now_price: idt.now_price,
+					commodity_title: idt.title,
 					num: 1,
 					type: 1,
-					classify: 1
-
+					classify: 1,
+					sku_id: kind
 				}
+
 				addshopcar(data).then(res => {
+					console.log(res)
 					if(res.data.code == 200) {
-						Notify({
-							type: 'success',
-							message: res.data.msg
-						});
+						Toast.success(res.data.msg);
+					} else if(res.data.code == 100002) {
+						Dialog.confirm({
+							title: '提示',
+							message: '需要登录'
+						}).then(() => {
+							this.$router.push('/need/login')
+						}).catch(() => {});
+						return
 					} else {
 						Notify({
 							type: 'warning',
@@ -270,13 +296,14 @@
 							font-weight: 500;
 							line-height: 34px;
 							color: rgba(51, 51, 51, 1);
+							padding-bottom 60px
 						}
 						.listxi {
-							margin-top: 60px;
 							display: flex;
 							justify-content: space-between;
 							align-items: center;
 							h2 {
+								width 79%;
 								.newp {
 									color: #FB0E3A;
 									font-size: 32px;

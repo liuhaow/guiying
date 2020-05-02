@@ -64,7 +64,7 @@
 
 		<div class="pay-ft">
 			<h2>
-				实付 <span>&yen;{{Number(messgein.now_price*num) + Number(messgein.deposit*100/100)-Number(value*100/100)}}</span>
+				实付 <span>&yen;{{Number(messgein.now_price*num).toFixed(2) + Number(messgein.deposit*100/100)-Number(value*100/100)}}</span>
 			</h2>
 			<button @click="orderData">提交订单</button>
 		</div>
@@ -192,7 +192,7 @@
 			},
 			youhuodataquan() {
 				var that = this
-				let coin = Number(that.messgein.now_price * that.num)+Number(that.messgein.deposit)
+				let coin = Number(that.messgein.now_price * that.num).toFixed(2)+Number(that.messgein.deposit)
 
 				console.log(coin)
 
@@ -283,10 +283,7 @@
 					tpdt = 1
 					
 				}
-				if(that.qisongjia>coin){
-						Toast.fail('满'+that.qisongjia+'元起送');
-						return
-				}
+				
 				let data = {
 					token: that.TokenId,
 					coin: coin,
@@ -301,7 +298,10 @@
 					remark: that.remark
 				}
 				console.log(data)
-
+				Toast.loading({
+					mask: true,
+					message: '加载中...'
+				});
 				singopayinfo(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {
@@ -618,14 +618,14 @@
 						font-size: 26px;
 						color: #333;
 						text-align: center;
-						background: #ccc;
+						background: #f1f1f1;
 						margin: 0 5px;
 					}
 					button {
 						width: 60px;
 						font-size: 26px;
 						color: #333;
-						background: #E1E1E1;
+						border :none!important;
 						height: 60px;
 					}
 				}

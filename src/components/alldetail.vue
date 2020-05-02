@@ -523,9 +523,10 @@
 						height: 60px;
 						margin: 0 20px 20px 0;
 						line-height: 60px;
+						padding :0 30px;
 						text-align: center;
 						border: 1px solid #e1e1e1;
-						font-size: 20px;
+						font-size: 24px;
 						color: #000;
 						border-radius: 5px;
 					}

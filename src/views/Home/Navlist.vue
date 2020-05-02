@@ -2,7 +2,7 @@
 	<div class="navlist">
 		<div class="nav-ul">
 			<ul>
-				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index,item.id)" :class="{'chost':selected==index+1}">
+				<li class='issueli' v-for='(item,index) in list' :key='index' @click="changestyle(index,item.id)" :class="{'chost':selected==index+1}">
 					{{item.name}}
 				</li>
 			</ul>
@@ -11,7 +11,7 @@
 
 			<scroller :on-infinite="infinite" :on-refresh="refresh" ref="myscroller">
 				<ul class="nav-mian">
-					<li v-for="(item,index) in tlist">
+					<li v-for="(item,index) in tlist" :key='index'>
 						<div class="nav-l" @click="checkdetail(item.id)">
 							<img :src="item.cover" alt="" />
 						</div>

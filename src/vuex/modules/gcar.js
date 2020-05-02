@@ -21,7 +21,7 @@ const getters = {
 				all_money += item.num * item.now_price
 			}
 		})
-		return state.all_money = all_money
+		return state.all_money = all_money.toFixed(2)
 	},
 	allSelsect(state) {
 		return state.all_selsect

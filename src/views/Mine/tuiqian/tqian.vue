@@ -14,7 +14,7 @@
 								<img v-for='(idt ,indx) in item.pro' :src="idt.cover" />
 							</li>
 						</ul>
-						<h2>查看全部》</h2>
+						<h2 @click="chakanallinfo(item.id)">查看全部》</h2>
 					</div>
 					<div class="j-f">
 						<button @click="shengqingData(item.id,item.deposit)">可退{{item.deposit}}</button>
@@ -70,6 +70,12 @@
 						
 					}
 				})
+			},
+			chakanallinfo(idt){
+				console.log(idt)
+				var that = this
+				that.$router.push('/myorder/alldan/'+idt)
+
 			}
 		}
 	}

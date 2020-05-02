@@ -59,7 +59,7 @@
 			},
 			nextbuData(){
 				var  that = this
-				var reg = 11 && /^((13|14|15|17|18)[0-9]{1}\d{8})$/;
+				var reg = 11 && /^[1]([3-9])[0-9]{9}$/;
 				if(!reg.test(that.phonenub)){
 					Toast({
 						message: '亲 手机号输入错误',

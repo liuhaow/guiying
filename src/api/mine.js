@@ -360,3 +360,23 @@ export const huankuandaya= data=>Axios({
 	method:'post',
 	data
 })
+//退款list
+
+export const tuikuandaya= data=>Axios({
+	url:'api/personal/refund_list',
+	method:'post',
+	data
+})
+//yaoshi
+export const yaokeydaya= data=>Axios({
+	url:'api/personal/business_agreement',
+	method:'post',
+	data
+})
+
+//qinahuanmingxi
+export const qiandebtdata= data=>Axios({
+	url:'api/personal/debt',
+	method:'post',
+	data
+})

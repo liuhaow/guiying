@@ -23,7 +23,8 @@
 			</div>
 
 			<div class="wu-l-n">
-				<p><span>退款金额:</span> &yen;{{totle}}</p>
+				<p><span>退款金额:</span> <input type="number" v-model="tuikaun" placeholder="请输入退款金额"> </p>
+				<p>总共可退&yen;{{totle}}</p>
 				<p><span>退款说明:</span> <input type="text" v-model="remark" placeholder="选填" /></p>
 
 			</div>
@@ -43,8 +44,7 @@
 <script>
 	import headt from '@/components/heda'
 	import { mapGetters } from 'vuex'
-	import { Notify } from 'vant';
-	import { Dialog } from 'vant';
+	import { Notify,Toast,Dialog } from 'vant';
 
 	import { tuihuosqingdata } from '@/api/mine'
 	export default {
@@ -54,7 +54,8 @@
 				fileList: [],
 				tid: '',
 				totle: '',
-				remark: ''
+				remark: '',
+				tuikaun:''
 
 			}
 		},
@@ -86,10 +87,25 @@
 					return
 				}
 				console.log(this.tid)
+				if(this.tuikaun>this.totle){
+					Toast.fail('你输入的金额多于支付金额')
+					this.tuikaun=''
+					return
+				}
+				if(!this.tuikaun){
+					Toast.fail('退款金额不能为空')
+					this.tuikaun=''
+					return
+				}
+				if(this.tuikaun==0){
+					Toast.fail('退款金额不能为0')
+					this.tuikaun=''
+					return
+				}
 				let data = {
 					token: this.TokenId,
 					order_id: this.$route.query.idt,
-					coin: this.$route.query.totle,
+					coin: this.tuikaun,
 					remark: this.remark,
 					reason: this.tid,
 					img: imgs
@@ -169,14 +185,13 @@
 				}
 			}
 			.wu-l-n {
-				height: 200px;
 				margin-top: 20px;
 				p {
 					display: flex;
 					align-items: center;
 					padding-left: 30px;
 					box-sizing: border-box;
-					height: 100px;
+					height: 80px;
 					color: #FF6501;
 					background: #fff;
 					font-size: 26px;

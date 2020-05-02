@@ -4,7 +4,7 @@ import * as types from '../types'
  * App通用配置
  */
 const state = {
-    loading: false,         //暂时只开发这一个 
+    loading: JSON.parse(localStorage.getItem('loding')) || 2,         //暂时只开发这一个 
 	TokenId:JSON.parse(localStorage.getItem('tokenId')) ||'',//token
 	taber:JSON.parse(localStorage.getItem('taber')) || 0,
 	phonenum:JSON.parse(localStorage.getItem('phone')) || '',//电话输入保存
@@ -17,19 +17,21 @@ const state = {
 	qingdand:JSON.parse(localStorage.getItem('qingdn')) || [],
 }
 const actions = {
+	
 	//手机号码输入
 	setPoneNumb({commit}, res){
 		localStorage.setItem('phone', JSON.stringify(res))		 		
         commit(types.PHONE_NUM, res)		
 	},
 	//等待状态
-    setLoadingState({ commit }, status) {
-        commit(types.COM_LOADING_STATUS, status)
+    setLoadingState({ commit }, res) {
+		localStorage.setItem('loding', JSON.stringify(res))	
+        commit(types.COM_LOADING_STATUS, res)
     },
     //taber转换
     settaber({commit},res){
 		localStorage.setItem('taber', JSON.stringify(res))	
-    	commit(types.TABE_R,status)
+    	commit(types.TABE_R,res)
     },
     //保存token
     setToken({commit}, res){
@@ -104,8 +106,8 @@ const mutations = {
    [types.SET_USER_DATA](state,res){
     	state.userData  = res
     },
-    [types.COM_LOADING_STATUS](state, status) {
-        state.loading = status
+    [types.COM_LOADING_STATUS](state, res) {
+        state.loading = res
     },
     [types.ADD_TOKEN](state,res){
     	state.TokenId  = res

@@ -192,7 +192,40 @@
 			</ul>
 
 		</div>
+		<div class="quanbu" v-if="select == 5">
+			<ul>
+				<li v-for='(item,index) in lstdata' :key='index'>
 
+					<div class="list-t">
+						<div class="list-t-l">
+							{{item.create_time}}
+						</div>
+					</div>
+					<div class="list-n">
+						<ul>
+							<li>
+								<img :src="item.cover" alt="" />
+							</li>
+						</ul>
+						<h2 @click="chakanData(item.id)">查看全部 》</h2>
+					</div>
+					<div class="list-f">
+						<div class="lis-f-f">
+							<div class="dinzh">
+
+								<button class="btde" v-if="item.status==0">审核中</button>
+								<button class="btde" v-if="item.status==1">退款中</button>
+								<button class="btde" v-if="item.status==2">拒绝退款</button>
+								<button class="btde" v-if="item.status==3">完成退款</button>								
+							</div>
+
+						</div>
+					</div>
+
+				</li>
+			</ul>
+
+		</div>
 		<van-popup v-model="showPicker" position="bottom" :style="{ height: '38%' }">
 			<div class="z-y-y">
 				<h2>支付方式</h2>
@@ -221,7 +254,7 @@
 
 	import { mapGetters, mapActions } from 'vuex'
 	import { Notify, Toast, popup } from 'vant';
-	import { orderallData, Shancsorderall, Outpayinfo, shouhuoData, zichanyue, weizhikuandaya } from '@/api/mine'
+	import { orderallData, Shancsorderall, Outpayinfo, shouhuoData, zichanyue, weizhikuandaya,tuikuandaya } from '@/api/mine'
 	export default {
 		data() {
 			return {
@@ -246,6 +279,9 @@
 					},
 					{
 						name: '待评价'
+					},
+					{
+						name: '退款'
 					}
 
 				],
@@ -287,13 +323,25 @@
 				page: 1,
 				status: this.orderl
 			}
-
-			orderallData(data).then(res => {
+			let pery ={
+				token: this.TokenId
+				
+			}
+			if(this.orderl<5){
+				orderallData(data).then(res => {
 				console.log(res)
 				if(res.data.code == 200) {
 					this.lstdata = res.data.data
 				}
 			})
+			}else{
+				tuikuandaya(pery).then(res=>{
+						if(res.data.code == 200) {
+								this.lstdata = res.data.data
+							}
+					})
+			}
+			
 
 		},
 		methods: {
@@ -396,8 +444,7 @@
 							Toast.fail('支付失败')
 						})
 				}, function(e) {
-							Toast.fail('支付失败')
-					
+					Toast.fail('支付失败')
 
 				})
 			},
@@ -422,13 +469,25 @@
 					page: 1,
 					status: index
 				}
+				let pery = {
+					token: this.TokenId
+				}
 				this.orderchoose(index)
-				orderallData(data).then(res => {
-					console.log(res)
-					if(res.data.code == 200) {
-						this.lstdata = res.data.data
-					}
-				})
+				if(index < 5) {
+					orderallData(data).then(res => {
+						console.log(res)
+						if(res.data.code == 200) {
+							this.lstdata = res.data.data
+						}
+					})
+				}else{				
+					tuikuandaya(pery).then(res=>{
+						if(res.data.code == 200) {
+								this.lstdata = res.data.data
+							}
+					})
+
+				}
 
 			},
 			checkenwul(idt) {

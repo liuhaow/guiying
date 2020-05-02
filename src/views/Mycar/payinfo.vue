@@ -154,7 +154,7 @@
 				}
 			})
 			that.xuanzh = that.qingdand
-			that.all_money = allney
+			that.all_money = allney.toFixed(2)
 			that.deposit = deposit
 			let idt = that.$route.query.id
 			let data = {
@@ -327,7 +327,10 @@
 					carid: qidn,
 					carbuy: 1
 				}
-
+				Toast.loading({
+					mask: true,
+					message: '加载中...'
+				});
 				singopayinfo(data).then(res => {
 					console.log(res)
 					if(res.data.code == 200) {

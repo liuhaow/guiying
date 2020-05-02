@@ -65,8 +65,8 @@
 			<ul class="czhilist">
 				<li class='issueli' v-for='(item,index) in list' @click="changestyle(index)" :class="{'actt':select===index}">
 					<div class="c-l-l">
-						<p>{{item.mony}}<span>元</span></p>
-						<h2>赠送{{item.zsong}}元</h2>
+						<p>{{item.coin}}<span>元</span></p>
+						<h2>赠送{{item.give_coin}}元</h2>
 					</div>
 
 				</li>
@@ -85,7 +85,7 @@
 
 <script>
 	import { mapGetters, mapActions } from 'vuex'
-	import { mineInfo } from '@/api/mine'
+	import { mineInfo ,RechargeInfo} from '@/api/mine'
 	import { Dialog } from 'vant';
 	
 	export default {
@@ -142,6 +142,12 @@
 			let data = {
 				token: this.TokenId
 			}
+			
+			RechargeInfo(data).then(res => {
+				if(res.data.code == 200) {
+					this.list = res.data.data
+				}
+			})
 			mineInfo(data).then(res => {
 
 				if(res.data.code == 200) {
@@ -311,22 +317,22 @@
 			white-space: nowrap;
 			width: auto;
 			.issueli {
-				width: 178px;
-				height: 206px;
+				width: 210px;
+				height: 220px;
 				background: #fff;
 				border-radius: 12px;
 				margin-left: 28px;
 				border: 2px solid rgba(94, 196, 110, 1);
 				display: inline-block;
 				.c-l-l {
-					width: 178px;
-					height: 206px;
+					width: 210px;
+					height: 220px;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
 					align-items: center;
 					p {
-						font-size: 42px;
+						font-size: 38px;
 						margin-bottom: 40px;
 						font-family: PingFang SC;
 						font-weight: bold;

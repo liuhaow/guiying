@@ -33,7 +33,7 @@
 								<h3>{{item.valid_start_time}}-{{item.valid_end_time}}</h3>
 							</div>
 						</div>
-						<button> 去使用</button>
+						<button @click="qushiyondata"> 去使用</button>
 					</li>
 				</ul>
 			</div>
@@ -100,6 +100,9 @@
 			back() {
 				this.$router.go(-1)
 
+			},
+			qushiyondata(){
+				this.$router.push('/overall')
 			},
 			changestyle(index) {
 				this.select = index;
